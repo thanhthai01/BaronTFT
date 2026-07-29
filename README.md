@@ -1,5 +1,7 @@
 # Baron TFT Website
 
+Website cá nhân ghi lại kiến thức TFT, hành trình leo rank và bộ công cụ luyện quyết định cho người chơi Việt Nam.
+
 Production website/web app for the Vietnamese TFT Evergreen Rank Manual.
 
 ## Stack
