@@ -1,0 +1,84 @@
+.shell {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-offset-accent);
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.focusToggle,
+.reset {
+  min-height: 2.5rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-weight: var(--fw-bold);
+  padding: 0.45rem 0.8rem;
+}
+
+.focusToggle[aria-pressed='true'] {
+  border-color: var(--accent-secondary);
+  background: color-mix(in srgb, var(--accent-secondary) 15%, var(--surface-card));
+}
+
+.reset {
+  color: var(--danger);
+}
+
+.panel {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.85rem;
+  align-items: start;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-raised);
+  padding: 1rem;
+}
+
+.item input {
+  width: 1.35rem;
+  height: 1.35rem;
+  accent-color: var(--accent-primary);
+  margin-top: 0.1rem;
+}
+
+.item span {
+  color: var(--text-primary);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  font-weight: var(--fw-semibold);
+}
+
+.done span {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.progress {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}

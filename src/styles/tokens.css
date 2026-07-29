@@ -1,0 +1,129 @@
+:root {
+  color-scheme: light;
+
+  --surface-canvas: #f1ecdf;
+  --surface-canvas-deep: #e4ddcb;
+  --surface-board: #ebe4d2;
+  --surface-card: #ffffff;
+  --surface-raised: #f6f1e4;
+  --surface-hover: #e8e1cf;
+  --surface-nav: rgba(241, 236, 223, 0.9);
+
+  --text-primary: #1b1b1b;
+  --text-secondary: #29271f;
+  --text-muted: #5b564a;
+  --text-subtle: #837c64;
+  --text-disabled: #a89e85;
+  --text-on-accent: #f6f1e4;
+
+  --accent-primary: #2a44c8;
+  --accent-primary-hover: #2038b0;
+  --accent-primary-press: #182b8c;
+  --accent-primary-soft: #e9ecfb;
+  --accent-secondary: #ff5a1f;
+  --accent-secondary-text: #e24a12;
+  --accent-secondary-press: #c8420e;
+  --focus-ring: rgba(56, 189, 248, 0.72);
+
+  --success: #1e9e57;
+  --warning: #c77a16;
+  --danger: #d23a22;
+  --info: var(--accent-primary);
+
+  --border-subtle: rgba(27, 27, 27, 0.12);
+  --border-line: rgba(27, 27, 27, 0.22);
+  --border-strong: rgba(27, 27, 27, 0.55);
+  --border-accent: var(--accent-primary);
+
+  --cost-1: #6b7280;
+  --cost-2: #1e9e57;
+  --cost-3: #2563eb;
+  --cost-4: #8b3fd6;
+  --cost-5: #c0851c;
+
+  --font-display: var(--font-epilogue), var(--font-libre-franklin), system-ui, sans-serif;
+  --font-body: var(--font-libre-franklin), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extra: 800;
+
+  --fs-display: clamp(3.2rem, 11vw, 5.4rem);
+  --fs-h1: clamp(2.55rem, 8vw, 4.5rem);
+  --fs-h2: clamp(2rem, 5vw, 3rem);
+  --fs-h3: clamp(1.45rem, 3vw, 2rem);
+  --fs-lg: clamp(1.05rem, 2vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.8125rem;
+  --fs-2xs: 0.6875rem;
+
+  --lh-tight: 1.02;
+  --lh-snug: 1.18;
+  --lh-body: 1.6;
+  --lh-relaxed: 1.72;
+  --ls-tight: -0.02em;
+  --ls-wide: 0.04em;
+  --ls-caps: 0.12em;
+
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+  --sp-24: 6rem;
+
+  --r-xs: 0.375rem;
+  --r-sm: 0.625rem;
+  --r-md: 0.75rem;
+  --r-lg: 0.875rem;
+  --r-xl: 1.125rem;
+  --r-pill: 999px;
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  --container: 75rem;
+  --container-wide: 85rem;
+  --gutter: clamp(1rem, 4vw, 1.5rem);
+
+  --shadow-offset-ink: 3px 3px 0 rgba(27, 27, 27, 0.9);
+  --shadow-offset-accent: 6px 6px 0 var(--accent-primary);
+  --shadow-offset-orange: 5px 5px 0 var(--accent-secondary);
+  --shadow-inset: inset 0 0 0 1px rgba(27, 27, 27, 0.06);
+  --ring: 0 0 0 3px var(--focus-ring);
+
+  --grad-accent: linear-gradient(180deg, #3350e0 0%, #2a44c8 100%);
+  --grad-paper: linear-gradient(135deg, #f6f1e4 0%, #e9e2d0 100%);
+  --grad-panel: linear-gradient(180deg, rgba(27, 27, 27, 0.02) 0%, rgba(27, 27, 27, 0) 100%);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 360ms;
+}
+
+[data-surface="focus"] {
+  color-scheme: dark;
+  --surface-canvas: #111827;
+  --surface-board: #1f2937;
+  --surface-card: #172033;
+  --surface-raised: #243244;
+  --surface-hover: #2f4055;
+  --surface-nav: rgba(17, 24, 39, 0.9);
+  --text-primary: #e7e2d6;
+  --text-secondary: #f3efe4;
+  --text-muted: #c9c2b2;
+  --text-subtle: #a89e85;
+  --border-subtle: rgba(231, 226, 214, 0.12);
+  --border-line: rgba(231, 226, 214, 0.2);
+  --border-strong: rgba(231, 226, 214, 0.55);
+}

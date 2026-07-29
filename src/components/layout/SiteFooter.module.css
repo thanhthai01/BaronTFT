@@ -1,0 +1,40 @@
+.footer {
+  border-top: 1px solid var(--border-line);
+  background: var(--surface-canvas-deep);
+  padding-block: 2.5rem;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.brand {
+  margin: 0 0 0.55rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: var(--fw-extra);
+  text-transform: uppercase;
+}
+
+.note {
+  max-width: 640px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.meta {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+@media (max-width: 720px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+}

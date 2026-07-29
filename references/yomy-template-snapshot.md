@@ -1,0 +1,163 @@
+- generic [active] [ref=e1] [box=0,0,914,11445]:
+  - link "Voir notre offre" [ref=e4] [cursor=pointer] [box=0,0,929,50]:
+    - /url: /products/pack-decouverte-3-recettes-85g
+    - generic [ref=e12] [box=364,18,219,14]: Pack decouverte offert sur votre premiere commande
+  - generic [box=0,50,929,0]:
+    - generic [box=0,50,929,869]:
+      - banner [box=0,50,929,88]:
+        - generic [ref=e15] [box=0,50,929,88]
+      - generic [box=0,0,914,854]:
+        - generic [box=0,0,914,854]
+  - main [ref=e60] [box=0,50,929,11097]:
+    - generic [ref=e64] [box=0,130,929,468]:
+      - generic [ref=e65] [box=49,133,382,466]:
+        - heading "Smart Cat Food" [level=1] [ref=e67] [box=49,133,382,137]
+        - paragraph [ref=e70] [box=49,288,382,13]: Votre chat mérite mieux qu'une gamelle de croquettes
+        - link "Découvrir la pâtée YOMY" [ref=e72] [cursor=pointer] [box=165,319,151,39]:
+          - /url: /products/pack-decouverte-3-recettes-85g
+        - generic [ref=e79] [box=49,390,382,42]
+      - region "Home Carousel" [ref=e99] [box=473,130,371,431]:
+        - generic [ref=e100] [box=473,130,371,402]
+        - generic [box=473,130,371,402]
+        - tablist "Select a slide to show" [box=473,545,371,16]
+    - generic [ref=e149] [box=-790,603,929,59]:
+      - list [ref=e150] [box=-790,603,1798,59]:
+        - listitem [ref=e151] [box=-790,603,182,59]
+        - listitem [ref=e154] [box=-608,603,162,59]
+        - listitem [ref=e157] [box=-446,603,118,59]
+        - listitem [ref=e160] [box=-328,603,122,59]
+        - listitem [ref=e163] [box=-206,603,182,59]
+        - listitem [ref=e166] [box=-24,603,182,59]
+        - listitem [ref=e169] [box=158,603,122,59]
+        - listitem [ref=e172] [box=280,603,182,59]
+        - listitem [ref=e175] [box=462,603,182,59]
+        - listitem [ref=e178] [box=644,603,182,59]
+        - listitem [ref=e181] [box=826,603,182,59]
+      - list [ref=e1067] [box=1008,603,1798,59]:
+        - listitem [ref=e1068] [box=1008,603,182,59]
+        - listitem [ref=e1071] [box=1190,603,162,59]
+        - listitem [ref=e1074] [box=1352,603,118,59]
+        - listitem [ref=e1077] [box=1470,603,122,59]
+        - listitem [ref=e1080] [box=1592,603,182,59]
+        - listitem [ref=e1083] [box=1774,603,182,59]
+        - listitem [ref=e1086] [box=1956,603,122,59]
+        - listitem [ref=e1089] [box=2078,603,182,59]
+        - listitem [ref=e1092] [box=2260,603,182,59]
+        - listitem [ref=e1095] [box=2442,603,182,59]
+        - listitem [ref=e1098] [box=2624,603,182,59]
+    - generic [ref=e185] [box=0,667,929,4641]:
+      - paragraph [ref=e188] [box=137,726,654,212]:
+        - strong [ref=e189] [box=265,714,399,94]: 4 RAISONS
+        - text: D’ADOPTER YOMY
+      - generic [ref=e192] [box=0,937,2705,858]:
+        - generic [ref=e194] [box=161,1156,590,420]
+        - generic [ref=e205] [box=758,1156,590,420]
+        - generic [ref=e216] [box=1356,1156,590,420]
+        - generic [ref=e227] [box=1954,1156,590,420]
+    - generic [ref=e243] [box=126,5347,678,58]:
+      - paragraph [ref=e244] [box=126,5347,678,29]: Le Robot YOMY
+      - paragraph [ref=e245] [box=126,5376,678,29]:
+        - text: Va lui
+        - strong [ref=e246] [box=419,5373,162,36]: changer la vie
+    - generic [ref=e256] [box=16,6052,280,387]:
+      - generic [ref=e257] [box=16,6052,280,13]: "Fonctionnalités Yomy :"
+      - generic [ref=e258] [box=16,6082,280,357]:
+        - generic [ref=e269] [box=70,6098,55,27]
+        - generic [ref=e280] [box=215,6098,65,27]
+        - generic [ref=e290] [box=70,6169,161,27]
+        - generic [ref=e308] [box=70,6238,64,45]
+        - generic [ref=e316] [box=215,6238,53,45]
+        - generic [ref=e324] [box=70,6325,136,27]
+        - generic [ref=e336] [box=70,6395,135,27]
+    - generic [ref=e342] [box=0,6700,929,549]:
+      - generic [ref=e345] [box=21,6705,887,460]:
+        - paragraph [ref=e347] [box=305,6776,319,58]
+        - generic [ref=e355] [box=434,6870,217,243]
+      - link "PRÉCOMMANDER" [ref=e435] [cursor=pointer] [box=407,7210,129,39]:
+        - /url: /products/distributeur-intelligent-yomy
+    - generic [ref=e445] [box=0,7288,929,1425]:
+      - generic [ref=e447] [box=196,7327,538,282]:
+        - heading "des recettes au poil pour sa" [level=2] [ref=e448] [box=196,7327,538,212]: des recettesau poilpour sa
+        - heading "vraie nature" [level=2] [ref=e449] [box=196,7539,538,71]
+      - generic [ref=e450] [box=0,7648,929,1026]:
+        - generic [ref=e452] [box=16,7648,898,935]
+        - link "Toutes nos recettes" [ref=e636] [cursor=pointer] [box=401,8635,127,39]:
+          - /url: /collections
+      - generic [box=0,-15,914,869]:
+        - generic [box=0,-15,914,869]: Fermer la popin
+        - generic [box=330,215,254,410]
+      - generic [box=0,-15,914,869]:
+        - generic [box=0,-15,914,869]: Fermer la popin
+        - generic [box=330,215,254,410]
+      - generic [box=0,-15,914,869]:
+        - generic [box=0,-15,914,869]: Fermer la popin
+        - generic [box=330,215,254,410]
+      - generic [box=0,-15,914,869]:
+        - generic [box=0,-15,914,869]: Fermer la popin
+        - generic [box=330,215,254,410]
+    - generic [ref=e644] [box=0,8713,929,67]:
+      - generic [ref=e646] [box=0,8713,929,67]:
+        - figure [ref=e648] [box=0,8713,929,67]
+        - figure [ref=e651] [box=929,8713,929,67]
+        - figure [ref=e654] [box=1858,8713,929,67]
+        - figure [ref=e657] [box=2787,8713,929,67]
+      - generic [ref=e659] [box=0,8713,929,67]:
+        - button "button item 1 Chat européen observant son distributeur automatique de repas Yomy, parfaitement intégré à la décoration d'un salon lumineux." [ref=e660] [cursor=pointer] [box=656,8713,60,42]
+        - button "button item 2 Chat blanc à poils longs reposant paisiblement au soleil à côté de son distributeur de pâtée Yomy au design minimaliste." [ref=e663] [cursor=pointer] [box=722,8713,60,42]
+        - button "button item 3 Chat se nourrissant de sa ration fraîche directement dans le tiroir ouvert du robot d'alimentation Yomy, posé près d'une plante d'intérieur." [ref=e666] [cursor=pointer] [box=787,8713,60,42]
+        - button "button item 4 Chat utilisant son distributeur automatique Yomy dans une cuisine moderne, pendant que son propriétaire vaque à ses occupations en arrière-plan." [ref=e669] [cursor=pointer] [box=853,8713,60,42]
+    - generic [ref=e673] [box=0,8780,929,936]:
+      - heading "Une pâtée équilibrée, appétante, qui respecte les vrais besoins du chat." [level=3] [ref=e675] [box=225,8819,479,58]
+      - generic [ref=e676] [box=164,8929,602,748]:
+        - generic [ref=e678] [box=164,8929,371,317]
+        - generic [ref=e690] [box=566,8950,177,129]
+        - generic [ref=e696] [box=164,9256,294,205]
+        - generic [ref=e703] [box=468,9256,144,205]
+        - generic [ref=e710] [box=623,9256,142,205]
+        - generic [ref=e717] [box=471,9472,294,205]
+        - generic [ref=e724] [box=164,9472,144,205]
+        - generic [ref=e731] [box=318,9472,142,205]
+    - generic [ref=e738] [box=0,9716,929,496]:
+      - paragraph [ref=e740] [box=349,9755,231,58]:
+        - text: Qu’en disent les
+        - strong [ref=e741] [box=372,9782,186,33]: Yomy-testeurs ?
+      - generic [ref=e742] [box=0,9849,929,324]:
+        - generic [ref=e744] [box=46,9862,1479,254]
+        - generic [ref=e845] [box=433,10145,62,29]
+    - generic [ref=e857] [box=0,10212,929,385]:
+      - generic [ref=e858] [box=16,10251,226,307]:
+        - heading "Questions? Réponses !" [level=2] [ref=e860] [box=16,10251,226,58]
+        - paragraph [ref=e863] [box=16,10319,226,41]: On a tout prévu. Ou presque. Voici les réponses aux questions les plus fréquentes.
+        - link "Contactez-nous" [ref=e865] [cursor=pointer] [box=16,10381,97,32]:
+          - /url: /pages/contact-1
+      - list [ref=e866] [box=321,10251,592,307]:
+        - listitem [ref=e867] [box=321,10251,592,47]
+        - listitem [ref=e877] [box=321,10303,592,47]
+        - listitem [ref=e887] [box=321,10355,592,47]
+        - listitem [ref=e897] [box=321,10407,592,47]
+        - listitem [ref=e907] [box=321,10459,592,47]
+        - listitem [ref=e917] [box=321,10511,592,47]
+    - generic [ref=e928] [box=0,10597,929,550]:
+      - figure [ref=e929] [box=0,10597,929,550]
+      - generic [ref=e933] [box=16,10636,571,472]:
+        - generic [ref=e934] [box=17,10637,487,256]
+        - generic [ref=e946] [box=52,10939,497,121]
+  - generic [ref=e957] [box=0,11147,929,297]:
+    - generic [ref=e961] [box=0,11163,929,221]:
+      - generic [ref=e962] [box=16,11163,211,213]:
+        - figure [ref=e963] [box=16,11163,78,117]
+        - paragraph [ref=e966] [box=16,11290,211,70]: Nous avons imaginé un distributeur intelligent de pâtée & de croquettes pour votre chat. Un petit robot qui gère (presque) tout :)
+      - generic [ref=e967] [box=262,11163,358,221]:
+        - navigation [ref=e968] [box=277,11176,326,17]
+        - generic [ref=e985] [box=277,11214,326,154]
+      - generic [ref=e988] [box=627,11163,286,221]:
+        - generic [ref=e989] [box=643,11176,255,114]
+        - navigation [ref=e1001] [box=643,11316,255,54]
+    - generic [ref=e1024] [box=0,11397,929,25]:
+      - paragraph [ref=e1026] [box=16,11397,50,12]: © 2026 YOMY
+      - navigation [ref=e1027] [box=477,11397,436,12]:
+        - list [ref=e1028] [box=477,11397,436,12]
+  - generic "Open WhatsApp chat" [ref=e1039] [box=833,711,63,63]:
+    - link "Send a message via WhatsApp" [ref=e1040] [cursor=pointer] [box=833,711,63,63]:
+      - /url: https://wa.me/+33142769136?text=
+  - button "Ouvrir le chat" [ref=e1048] [cursor=pointer] [box=836,780,54,54]

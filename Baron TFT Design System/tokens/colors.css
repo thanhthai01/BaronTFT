@@ -1,0 +1,78 @@
+/* Baron TFT — Color tokens. Risograph "zine" theme: warm ivory paper, ink-black
+   text and hairlines, two flat spot inks — cobalt blue (lead) + fluoro orange (2nd).
+   NOTE: variable NAMES are kept stable from the original dark theme so components
+   need no rewrite — only the VALUES flipped to a light, print-ink palette. */
+:root {
+  /* ---- Base neutrals — now a LIGHT paper ramp (name kept, value flipped) ---- */
+  --ink-950: #E4DDCB;   /* deepest paper / void edge */
+  --ink-900: #F1ECDF;   /* app background — warm ivory */
+  --ink-850: #EBE4D2;   /* board / section band */
+  --ink-800: #FFFFFF;   /* surface / card */
+  --ink-700: #F6F1E4;   /* elevated / raised */
+  --ink-600: #E8E1CF;   /* hover surface */
+  --ink-500: #B8AF98;   /* mid tone */
+  --ink-400: #9A9075;   /* muted line */
+  --ink-300: #A89E85;   /* disabled text */
+
+  /* ---- Ink text ramp (name kept "paper", value flipped to dark ink) ---- */
+  --paper-0:  #1B1B1B;  /* primary text — near black */
+  --paper-1:  #29271F;
+  --paper-2:  #5B564A;  /* secondary text */
+  --paper-3:  #837C64;  /* tertiary / captions */
+
+  /* ---- Brand: Cobalt spot ink (name kept "gold") ---- */
+  --gold-50:  #E9ECFB;
+  --gold-100: #2A44C8;  /* used as accent text on light */
+  --gold-300: #2A44C8;  /* accent text / links */
+  --gold-500: #2A44C8;  /* PRIMARY accent — cobalt */
+  --gold-600: #2038B0;
+  --gold-700: #182B8C;
+
+  /* ---- Secondary: Fluoro orange spot ink (name kept "teal") ---- */
+  --teal-100: #FFE2D3;
+  --teal-300: #E24A12;  /* text-weight orange (darker for light bg) */
+  --teal-500: #FF5A1F;  /* secondary accent — fluoro orange */
+  --teal-700: #C8420E;
+
+  /* ---- TFT champion cost tiers (canonical, darkened for light paper) ---- */
+  --cost-1: #6B7280;  /* 1-cost — steel */
+  --cost-2: #1E9E57;  /* 2-cost — green */
+  --cost-3: #2563EB;  /* 3-cost — blue */
+  --cost-4: #8B3FD6;  /* 4-cost — purple */
+  --cost-5: #C0851C;  /* 5-cost — gold */
+
+  /* ---- Status / feedback ---- */
+  --success: #1E9E57;
+  --warning: #C77A16;
+  --danger:  #D23A22;
+  --info:    #2A44C8;
+
+  /* ============ SEMANTIC ALIASES ============ */
+  --bg-app:        var(--ink-900);
+  --bg-void:       var(--ink-950);
+  --surface-board: var(--ink-850);
+  --surface-card:  var(--ink-800);
+  --surface-raised:var(--ink-700);
+  --surface-hover: var(--ink-600);
+  --surface-nav:   rgba(241,236,223,0.86);
+
+  --text-strong:   var(--paper-0);
+  --text-body:     var(--paper-1);
+  --text-muted:    var(--paper-2);
+  --text-subtle:   var(--paper-3);
+  --text-disabled: var(--ink-300);
+  --text-on-gold:  #F6F1E4;   /* paper on cobalt fills */
+
+  /* Ink hairlines — zine keeps borders visible and dark */
+  --border-subtle: rgba(27,27,27,0.12);
+  --border-line:   rgba(27,27,27,0.22);
+  --border-strong: rgba(27,27,27,0.55);
+  --border-gold:   var(--gold-500);
+
+  --accent:        var(--gold-500);
+  --accent-hover:  var(--gold-600);
+  --accent-press:  var(--gold-700);
+  --accent-2:      var(--teal-500);
+
+  --focus-ring:    rgba(42,68,200,0.5);
+}

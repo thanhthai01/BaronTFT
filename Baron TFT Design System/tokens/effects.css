@@ -1,0 +1,31 @@
+/* Baron TFT — Effects: shadows, spot-ink accents, gradients, motion.
+   Zine direction: NO soft blur / glows. Elevation = hard offset "print misregister"
+   shadows in ink or spot color. Flat fills, crisp hairlines. */
+:root {
+  /* Elevation — hard offset shadows (risograph misregistration) */
+  --shadow-sm: 2px 2px 0 rgba(27,27,27,0.85);
+  --shadow-md: 4px 4px 0 rgba(27,27,27,0.9);
+  --shadow-lg: 6px 6px 0 var(--gold-500);
+  --shadow-inset: inset 0 0 0 1px rgba(27,27,27,0.06);
+
+  /* Spot-ink "pop" — kept names, now hard offset in ink over spot color */
+  --glow-gold: 4px 4px 0 var(--gold-700);
+  --glow-teal: 4px 4px 0 var(--teal-700);
+  --glow-soft-gold: 3px 3px 0 rgba(42,68,200,0.45);
+
+  /* Fills — flat spot inks, near-flat gradients only */
+  --grad-gold: linear-gradient(180deg, #3350E0 0%, #2A44C8 100%); /* @kind color */
+  --grad-board: linear-gradient(135deg, #F6F1E4 0%, #E9E2D0 100%); /* @kind color */
+  --grad-panel: linear-gradient(180deg, rgba(27,27,27,0.02) 0%, rgba(27,27,27,0) 100%); /* @kind color */
+  --grad-fade-b: linear-gradient(180deg, rgba(241,236,223,0) 0%, var(--ink-900) 100%); /* @kind color */
+
+  /* Focus */
+  --ring: 0 0 0 3px var(--focus-ring);
+
+  /* Motion — snappy, tactical; no bounce */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 200ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+}

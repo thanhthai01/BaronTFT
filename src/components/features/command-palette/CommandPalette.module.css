@@ -1,0 +1,75 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: start center;
+  background: rgba(27, 27, 27, 0.32);
+  padding: min(12vh, 6rem) var(--gutter) 2rem;
+}
+
+.dialog {
+  width: min(100%, 44rem);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  box-shadow: 10px 10px 0 var(--accent-primary);
+}
+
+.input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--border-line);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+  padding: 1.1rem 1.25rem;
+}
+
+.list {
+  max-height: min(62vh, 28rem);
+  overflow: auto;
+  padding: 0.75rem;
+}
+
+.groupHeading {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
+  padding: 0.8rem 0.6rem 0.35rem;
+  text-transform: uppercase;
+}
+
+.item {
+  display: grid;
+  gap: 0.15rem;
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.8rem 0.75rem;
+}
+
+.item[data-selected='true'] {
+  background: var(--accent-primary-soft);
+}
+
+.item strong {
+  font-family: var(--font-display);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.item span {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.empty {
+  color: var(--text-muted);
+  padding: 2rem;
+  text-align: center;
+}

@@ -1,0 +1,79 @@
+/* Baron TFT landing UI kit — layout styling. Composes DS tokens; components bring their own CSS. */
+.lp-page{background:var(--bg-app);min-height:100vh}
+.lp-container{max-width:var(--container);margin:0 auto;padding:0 24px}
+
+/* ---- Hero ---- */
+.lp-hero{position:relative;overflow:hidden;background:var(--grad-board);border-bottom:1px solid var(--border-line)}
+.lp-hero__glow{position:absolute;top:-160px;right:-120px;width:520px;height:520px;background:radial-gradient(circle,rgba(42,68,200,.12),transparent 62%);pointer-events:none}
+.lp-hero__inner{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 24px 84px;position:relative}
+.lp-hero__copy{max-width:540px}
+.lp-hero__title{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:76px;line-height:.96;letter-spacing:-.01em;color:var(--text-strong);margin:16px 0 22px}
+.lp-hero__title em{font-style:normal;color:var(--gold-300)}
+.lp-hero__lead{font-family:var(--font-body);font-size:18px;line-height:1.65;color:var(--text-muted);margin:0 0 28px}
+.lp-hero__cta{display:flex;gap:14px;flex-wrap:wrap}
+.lp-hero__stats{display:flex;gap:36px;margin-top:38px;padding-top:26px;border-top:1px solid var(--border-line)}
+.lp-stat b{font-family:var(--font-display);font-weight:700;font-size:32px;color:var(--gold-300);display:block;line-height:1}
+.lp-stat span{font-family:var(--font-body);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-subtle);margin-top:6px;display:block}
+.lp-hero__board{display:flex;justify-content:center}
+.lp-heroboard{display:flex;flex-direction:column;align-items:center;gap:14px}
+.lp-heroboard__tag{align-self:center}
+.lp-heroboard__caption{font-family:var(--font-body);font-size:12px;color:var(--text-subtle);text-align:center}
+
+/* ---- Section frame ---- */
+.lp-section{padding:80px 0}
+.lp-section--alt{background:var(--ink-850);border-top:1px solid var(--border-line);border-bottom:1px solid var(--border-line)}
+.lp-section__head{max-width:620px;margin-bottom:34px}
+.lp-section__title{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:42px;line-height:1.02;letter-spacing:-.01em;color:var(--text-strong);margin:10px 0 12px}
+.lp-section__sub{font-family:var(--font-body);font-size:17px;line-height:1.6;color:var(--text-muted);margin:0}
+.lp-section__tabs{margin-bottom:28px}
+
+/* ---- Guide grid ---- */
+.lp-guidegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.lp-guidegrid .tftguide{width:auto}
+.lp-calloutrow{margin-top:26px}
+
+/* ---- Champion explorer ---- */
+.lp-explorer{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+.lp-explorer__controls{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.lp-chips{display:flex;gap:8px;flex-wrap:wrap}
+.lp-roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.lp-roster__empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--text-subtle);font-family:var(--font-body);border:1px dashed var(--border-line);border-radius:var(--r-md)}
+.lp-explorer__side{position:sticky;top:84px;display:flex;flex-direction:column;gap:12px}
+.lp-explorer__sidelabel{padding-left:2px}
+
+/* ---- Traits / items two-col ---- */
+.lp-two{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.lp-traitlist{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.lp-traitlist .tfttrait{width:auto}
+.lp-itempanel{background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-lg);padding:22px}
+.lp-itempanel__head{margin-bottom:18px}
+.lp-itemrow{display:flex;gap:18px;flex-wrap:wrap}
+
+/* ---- CTA ---- */
+.lp-cta{position:relative;overflow:hidden;background:var(--grad-board);border-top:1px solid var(--border-line);text-align:center}
+.lp-cta__glow{position:absolute;inset:0;background:radial-gradient(60% 120% at 50% 0%,rgba(42,68,200,.12),transparent 60%);pointer-events:none}
+.lp-cta__inner{position:relative;padding:88px 24px}
+.lp-cta__title{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:52px;line-height:1;letter-spacing:-.01em;color:var(--text-strong);margin:14px 0 14px}
+.lp-cta__sub{font-family:var(--font-body);font-size:18px;color:var(--text-muted);margin:0 0 30px}
+.lp-cta__buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ---- Footer ---- */
+.lp-footer{background:var(--ink-950);border-top:1px solid var(--border-line);padding:56px 0 0}
+.lp-footer__inner{display:grid;grid-template-columns:1.2fr 2fr;gap:40px;padding-bottom:44px}
+.lp-footer__brand{display:flex;gap:14px;align-items:flex-start}
+.lp-footer__mark{flex:none;width:40px;height:46px;background:var(--grad-gold);clip-path:var(--hex-clip);display:flex;align-items:center;justify-content:center;color:var(--text-on-gold);font-size:19px;font-weight:700}
+.lp-footer__wm{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:26px;color:var(--text-strong);line-height:1}
+.lp-footer__wm em{font-style:normal;color:var(--gold-300)}
+.lp-footer__note{font-family:var(--font-body);font-size:13px;line-height:1.5;color:var(--text-subtle);margin:8px 0 0;max-width:280px}
+.lp-footer__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.lp-footer__h{font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:14px;letter-spacing:.06em;color:var(--text-body);margin-bottom:14px}
+.lp-footer__link{display:block;font-family:var(--font-body);font-size:14px;color:var(--text-subtle);text-decoration:none;padding:5px 0;transition:color var(--dur-fast)}
+.lp-footer__link:hover{color:var(--gold-300)}
+.lp-footer__bar{border-top:1px solid var(--border-line);padding:18px 0;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text-disabled)}
+
+@media(max-width:960px){
+  .lp-hero__inner,.lp-two,.lp-explorer,.lp-footer__inner{grid-template-columns:1fr}
+  .lp-hero__title{font-size:56px}
+  .lp-explorer__side{position:static}
+  .lp-guidegrid{grid-template-columns:1fr}
+}

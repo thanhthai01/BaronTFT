@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baron TFT — Xem thử 4 hướng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,500&family=Libre+Franklin:wght@400;500;600;800&family=Bitter:wght@500;700;900&family=Be+Vietnam+Pro:wght@400;500;600;800&family=Archivo:wght@500;700;900&family=JetBrains+Mono:wght@500;700&family=Epilogue:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#3a3a34;font-family:'Be Vietnam Pro',sans-serif}
+  /* ---- switcher ---- */
+  .switch{position:sticky;top:0;z-index:50;display:flex;gap:8px;align-items:center;padding:14px 26px;background:#1d1d1a;flex-wrap:wrap}
+  .switch b{color:#efece2;font-size:14px;margin-right:8px;font-weight:700}
+  .switch button{font:600 13px/1 'Be Vietnam Pro';color:#cfccc0;background:#33332e;border:1.5px solid transparent;padding:9px 15px;border-radius:8px;cursor:pointer;transition:.15s}
+  .switch button:hover{color:#fff}
+  .switch button.on{background:#efece2;color:#1d1d1a;border-color:#efece2}
+  .switch button .d{opacity:.55;font-size:11px}
+
+  /* ---- themed stage ---- */
+  .stage{--fd:'Spectral';--fb:'Libre Franklin';
+    font-family:var(--fb);background:var(--bg);color:var(--ink);
+    min-height:100vh;padding:0 0 70px;transition:background .25s,color .25s}
+
+  .nav{display:flex;align-items:center;gap:28px;padding:22px 56px;border-bottom:1px solid var(--line)}
+  .logo{font-family:var(--fd);font-weight:900;font-size:22px;letter-spacing:.02em;color:var(--ink)}
+  .logo em{color:var(--accent);font-style:normal}
+  .nav .lk{display:flex;gap:22px;margin-left:8px}
+  .nav .lk a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600}
+  .nav .lk a:hover{color:var(--accent)}
+  .nav .sp{flex:1}
+  .search{display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);border-radius:9px;color:var(--muted);font-size:13px;background:var(--surface2)}
+  .nav .cta{background:var(--accent);color:var(--on-accent);border:0;font-weight:700;font-size:14px;padding:10px 18px;border-radius:9px;cursor:pointer;font-family:var(--fb)}
+
+  .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:center;padding:66px 56px 56px;max-width:1240px;margin:0 auto}
+  .kick{font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+  .h1{font-family:var(--fd);font-weight:var(--dw,900);font-size:68px;line-height:.98;letter-spacing:-.02em;margin-bottom:22px;color:var(--ink)}
+  .h1 .g{color:var(--accent)}
+  .sub{font-size:17px;line-height:1.6;color:var(--muted);max-width:44ch;margin-bottom:30px}
+  .acts{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+  .b1{background:var(--accent);color:var(--on-accent);border:0;font-weight:700;font-size:15px;padding:15px 26px;border-radius:10px;cursor:pointer;font-family:var(--fb)}
+  .b2{background:transparent;color:var(--accent2);border:1.5px solid var(--accent2);font-weight:700;font-size:15px;padding:15px 26px;border-radius:10px;cursor:pointer;font-family:var(--fb)}
+  .stats{display:flex;gap:34px}
+  .stat .n{font-family:var(--fd);font-weight:800;font-size:26px;color:var(--ink)}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* hex board panel */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+  .panel .ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+  .panel .ph .t{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--ink)}
+  .panel .ph .tier{font:800 13px/1 'JetBrains Mono',monospace;padding:5px 9px;border-radius:6px;background:var(--accent);color:var(--on-accent)}
+  .board{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+  .brow{display:flex;gap:6px}
+  .brow:nth-child(even){margin-left:26px}
+  .hex{width:44px;height:50px;background:var(--hexbg);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;align-items:center;justify-content:center}
+  .hex.u{box-shadow:inset 0 0 0 2.5px var(--uc)}
+  .hex .dot{width:15px;height:15px;border-radius:50%;background:var(--uc)}
+  .traits{display:flex;gap:8px;flex-wrap:wrap}
+  .trait{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--surface2);padding:5px 10px;border-radius:20px;border:1px solid var(--line)}
+  .trait i{width:8px;height:8px;border-radius:2px;transform:rotate(45deg);background:var(--accent2)}
+
+  /* meta row */
+  .meta{max-width:1240px;margin:0 auto;padding:0 56px}
+  .meta h3{font-family:var(--fd);font-weight:800;font-size:24px;color:var(--ink);margin-bottom:4px}
+  .meta .msub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .comp{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .comp .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .comp .nm{font-family:var(--fd);font-weight:800;font-size:16px;color:var(--ink)}
+  .badge{font:800 12px/1 'JetBrains Mono',monospace;width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+  .units{display:flex;gap:6px;margin-bottom:14px}
+  .unit{width:38px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font:800 12px/1 'JetBrains Mono',monospace}
+  .comp .foot{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+  .comp .foot b{color:var(--accent2)}
+
+  /* ===== THEMES ===== */
+  .stage[data-t="1a"]{--fd:'Spectral';--fb:'Libre Franklin';--dw:700;--bg:#F4EFE6;--surface:#fff;--surface2:#F0EADD;--ink:#17150F;--muted:#6B6355;--line:#E0D8C6;--accent:#DA3B22;--accent2:#26415E;--on-accent:#fff;--hexbg:#F0EADD;--shadow:0 12px 30px rgba(23,21,15,.07)}
+  .stage[data-t="1b"]{--fd:'Bitter';--fb:'Be Vietnam Pro';--dw:900;--bg:#EEE4CE;--surface:#F6EFDD;--surface2:#EAE0C6;--ink:#33271B;--muted:#7A6A54;--line:#DCCBA6;--accent:#C25B36;--accent2:#2F5D50;--on-accent:#F4ECD8;--hexbg:#EAE0C6;--shadow:0 12px 30px rgba(51,39,27,.1)}
+  .stage[data-t="1c"]{--fd:'Archivo';--fb:'Be Vietnam Pro';--dw:900;--bg:#0A0A11;--surface:#13131F;--surface2:#1E1E2E;--ink:#ECEAF2;--muted:#9B98AC;--line:rgba(255,255,255,.09);--accent:#FF3D8B;--accent2:#2FE1E6;--on-accent:#0A0A11;--hexbg:#1A1A2A;--shadow:0 16px 40px rgba(0,0,0,.4)}
+  .stage[data-t="1d"]{--fd:'Epilogue';--fb:'Libre Franklin';--dw:800;--bg:#F1ECDF;--surface:#fff;--surface2:#F1ECDF;--ink:#1B1B1B;--muted:#5B564A;--line:#1B1B1B;--accent:#2A44C8;--accent2:#FF5A1F;--on-accent:#F1ECDF;--hexbg:#F1ECDF;--shadow:5px 5px 0 var(--accent)}
+  .stage[data-t="1d"] .panel,.stage[data-t="1d"] .comp{border-width:2px}
+  .stage[data-t="1d"] .b1,.stage[data-t="1d"] .nav .cta,.stage[data-t="1d"] .panel .ph .tier{border-radius:8px}
+</style>
+</head>
+<body>
+<div class="switch">
+  <b>Xem thử:</b>
+  <button data-go="1a" class="on">1a <span class="d">Chiến Thư</span></button>
+  <button data-go="1b">1b <span class="d">Bàn Đấu Pháp</span></button>
+  <button data-go="1c">1c <span class="d">Đấu Trường</span></button>
+  <button data-go="1d">1d <span class="d">Zine Đấu Sĩ</span></button>
+</div>
+
+<div class="stage" id="stage" data-t="1a">
+  <div class="nav">
+    <div class="logo">BARON<em>.</em></div>
+    <div class="lk"><a>Học cơ bản</a><a>Tướng</a><a>Meta comps</a><a>Trang bị</a></div>
+    <div class="sp"></div>
+    <div class="search">🔍 Tìm tướng, tộc hệ…</div>
+    <button class="cta">Đăng nhập</button>
+  </div>
+
+  <div class="hero">
+    <div>
+      <div class="kick">Học TFT từ số 0</div>
+      <div class="h1">Hiểu ván đấu,<br><span class="g">không chỉ chép comp.</span></div>
+      <div class="sub">Baron dạy bạn tư duy như một kỳ thủ — từ vị trí quân, cách xoay vàng, đến đọc vị đối thủ. Song ngữ Việt / Anh.</div>
+      <div class="acts">
+        <button class="b1">Bắt đầu học miễn phí</button>
+        <button class="b2">Xem meta hiện tại</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">120+</div><div class="l">Bài học</div></div>
+        <div class="stat"><div class="n">Set 14</div><div class="l">Cập nhật meta</div></div>
+        <div class="stat"><div class="n">2 NN</div><div class="l">Việt / Anh</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="t">Đội hình Sát Thủ</span><span class="tier">Tier S</span></div>
+      <div class="board">
+        <div class="brow"><div class="hex"></div><div class="hex u" style="--uc:#8D96A5"><div class="dot"></div></div><div class="hex"></div><div class="hex u" style="--uc:#B15CF0"><div class="dot"></div></div></div>
+        <div class="brow"><div class="hex u" style="--uc:#3B82F6"><div class="dot"></div></div><div class="hex"></div><div class="hex u" style="--uc:#E4A93C"><div class="dot"></div></div><div class="hex"></div></div>
+        <div class="brow"><div class="hex"></div><div class="hex u" style="--uc:#2FB86B"><div class="dot"></div></div><div class="hex"></div><div class="hex u" style="--uc:#B15CF0"><div class="dot"></div></div></div>
+      </div>
+      <div class="traits"><span class="trait"><i></i>Sát Thủ 4</span><span class="trait"><i></i>Pháp Sư 2</span><span class="trait"><i></i>Cao Quý 3</span></div>
+    </div>
+  </div>
+
+  <div class="meta">
+    <h3>Meta comps đang mạnh</h3>
+    <div class="msub">Cập nhật cho bản 14.3 · sắp theo tỉ lệ top 4</div>
+    <div class="grid">
+      <div class="comp">
+        <div class="ch"><span class="nm">Sát Thủ Cơ Giới</span><span class="badge" style="background:var(--accent);color:var(--on-accent)">S</span></div>
+        <div class="units"><div class="unit" style="color:#8D96A5">1</div><div class="unit" style="color:#2FB86B">2</div><div class="unit" style="color:#B15CF0">4</div><div class="unit" style="color:#E4A93C">5</div></div>
+        <div class="foot"><span>Độ khó: Vừa</span><span>Top 4: <b>62%</b></span></div>
+      </div>
+      <div class="comp">
+        <div class="ch"><span class="nm">Pháp Sư Ánh Sáng</span><span class="badge" style="background:var(--accent2);color:#fff">A</span></div>
+        <div class="units"><div class="unit" style="color:#8D96A5">1</div><div class="unit" style="color:#3B82F6">3</div><div class="unit" style="color:#3B82F6">3</div><div class="unit" style="color:#E4A93C">5</div></div>
+        <div class="foot"><span>Độ khó: Dễ</span><span>Top 4: <b>58%</b></span></div>
+      </div>
+      <div class="comp">
+        <div class="ch"><span class="nm">Kiếm Sĩ Bạo Kích</span><span class="badge" style="background:var(--accent2);color:#fff">A</span></div>
+        <div class="units"><div class="unit" style="color:#2FB86B">2</div><div class="unit" style="color:#3B82F6">3</div><div class="unit" style="color:#B15CF0">4</div><div class="unit" style="color:#B15CF0">4</div></div>
+        <div class="foot"><span>Độ khó: Khó</span><span>Top 4: <b>55%</b></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const stage=document.getElementById('stage');
+  document.querySelectorAll('.switch button').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.switch button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      stage.dataset.t=b.dataset.go;
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+  });
+</script>
+</body>
+</html>

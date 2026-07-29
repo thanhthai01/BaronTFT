@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/tokens/effects.css">
+<link rel="stylesheet" href="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/styles.css">
+<script src="_ds/baron-tft-design-system-5d933fd0-bf8e-40bc-867f-b436878a2dbb/_ds_bundle.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: var(--bg-app); }
+  * { box-sizing: border-box; }
+  a { color: var(--gold-300); text-decoration: none; }
+  a:hover { color: var(--teal-300); }
+  input, textarea, select { font-family: var(--font-body); }
+  @keyframes popIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* Chế độ tối — chỉ đảo giá trị token, không đổi component */
+  :root[data-theme="dark"] {
+    --ink-950: #0B0F17; --ink-900: #111827; --ink-850: #161E2C; --ink-800: #1F2937;
+    --ink-700: #253143; --ink-600: #2E3B50; --ink-500: #4B5666; --ink-400: #6B7688; --ink-300: #6E7789;
+    --paper-0: #E7E2D6; --paper-1: #DAD5C8; --paper-2: #A9A597; --paper-3: #8B897E;
+    --gold-100: #93A6FF; --gold-300: #93A6FF; --gold-500: #4664F0; --gold-600: #3A55D8; --gold-700: #2C41AE;
+    --teal-100: #4A2317; --teal-300: #FF8452; --teal-500: #FF5A1F; --teal-700: #C8420E;
+    --surface-nav: rgba(17,24,39,0.86);
+    --text-on-gold: #F1ECDF;
+    --border-subtle: rgba(231,226,214,0.12); --border-line: rgba(231,226,214,0.2); --border-strong: rgba(231,226,214,0.42);
+    --shadow-sm: 2px 2px 0 rgba(0,0,0,0.6); --shadow-md: 4px 4px 0 rgba(0,0,0,0.65); --shadow-lg: 6px 6px 0 var(--gold-500);
+    --grad-gold: linear-gradient(180deg, #4E6BF5 0%, #4664F0 100%);
+    --grad-board: linear-gradient(135deg, #1A2333 0%, #131B28 100%);
+    --focus-ring: rgba(70,100,240,0.55);
+  }
+  :root[data-theme="dark"] .tftnav { background: #0B0F17; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg-app);font-family:var(--font-body);color:var(--text-body)">
+
+  <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.NavBar" links="{{ navLinks }}" active="{{ page }}" on-navigate="{{ goto }}" actions="{{ navActions }}" hint-size="100%,64px"></x-import>
+
+  <!-- ============ HOME ============ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Home">
+
+    <section style="max-width:1360px;margin:0 auto;padding:56px 24px 24px;display:grid;grid-template-columns:minmax(320px,1fr) auto;gap:48px;align-items:center">
+      <div>
+        <div class="tft-eyebrow" style="margin-bottom:14px">GHI CHÚ CỦA MÌNH · SET 18</div>
+        <h1 class="tft-h1" style="margin:0 0 18px;max-width:14ch;text-wrap:balance">Học cách thắng lobby, không học thuộc đội hình.</h1>
+        <p class="tft-lead" style="margin:0 0 28px;max-width:46ch;text-wrap:pretty">Một giáo trình TFT xuyên mùa: đọc sức mạnh bàn đấu, quản lý tài nguyên, chọn nhịp roll và review lỗi sau mỗi phiên leo rank.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" size="lg" on-click="{{ gotoLesson }}" hint-size="auto,50px">Bắt đầu lộ trình</x-import>
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" size="lg" variant="secondary" on-click="{{ gotoChecklist }}" hint-size="auto,50px">Mở checklist trong trận</x-import>
+        </div>
+        <div style="display:flex;gap:26px;margin-top:34px;font-family:var(--font-mono);font-size:13px;color:var(--text-subtle)">
+          <span>7 bài học</span><span>·</span><span>200 Linh hoả</span><span>·</span><span>246 Nâng cấp</span>
+        </div>
+      </div>
+
+      <div style="position:relative;padding:22px;background:var(--grad-board);border:2px solid var(--paper-0);border-radius:var(--r-lg);box-shadow:var(--shadow-md)" onMouseLeave="{{ clearHover }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+          <div class="tft-eyebrow">BÀN QUYẾT ĐỊNH</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-subtle)">HOVER 1 Ô</div>
+        </div>
+        <div style="position:relative">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ hexRows }}" as="row" hint-placeholder-count="3">
+              <div style="{{ row.rowStyle }}">
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="4">
+                  <div style="width:104px;height:118px;flex:none;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:var(--paper-0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:background var(--dur-fast) var(--ease-out)" style-hover="background:var(--gold-500)" onMouseEnter="{{ cell.onEnter }}" onClick="{{ cell.onEnter }}">
+                    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--ink-500)">{{ cell.num }}</span>
+                    <span style="font-family:var(--font-display);font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:-.01em;color:var(--ink-900);text-align:center;line-height:1.05;max-width:84px">{{ cell.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hoverSkill }}">
+            <div style="{{ popupStyle }}">
+              <div style="background:var(--surface-card);border:2px solid var(--paper-0);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:18px;animation:popIn var(--dur-base) var(--ease-out)">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                  <span style="width:22px;height:25px;flex:none;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:var(--teal-500)"></span>
+                  <span style="font-family:var(--font-display);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:-.01em;color:var(--text-strong)">{{ hoverSkill.label }}</span>
+                </div>
+                <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-300);margin-bottom:5px">DẤU HIỆU BẠN ĐANG SAI</div>
+                <p style="margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--text-body)">{{ hoverSkill.sign }}</p>
+                <div style="display:grid;gap:8px;padding-top:12px;border-top:1px solid var(--border-subtle)">
+                  <div style="display:flex;gap:8px;font-size:13px;color:var(--text-muted)"><b style="color:var(--gold-300);min-width:74px">Bài học</b><span>{{ hoverSkill.lesson }}</span></div>
+                  <div style="display:flex;gap:8px;font-size:13px;color:var(--text-muted)"><b style="color:var(--gold-300);min-width:74px">Checklist</b><span>{{ hoverSkill.check }}</span></div>
+                  <div style="display:flex;gap:8px;font-size:13px;color:var(--text-muted)"><b style="color:var(--gold-300);min-width:74px">10 trận</b><span>{{ hoverSkill.drill }}</span></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+
+    <section style="max-width:1360px;margin:0 auto;padding:48px 24px">
+      <div class="tft-eyebrow" style="margin-bottom:16px">TÔI MUỐN…</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <sc-for list="{{ paths }}" as="p" hint-placeholder-count="3">
+          <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:24px;box-shadow:var(--shadow-sm);cursor:pointer;transition:transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-base) var(--ease-out)" style-hover="transform:translateY(-3px);box-shadow:var(--shadow-lg)" onClick="{{ p.go }}">
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--text-subtle);margin-bottom:12px">{{ p.num }}</div>
+            <h3 style="font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:21px;margin:0 0 8px;color:var(--text-strong);letter-spacing:-.01em">{{ p.title }}</h3>
+            <p style="margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--text-muted)">{{ p.desc }}</p>
+            <span style="font-family:var(--font-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--gold-300)">{{ p.cta }} →</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="background:var(--surface-board);border-top:1px solid var(--border-line);border-bottom:1px solid var(--border-line)">
+      <div style="max-width:1360px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:56px">
+        <div>
+          <h2 class="tft-h2" style="margin:0 0 14px">Bạn đang mất rank vì…</h2>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:var(--text-muted)">Không phải vì thiếu đội hình meta. Mình gom lại 6 lỗi quyết định gặp nhiều nhất khi coach bạn bè từ Vàng lên Cao Thủ.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <sc-for list="{{ leaks }}" as="l" hint-placeholder-count="6">
+            <div style="display:flex;gap:12px;padding:14px 16px;background:var(--surface-card);border:1px solid var(--border-line);border-left:3px solid var(--teal-500);border-radius:var(--r-sm)">
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--teal-300);padding-top:2px">{{ l.num }}</span>
+              <span style="font-size:14px;line-height:1.5;color:var(--text-body)">{{ l.text }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section style="max-width:1360px;margin:0 auto;padding:56px 24px 80px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:20px;flex-wrap:wrap">
+        <h2 class="tft-h2" style="margin:0">Giáo án 8 tuần</h2>
+        <span style="font-size:14px;color:var(--text-muted)">Mỗi tuần một kỹ năng, 10–20 trận có mục tiêu.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+        <sc-for list="{{ weeks }}" as="w" hint-placeholder-count="8">
+          <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-sm);padding:18px;transition:border-color var(--dur-base) var(--ease-out)" style-hover="border-color:var(--gold-500)">
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--gold-300);margin-bottom:10px">TUẦN {{ w.num }}</div>
+            <div style="font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:17px;color:var(--text-strong);line-height:1.1;margin-bottom:8px">{{ w.title }}</div>
+            <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ w.goal }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ============ GUIDE / NHẬP MÔN ============ -->
+  <sc-if value="{{ isGuide }}">
+  <div data-screen-label="Guide" style="width:100%;padding:32px 24px 64px">
+    <div style="position:relative;width:100%;max-width:1560px;margin:0 auto;border:2px solid var(--paper-0);border-radius:var(--r-md);box-shadow:var(--shadow-md);overflow:hidden;background:var(--paper-0)" onMouseLeave="{{ clearSpot }}">
+      <img src="assets/tft-board.png" alt="Màn hình TFT" style="display:block;width:100%;height:auto">
+      <img src="assets/col-hp-player.png" alt="Cột máu người chơi" style="position:absolute;right:0;top:21.5%;height:43%;width:auto;object-fit:contain">
+      <sc-for list="{{ spots }}" as="s" hint-placeholder-count="9">
+        <div style="{{ s.boxStyle }}" onMouseEnter="{{ s.onEnter }}" onClick="{{ s.onEnter }}">
+          <span style="{{ s.tagStyle }}">{{ s.label }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ activeSpot }}">
+        <div style="{{ spotPopupStyle }}">
+          <div style="background:var(--surface-card);border:2px solid var(--paper-0);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:16px;animation:popIn var(--dur-base) var(--ease-out)">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+              <span style="width:20px;height:23px;flex:none;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:var(--teal-500)"></span>
+              <span style="font-family:var(--font-display);font-weight:800;font-size:18px;text-transform:uppercase;color:var(--text-strong)">{{ activeSpot.label }}</span>
+            </div>
+            <p style="margin:0 0 10px;font-size:14px;line-height:1.55;color:var(--text-body)">{{ activeSpot.desc }}</p>
+            <div style="padding-top:10px;border-top:1px solid var(--border-subtle);font-size:13px;line-height:1.5;color:var(--text-muted)"><b style="color:var(--gold-300)">Người mới hay sai:</b> {{ activeSpot.tip }}</div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="max-width:1560px;margin:22px auto 0;display:flex;justify-content:flex-end">
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" on-click="{{ gotoChecklist }}" hint-size="auto,40px">Mở checklist trong trận</x-import>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ SET 18 KNOWLEDGE ============ -->
+  <sc-if value="{{ isSet18 }}">
+  <div data-screen-label="Set 18" style="max-width:1360px;margin:0 auto;padding:40px 24px 80px">
+    <div class="tft-eyebrow" style="margin-bottom:12px">GHI CHÚ CỦA MÌNH · SET 18</div>
+    <h1 class="tft-h1" style="font-size:44px;margin:0 0 12px;max-width:22ch">Kiến thức Set 18</h1>
+    <p class="tft-lead" style="margin:0 0 24px;max-width:60ch">Tất cả tra cứu về tướng, trang bị, tộc hệ, ma trận, Linh hoả và Nâng cấp cho Set 18. Chọn tab để chuyển nhanh giữa các mảng, mỗi mảng có báo cáo đầy đủ để đọc sâu.</p>
+
+    <div style="margin-bottom:26px">
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Tabs" tabs="{{ setTabs }}" value="{{ setTab }}" on-change="{{ selectSetTab }}" variant="line" hint-size="100%,48px"></x-import>
+    </div>
+
+    <!-- Tab: Tướng -->
+    <sc-if value="{{ setTabIs.champions }}">
+      <div style="display:grid;gap:22px">
+        <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+          <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 10px;color:var(--text-strong)">Bản đồ vai trò tướng</h2>
+          <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--text-muted)">Toàn bộ tướng Set 18 chia theo vai trò (main carry, off-carry, tank chính, off-tank, utility, buff & summon) và giá tiền, kèm gợi ý item và tướng chuyển tiếp nhanh.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <sc-for list="{{ roleRows }}" as="r" hint-placeholder-count="6">
+              <div style="border:1px solid var(--border-line);border-radius:var(--r-sm);padding:12px 14px;background:var(--surface-raised)">
+                <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--teal-300);margin-bottom:4px">{{ r.tag }}</div>
+                <div style="font-family:var(--font-display);font-weight:700;font-size:15px;text-transform:uppercase;color:var(--text-strong);margin-bottom:4px">{{ r.title }}</div>
+                <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ r.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px">
+            <a href="docs/set18-champions.html" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Mở báo cáo bản đồ tướng đầy đủ →</a>
+          </div>
+        </div>
+
+        <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+          <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 10px;color:var(--text-strong)">Utility budget & carry damage</h2>
+          <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:var(--text-muted)">Utility (CC, Shred, Sunder, anti-heal, shield, aggro-swap) là phần sức mạnh không hiện lên bảng damage. Một tướng utility kém có thể là ứng viên carry, nhưng chỉ khi <b>cơ chế damage và trait phù hợp</b>.</p>
+          <div style="display:grid;gap:8px;font-size:14px;line-height:1.55;color:var(--text-body)">
+            <div>· <b>Tier S utility</b>: có thể tự đổi kết quả giao tranh — CC dài, execute, Shred/Sunder diện rộng.</div>
+            <div>· <b>Tier A</b>: utility ổn định, cần trait hoặc item để phát huy.</div>
+            <div>· <b>Utility thấp</b>: sát thương phải cao đáng kể để bù, không thì thành thân dự bị.</div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:14px;flex-wrap:wrap">
+            <a href="docs/set18-utility-budget.md" target="_blank" rel="noopener" style="font-size:13px;color:var(--gold-300)">Báo cáo Utility Budget →</a>
+            <a href="docs/set18-low-utility-carry.md" target="_blank" rel="noopener" style="font-size:13px;color:var(--gold-300)">Phân tích Low-Utility Carry →</a>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Trang bị -->
+    <sc-if value="{{ setTabIs.items }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 10px;color:var(--text-strong)">Công thức ghép & fit theo carry</h2>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--text-muted)">Cùng ma trận tộc hệ mình để luôn công thức 9 component ghép ra đồ hoàn chỉnh. Fit đồ theo carry: AD carry cần AS + sát thương, AP cần mana + burst, tank cần một dòng hồi/kháng thay vì hai lớp máu.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <sc-for list="{{ itemGroups }}" as="g" hint-placeholder-count="6">
+            <div style="border:1px solid var(--border-line);border-radius:var(--r-sm);padding:12px 14px;background:var(--surface-raised)">
+              <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--teal-300);margin-bottom:4px">{{ g.tag }}</div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:15px;text-transform:uppercase;color:var(--text-strong);margin-bottom:4px">{{ g.title }}</div>
+              <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ g.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px">
+          <a href="docs/set18-synergy-grid.html#items" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Tra cứu công thức đồ đầy đủ →</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Tộc hệ -->
+    <sc-if value="{{ setTabIs.traits }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 12px;color:var(--text-strong)">36 tộc hệ Set 18</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+          <sc-for list="{{ traitCats }}" as="c" hint-placeholder-count="3">
+            <div style="border:1px dashed var(--border-line);border-radius:var(--r-sm);padding:14px 16px">
+              <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--gold-300);margin-bottom:6px">{{ c.count }}</div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:17px;text-transform:uppercase;color:var(--text-strong);margin-bottom:4px">{{ c.title }}</div>
+              <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ c.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:var(--text-body)">Đọc tộc hệ theo <b>vai trò trait</b>, không theo tên: <b>Spellweaver</b> khuếch đại phép, <b>Rapidfire</b> tăng nhịp bắn, <b>Solar</b>/<b>Lunar</b> cấp tempo, <b>Defender</b>/<b>Vanguard</b> giữ frontline, <b>Executioner</b> kết liễu.</p>
+        <div style="margin-top:6px">
+          <a href="docs/set18-synergy-grid.html" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Tra cứu chi tiết từng trait →</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Ma trận -->
+    <sc-if value="{{ setTabIs.matrix }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 8px;color:var(--text-strong)">Ma trận Tộc × Hệ (Origin × Class)</h2>
+        <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text-muted)">Bảng chéo Origin (tộc) × Class (hệ) trải toàn bộ tướng Set 18 theo giá. Dùng khi bạn cần trả lời "tướng nào vừa là Solar vừa là Rapidfire" trong 5 giây, hoặc lên board 8 người quanh hai trait chính.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="tip" title="ĐỌC MA TRẬN THẾ NÀO" hint-size="100%,90px">Chọn 1 trait cột (Origin) và 1 trait hàng (Class), ô giao là danh sách tướng có cả hai. Ô càng nhiều tướng, càng dễ xây đội hình quanh cặp đó.</x-import>
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="warning" title="BẪY MA TRẬN" hint-size="100%,90px">Ma trận dựng ra board có nhiều trait, không phải board mạnh. Kiểm tra tempo, item fit và giá tiền trước khi ép — Set 18 không tự thưởng chỉ vì bảng đẹp.</x-import>
+        </div>
+        <div style="margin-top:14px">
+          <a href="docs/set18-synergy-grid.html" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Mở ma trận tương tác →</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Linh hoả -->
+    <sc-if value="{{ setTabIs.wisp }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 8px;color:var(--text-strong)">Linh hoả (Wisps) · 200 cái</h2>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--text-muted)">Linh hoả xuất hiện trong shop như nguồn sức mạnh <b>tạm thời, dùng một lần</b>. Mỗi vòng chỉ mua tối đa <b>1</b>. Linh hoả mạnh hơn xuất hiện dần theo tiến độ trận, không cố định theo mốc vòng.</p>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+          <sc-for list="{{ wispTiers }}" as="w" hint-placeholder-count="5">
+            <div style="border:1px solid var(--border-line);border-radius:var(--r-sm);padding:12px 12px;background:var(--surface-raised);text-align:center">
+              <div style="font-family:var(--font-mono);font-size:11px;color:var(--teal-300);letter-spacing:.08em">{{ w.gold }}</div>
+              <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--text-strong);margin:4px 0">{{ w.count }}</div>
+              <div style="font-size:12px;line-height:1.4;color:var(--text-muted)">{{ w.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:14px 0 0;font-size:14px;color:var(--text-muted)">Nhóm hiệu ứng: <b>Tướng</b> (16) · <b>Chiến đấu</b> (94) · <b>Cửa hàng</b> (19) · <b>Vàng/KN</b> · <b>Khác</b>.</p>
+        <div style="margin-top:14px">
+          <a href="docs/set18-wisp-augments.html#wisps" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Danh sách 200 Linh hoả →</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Nâng cấp -->
+    <sc-if value="{{ setTabIs.augments }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 8px;color:var(--text-strong)">Nâng cấp (Augments) · 246 cái</h2>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--text-muted)">Datamine chỉ chắc chắn trường <b>tier</b> (Bậc 1/2/3). Theo quy ước xuyên mùa, tier tương ứng <b>Bạc / Vàng / Lăng kính</b> — mạnh dần theo bậc và nhu cầu cam kết cao dần.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <sc-for list="{{ augTiers }}" as="a" hint-placeholder-count="3">
+            <div style="border:1px solid var(--border-line);border-radius:var(--r-sm);padding:14px 16px;background:var(--surface-raised)">
+              <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--teal-300);margin-bottom:6px">{{ a.tier }}</div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:16px;text-transform:uppercase;color:var(--text-strong);margin-bottom:4px">{{ a.name }}</div>
+              <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ a.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px">
+          <a href="docs/set18-wisp-augments.html#augments" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Danh sách 246 Nâng cấp →</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab: Đội hình -->
+    <sc-if value="{{ setTabIs.comps }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px 24px">
+        <h2 style="font-family:var(--font-display);font-weight:800;text-transform:uppercase;font-size:22px;margin:0 0 8px;color:var(--text-strong)">7 đội hình evergreen Set 18</h2>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:var(--text-muted)">Không phải tier list. Đây là 7 khung đội hình để luyện — mỗi khung có điểm mạnh, rủi ro, mốc economy/rolldown, item priority, positioning và fallback.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+          <sc-for list="{{ comps }}" as="c" hint-placeholder-count="7">
+            <div style="border:1px solid var(--border-line);border-radius:var(--r-sm);padding:14px 16px;background:var(--surface-raised)">
+              <div style="font-family:var(--font-display);font-weight:800;font-size:16px;text-transform:uppercase;color:var(--text-strong);margin-bottom:6px">{{ c.name }}</div>
+              <div style="font-size:13px;line-height:1.5;color:var(--text-muted)">{{ c.pitch }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px">
+          <a href="docs/set18-comps.html" target="_blank" rel="noopener" style="font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:var(--gold-300)">Báo cáo 7 đội hình đầy đủ →</a>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ LESSON ============ -->
+  <sc-if value="{{ isLesson }}">
+  <div data-screen-label="Lesson" style="max-width:1360px;margin:0 auto;padding:32px 24px 80px;display:grid;grid-template-columns:236px minmax(0,1fr) 320px;gap:32px;align-items:start">
+
+    <aside style="position:sticky;top:24px;background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:16px">
+      <div class="tft-eyebrow" style="margin-bottom:12px">{{ moduleCount }}</div>
+      <div style="display:grid;gap:2px">
+        <sc-for list="{{ modules }}" as="m" hint-placeholder-count="10">
+          <div style="{{ m.rowStyle }}" onClick="{{ m.go }}">
+            <span style="font-family:var(--font-mono);font-size:11px;opacity:.6">{{ m.num }}</span>
+            <span style="font-size:13px;line-height:1.35">{{ m.title }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </aside>
+
+    <article style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:40px 44px">
+      <div class="tft-eyebrow" style="margin-bottom:12px">MODULE {{ activeModule.num }} · GHI CHÚ CỦA MÌNH</div>
+      <h1 class="tft-h1" style="font-size:44px;margin:0 0 16px">{{ activeModule.title }}</h1>
+      <p class="tft-lead" style="margin:0 0 28px">{{ activeModule.lead }}</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px">
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Tag" tone="gold" hint-size="auto,22px">{{ activeModule.skill }}</x-import>
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Tag" hint-size="auto,22px">{{ activeModule.read }}</x-import>
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Tag" tone="teal" hint-size="auto,22px">Bài tập 10 trận</x-import>
+      </div>
+      <div style="display:grid;gap:22px">
+        <sc-for list="{{ activeModule.blocks }}" as="b" hint-placeholder-count="4">
+          <div>
+            <h3 style="font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:22px;letter-spacing:-.01em;color:var(--text-strong);margin:0 0 10px">{{ b.h }}</h3>
+            <p style="margin:0;font-size:16px;line-height:1.7;color:var(--text-body);text-wrap:pretty">{{ b.p }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:28px">
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="tip" title="MẸO CỦA MÌNH" hint-size="100%,80px">{{ activeModule.tip }}</x-import>
+      </div>
+    </article>
+
+    <aside style="position:sticky;top:24px;display:grid;gap:16px">
+      <div style="background:var(--paper-0);border-radius:var(--r-md);padding:20px;box-shadow:var(--shadow-md)">
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--teal-500);margin-bottom:12px">ÁP DỤNG NGAY</div>
+        <div style="display:grid;gap:10px;margin-bottom:18px">
+          <sc-for list="{{ activeModule.apply }}" as="a" hint-placeholder-count="4">
+            <div style="display:flex;gap:9px;font-size:13px;line-height:1.5;color:var(--ink-700)">
+              <span style="color:var(--teal-500)">◆</span><span>{{ a }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" block="{{ true }}" size="sm" on-click="{{ gotoChecklist }}" hint-size="100%,34px">Mở checklist</x-import>
+      </div>
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:18px">
+        <div class="tft-eyebrow" style="margin-bottom:10px">TỰ KIỂM TRA</div>
+        <div style="display:grid;gap:12px">
+          <sc-for list="{{ activeModule.quiz }}" as="q" hint-placeholder-count="3">
+            <div style="font-size:13px;line-height:1.5;color:var(--text-muted);padding-left:12px;border-left:2px solid var(--gold-500)">{{ q }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:var(--surface-raised);border:1px dashed var(--border-line);border-radius:var(--r-md);padding:18px">
+        <div class="tft-eyebrow" style="margin-bottom:8px">SAU TRẬN</div>
+        <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:var(--text-muted)">Ghi lại lỗi đầu tiên có thể sửa trong Review Lab.</p>
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" block="{{ true }}" size="sm" variant="secondary" on-click="{{ gotoReview }}" hint-size="100%,34px">Vào review lab</x-import>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+  <!-- ============ CHECKLIST ============ -->
+  <sc-if value="{{ isChecklist }}">
+  <div data-screen-label="Checklist" style="max-width:900px;margin:0 auto;padding:40px 24px 80px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px">
+      <div>
+        <div class="tft-eyebrow" style="margin-bottom:10px">DÙNG ĐƯỢC KHI ĐANG CHƠI</div>
+        <h1 class="tft-h1" style="font-size:44px;margin:0">Checklist trong trận</h1>
+      </div>
+      <div style="display:flex;gap:10px">
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" variant="ghost" size="sm" on-click="{{ toggleFocus }}" hint-size="auto,34px">{{ focusLabel }}</x-import>
+        <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" variant="secondary" size="sm" on-click="{{ resetChecks }}" hint-size="auto,34px">Reset trận mới</x-import>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Tabs" tabs="{{ clTabs }}" value="{{ tab }}" on-change="{{ setTab }}" hint-size="100%,48px"></x-import>
+    </div>
+
+    <div style="background:var(--surface-card);border:2px solid var(--paper-0);border-radius:var(--r-md);box-shadow:var(--shadow-md);overflow:hidden">
+      <sc-for list="{{ clItems }}" as="it" hint-placeholder-count="5">
+        <div style="display:flex;gap:16px;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border-subtle);cursor:pointer" style-hover="background:var(--surface-hover)" onClick="{{ it.toggle }}">
+          <span style="{{ it.boxStyle }}">{{ it.mark }}</span>
+          <span style="{{ it.textStyle }}">{{ it.text }}</span>
+        </div>
+      </sc-for>
+      <div style="display:flex;justify-content:space-between;padding:14px 22px;font-family:var(--font-mono);font-size:12px;color:var(--text-subtle)">
+        <span>{{ clProgress }}</span><span>{{ tabLabel }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top:22px">
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="warning" title="ĐỪNG TICK CHO ĐỦ" hint-size="100%,80px">Nếu một câu bạn không trả lời được ngay trong 3 giây, đó chính là kỹ năng cần luyện tuần này.</x-import>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ REVIEW LAB ============ -->
+  <sc-if value="{{ isReview }}">
+  <div data-screen-label="Review Lab" style="max-width:1100px;margin:0 auto;padding:40px 24px 80px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start">
+    <div>
+      <div class="tft-eyebrow" style="margin-bottom:10px">15 PHÚT SAU TRẬN</div>
+      <h1 class="tft-h1" style="font-size:44px;margin:0 0 26px">Review trận vừa chơi</h1>
+
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px;margin-bottom:18px">
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:14px">
+          <label style="display:grid;gap:6px">
+            <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--text-subtle)">HẠNG</span>
+            <input value="{{ rv.placement }}" onInput="{{ setPlacement }}" placeholder="5" style="font-family:var(--font-mono);font-size:16px;padding:10px 12px;border:1px solid var(--border-line);border-radius:var(--r-xs);background:var(--surface-raised);color:var(--text-strong)">
+          </label>
+          <label style="display:grid;gap:6px">
+            <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--text-subtle)">ĐỘI HÌNH ĐÃ CHƠI</span>
+            <input value="{{ rv.comp }}" onInput="{{ setComp }}" placeholder="Reroll 2 vàng, 2 item tank" style="font-size:15px;padding:10px 12px;border:1px solid var(--border-line);border-radius:var(--r-xs);background:var(--surface-raised);color:var(--text-strong)">
+          </label>
+        </div>
+      </div>
+
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px;margin-bottom:18px">
+        <div class="tft-eyebrow" style="margin-bottom:16px">TURNING POINT</div>
+        <div style="display:flex;align-items:center;gap:0">
+          <sc-for list="{{ stages }}" as="s" hint-placeholder-count="4">
+            <div style="{{ s.wrapStyle }}" onClick="{{ s.pick }}">
+              <span style="{{ s.dotStyle }}"></span>
+              <span style="{{ s.labelStyle }}">{{ s.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:16px 0 0;font-size:14px;color:var(--text-muted)">{{ stageNote }}</p>
+      </div>
+
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px;margin-bottom:18px">
+        <div class="tft-eyebrow" style="margin-bottom:14px">LỖI ĐẦU TIÊN CÓ THỂ SỬA</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ errTags }}" as="t" hint-placeholder-count="9">
+            <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.FilterChip" active="{{ t.on }}" on-click="{{ t.toggle }}" hint-size="auto,34px">{{ t.label }}</x-import>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:var(--surface-card);border:1px solid var(--border-line);border-radius:var(--r-md);padding:22px">
+        <div class="tft-eyebrow" style="margin-bottom:12px">QUYẾT ĐỊNH THAY THẾ LẦN SAU</div>
+        <textarea value="{{ rv.alt }}" onInput="{{ setAlt }}" placeholder="Ở 3-2 mình sẽ lên cấp 7 thay vì roll xuống 10 vàng, vì board đã đủ 2 item carry." style="width:100%;min-height:110px;resize:vertical;font-size:15px;line-height:1.6;padding:12px 14px;border:1px solid var(--border-line);border-radius:var(--r-xs);background:var(--surface-raised);color:var(--text-strong)"></textarea>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" on-click="{{ copySummary }}" hint-size="auto,40px">{{ copyLabel }}</x-import>
+          <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" variant="ghost" on-click="{{ resetReview }}" hint-size="auto,40px">Xoá phiếu</x-import>
+        </div>
+      </div>
+    </div>
+
+    <aside style="position:sticky;top:24px;display:grid;gap:16px">
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="note" title="QUYẾT ĐỊNH TỐT · KẾT QUẢ XẤU" hint-size="100%,90px">Bạn đọc đúng lobby nhưng shop không ra. Ghi nhận rồi bỏ qua — đừng sửa quy trình đúng.</x-import>
+      <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Callout" variant="danger" title="QUYẾT ĐỊNH XẤU · KẾT QUẢ TỐT" hint-size="100%,90px">All-in bừa mà vẫn top 2. Đây mới là thứ cần sửa, vì nó sẽ giết bạn 9 trận sau.</x-import>
+      <div style="background:var(--paper-0);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow-md)">
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--teal-500);margin-bottom:10px">SUMMARY MARKDOWN</div>
+        <pre style="margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.6;color:var(--ink-700);white-space:pre-wrap">{{ summary }}</pre>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
+  <!-- ============ PLACEHOLDER PAGES ============ -->
+  <sc-if value="{{ isSoon }}">
+  <div data-screen-label="Coming soon" style="max-width:900px;margin:0 auto;padding:80px 24px">
+    <div class="tft-eyebrow" style="margin-bottom:12px">ĐANG VIẾT</div>
+    <h1 class="tft-h1" style="font-size:44px;margin:0 0 16px">{{ soonTitle }}</h1>
+    <p class="tft-lead" style="margin:0 0 26px;max-width:52ch">{{ soonDesc }}</p>
+    <x-import component-from-global-scope="BaronTFTDesignSystem_5d933f.Button" variant="secondary" on-click="{{ gotoHome }}" hint-size="auto,40px">Về trang chủ</x-import>
+  </div>
+  </sc-if>
+
+  <!-- ============ COMMAND PALETTE ============ -->
+  <sc-if value="{{ paletteOpen }}">
+  <div style="position:fixed;inset:0;background:rgba(27,27,27,.42);display:flex;align-items:flex-start;justify-content:center;padding-top:14vh;z-index:80" onClick="{{ closePalette }}">
+    <div style="width:min(560px,92vw);background:var(--surface-card);border:2px solid var(--paper-0);border-radius:var(--r-md);box-shadow:var(--shadow-lg);overflow:hidden" onClick="{{ stop }}">
+      <input value="{{ query }}" onInput="{{ setQuery }}" placeholder="Tìm bài học, checklist, biểu mẫu…" autofocus style="width:100%;border:none;outline:none;padding:18px 20px;font-size:16px;background:var(--surface-card);color:var(--text-strong);border-bottom:1px solid var(--border-line)">
+      <div style="max-height:340px;overflow:auto">
+        <sc-for list="{{ results }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 20px;cursor:pointer;border-bottom:1px solid var(--border-subtle)" style-hover="background:var(--surface-hover)" onClick="{{ r.go }}">
+            <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--gold-300);min-width:74px">{{ r.kind }}</span>
+            <span style="font-size:14px;color:var(--text-body)">{{ r.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:10px 20px;font-family:var(--font-mono);font-size:11px;color:var(--text-subtle)">ESC để đóng · CTRL+K để mở</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <footer style="border-top:2px solid var(--paper-0);background:var(--surface-board)">
+    <div style="max-width:1360px;margin:0 auto;padding:28px 24px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--text-subtle)">
+      <span>Baron TFT · ghi chú leo rank của mình, Set 18</span>
+      <span style="font-family:var(--font-mono)">Fan project · không liên kết Riot Games</span>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1360,&quot;height&quot;:900}}">
+const SKILLS = [
+  { id:'gold', label:'Vàng', sign:'Roll xuống 0 vàng ở stage 3 mà không nói được mình đang tìm gì.', lesson:'Kinh tế, lên cấp và roll', check:'Trước rolldown', drill:'10 trận: giữ mốc 50 vàng đến 4-1, chỉ phá mốc khi có lý do viết ra được.' },
+  { id:'hp', label:'Máu', sign:'Mất 40 HP trước stage 4 mà kế hoạch vẫn y nguyên.', lesson:'Đánh giá sức mạnh bàn đấu', check:'Stage 3', drill:'10 trận: mỗi lượt tự hỏi HP hiện tại cho mình chờ thêm mấy vòng.' },
+  { id:'items', label:'Trang bị', sign:'Giữ 4 component tới stage 4 vì sợ ghép sai meta.', lesson:'Trang bị và nâng cấp', check:'Stage 2', drill:'10 trận: slam ít nhất 1 đồ trước 2-5, ghi lại kết quả.' },
+  { id:'tempo', label:'Tempo', sign:'Board yếu nhưng vẫn tiết kiệm, tới 4-2 mới thức tỉnh.', lesson:'Cây quyết định theo giai đoạn', check:'Stage 3', drill:'10 trận: mỗi vòng chọn 1 trong 2 — mạnh hơn ngay, hoặc mạnh hơn sau. Không lửng lơ.' },
+  { id:'scout', label:'Scout', sign:'Scout đủ 7 người nhưng không đổi gì sau khi scout.', lesson:'Scouting và positioning', check:'Stage 4', drill:'10 trận: mỗi lần scout phải tạo ra 1 thay đổi cụ thể.' },
+  { id:'pivot', label:'Pivot', sign:'Biết comp hỏng từ 3-2 nhưng cố tới 4-5 mới đổi.', lesson:'Flex, pivot và xây đội hình', check:'Stage 4', drill:'10 trận: đặt hạn chót pivot ở 4-1, quá hạn thì cam kết.' },
+  { id:'roll', label:'Roll', sign:'Roll theo cảm giác, không đặt mốc vàng dừng.', lesson:'Kinh tế, lên cấp và roll', check:'Trước rolldown', drill:'10 trận: trước khi roll, nói to slot cần nâng cấp và mốc vàng sẽ dừng.' },
+  { id:'position', label:'Vị trí', sign:'Đội hình đứng nguyên một chỗ suốt 8 vòng.', lesson:'Scouting và positioning', check:'Late game', drill:'10 trận: đổi vị trí carry mỗi vòng dựa trên đối thủ kế tiếp.' },
+  { id:'augment', label:'Lõi', sign:'Chọn lõi mạnh nhất trên giấy, không phải mạnh nhất cho board mình.', lesson:'Nền tảng không đổi qua các mùa', check:'Lobby', drill:'10 trận: trước khi chọn lõi, kể ra board 8 người mà lõi đó dẫn tới.' },
+  { id:'board', label:'Board mạnh', sign:'Thua streak mà vẫn giữ 3 tướng 1 vàng vì "để dành".', lesson:'Đánh giá sức mạnh bàn đấu', check:'Stage 2', drill:'10 trận: sau mỗi lượt mua, tự hỏi board này có phải mạnh nhất mình dựng được không.' },
+];
+
+const LESSONS = {
+  tempo: {
+    num:'01', title:'Tempo — mua sức mạnh nào?', skill:'Tempo', read:'7 phút đọc',
+    lead:'Tempo không phải chơi nhanh. Tempo là chọn đúng thời điểm mình chấp nhận yếu để mạnh hơn sau — và biết mình còn bao nhiêu HP để trả giá.',
+    blocks:[
+      { h:'Mỗi vòng chỉ có hai lựa chọn', p:'Mình quy mọi quyết định về một câu: vòng này mình mua sức mạnh ngay, hay mua sức mạnh tương lai? Lên cấp, ghép đồ, mua tướng 2 sao là sức mạnh ngay. Giữ vàng ăn lãi, giữ component, chờ mốc cấp là sức mạnh tương lai. Cái giết rank không phải chọn sai, mà chọn nửa vời — roll 20 vàng rồi lại lên cấp, cuối cùng không được gì.' },
+      { h:'HP là tiền tệ thứ hai', p:'Mình đọc HP như đọc vàng. Trên 70 HP mình có quyền chậm, dưới 50 HP mọi thứ tiết kiệm đều là nợ. Ở 40 HP mà vẫn giữ 60 vàng nghĩa là mình đang tiết kiệm cho một tương lai không tồn tại.' },
+      { h:'Mốc quyết định mình dùng', p:'2-5 slam đồ nếu chưa có carry rõ. 3-2 kiểm tra streak và chọn hướng đi. 4-1 là hạn chót pivot. 4-2 là rolldown chính nếu mình đánh top 1. Sau 4-5 mình chỉ tinh chỉnh vị trí và đồ, không đổi kế hoạch nữa.' },
+      { h:'Dấu hiệu mình đang lệch tempo', p:'Mình vào vòng đánh mà không biết vòng sau muốn gì. Đó là dấu hiệu duy nhất mình cần. Nếu không trả lời được "vòng sau board mình khác chỗ nào", thì vòng này mình đã lãng phí.' },
+    ],
+    tip:'Mình đặt hạn chót pivot ở <b>4-1</b>. Sau mốc đó, cam kết và chơi cho hạng cao nhất còn khả thi — đổi hướng muộn gần như luôn ra top 6.',
+    apply:['Trước mỗi vòng: mua sức mạnh ngay hay tương lai?','HP còn cho phép chờ thêm mấy vòng?','Vòng sau board khác chỗ nào?','Nếu roll bây giờ, mình tìm chính xác điều gì?'],
+    quiz:['Bạn đang chơi vì top 4 hay top 1, vì sao?','Mốc vàng nào bạn sẽ dừng roll?','Lần cuối phá mốc 50 vàng là vì lý do gì?'],
+  },
+  economy: {
+    num:'02', title:'Kinh tế — vàng, lãi và ba chế độ', skill:'Vàng', read:'8 phút đọc',
+    lead:'Vàng có ba chế độ: tích lũy (ăn lãi 50), ổn định (30–40 để duy trì board), tất tay (roll xuống 0). Chọn sai chế độ với trạng thái board là mất top.',
+    blocks:[
+      { h:'Breakpoint của vàng', p:'Mốc 10/20/30/40/50 mỗi cái đẻ 1 vàng lãi. 50 là trần. Không có mốc nào đáng phá nếu không mua được tăng lực có thể quy đổi thành máu giữ được ở stage sau.' },
+      { h:'Ba chế độ vận hành', p:'<b>Tích lũy</b>: HP an toàn, board đủ dùng, mục tiêu là fast 8 hoặc rolldown 4-2. <b>Ổn định</b>: đạt lãi 30–40 và roll tối thiểu để không mất streak. <b>Tất tay</b>: HP thấp hoặc thấy hit ngay, chấp nhận mất lãi để đổi lấy hạng.' },
+      { h:'Cây quyết định lên cấp', p:'Lên cấp <b>vì tempo</b> khi win streak muốn kéo dài hoặc lose streak sắp gãy. Lên cấp <b>vì xác suất</b> ở 3-2 để tìm 2 vàng, 4-1 để tìm 3–4 vàng, 4-5/5-1 để mở 5 vàng. Không lên cấp khi chưa có kế hoạch tiêu vàng ngay sau đó.' },
+      { h:'Giữ cặp hay giữ kinh tế?', p:'Giữ cặp khi tướng đó nằm trong board 8 người mục tiêu, hoặc là 4-cost bạn định roll ở 4-2. Bán khi cặp đó chỉ là <i>có thể chuyển bài</i> — không cụ thể là đội hình nào.' },
+    ],
+    tip:'Không bao giờ roll ở 3-1 để "tìm hit" nếu HP còn trên 70 — bạn đang trả full price cho một xác suất tồi.',
+    apply:['Đang ở chế độ nào trong 3 chế độ?','Roll vòng này có breakpoint dừng chưa?','Cặp tướng đang giữ nằm trong board mục tiêu không?','Có ai trong lobby đang cạnh tranh chính carry của mình?'],
+    quiz:['Vì sao mốc 50 vàng lại đặc biệt?','Lần cuối bạn tất tay, board có mạnh hơn hai người kế bên không?','Streak của bạn còn mấy vòng trước khi gãy?'],
+  },
+  boardstrength: {
+    num:'03', title:'Sức mạnh bàn đấu — 6 trụ', skill:'Board strength', read:'10 phút đọc',
+    lead:'Board mạnh không phải nhiều tướng đắt. Sức mạnh = tổng 6 trụ: sát thương, độ bền, tempo, utility, item, tổng thể. Yếu một trụ là yếu cả board.',
+    blocks:[
+      { h:'6 trụ sức mạnh', p:'<b>Sát thương</b> đủ giết ai trong 6 giây. <b>Độ bền</b> giữ carry sống đủ 3–4 giây. <b>Tempo</b> cast/AS đủ nhanh để lên damage trước khi tank vỡ. <b>Utility</b> CC/Shred/Sunder để nhân sát thương. <b>Item</b> đúng carry, đúng đồ. <b>Tổng thể</b>: cấp và số tướng đúng cấp.' },
+      { h:'Phân biệt thiếu sát thương và thiếu frontline', p:'Tank sống nhưng đối thủ không chết → thiếu sát thương: bù AD/AP, mana/AS, crit, damage amp, Sunder/Shred hoặc target. Carry bị chạm trước khi vận hành → thiếu frontline: bù sao tank, item thủ, hồi/khiên, CC, chia target hoặc đổi vị trí.' },
+      { h:'Bốn trạng thái trận', p:'A — mạnh & giàu: fast 8. B — mạnh nhưng nghèo: ổn định, chờ 4-2. C — yếu nhưng giàu: mua sức mạnh ngay, không tiếc vàng. D — yếu & nghèo: chấp nhận top 6, sửa quyết định lần sau.' },
+    ],
+    tip:'Board mình mạnh nhất mình dựng được không, hay chỉ là board mình đang có?',
+    apply:['So với 3 người HP cao nhất, mình mạnh hay yếu?','Trụ nào đang thiếu — sát thương hay frontline?','Trạng thái A/B/C/D hiện tại?','Sửa được trụ thiếu bằng 1 quyết định nào?'],
+    quiz:['Vì sao "board đủ tướng" khác "board mạnh"?','Cast của carry chính hiện đang lên nhờ gì?','Tank chính sống được mấy giây với item hiện tại?'],
+  },
+  items: {
+    num:'04', title:'Trang bị — slam, fit và loãng chỉ số', skill:'Trang bị', read:'9 phút đọc',
+    lead:'Đồ trong kho là đồ 0 sức mạnh. Slam sớm hầu như không sai — chờ đồ hoàn hảo mới là lỗi tốn top nhiều nhất.',
+    blocks:[
+      { h:'Nguyên tắc slam', p:'Trước 2-5 slam ít nhất 1 đồ tank hoặc 1 đồ AS/mana. Component không có gợi ý carry rõ vẫn slam thành đồ generic (Deathblade, Rageblade, Warmog, Dragon Claw). Đồ hoàn chỉnh trên bench mạnh hơn 3 component trong kho.' },
+      { h:'Loãng chỉ số', p:'Cộng nhiều cùng một chỉ số (5 lớp AS trên carry chỉ dùng 1 nhịp) là loãng. Không sửa nút thắt (thiếu mana mà cộng AD) là loãng. Không đạt breakpoint mới (99% AS thay vì 100%) là loãng. Thời gian hoạt động thấp (carry chưa cast đã chết) là loãng.' },
+      { h:'Đọc chỉ số một tướng', p:'Attack (dùng AD), Magic (dùng AP), Hybrid (cả hai). Nhìn cast: burst đơn cần AP/mana, bắn liên tục cần AS/mana, đánh thường cần AD/crit. Máu và kháng cân bằng: 1000 máu 0 kháng chết nhanh hơn 700 máu 50/50 kháng.' },
+      { h:'Fit theo carry', p:'AD carry: 2 sát thương + 1 tank (Bloodthirster hoặc Edge). AP carry: 1 mana (Blue/Shojin) + 1 sát thương + 1 tank. Tank: 1 giáp + 1 kháng phép + 1 hồi/utility, không đắp hai lớp máu.' },
+    ],
+    tip:'Component thứ 4 trong kho ở stage 3 là báo động — bạn đang chờ đội hình khác, không phải đội hình đang có.',
+    apply:['Kho còn mấy component chưa dùng?','Carry chính đã đủ 3 đồ chưa?','Đồ nào đang loãng chỉ số?','Đồ tank có cân bằng giáp/kháng chưa?'],
+    quiz:['Vì sao slam sớm hầu như không sai?','Carry của bạn hiện dùng AD, AP hay hybrid?','Đồ nào bạn hay giữ tới stage 4 nhất — và vì sao?'],
+  },
+  mana: {
+    num:'05', title:'Mana, cast và thời gian chết', skill:'Cast cycle', read:'12 phút đọc',
+    lead:'Một chu kỳ kỹ năng không phải cast → damage. Nó có 8 giai đoạn, và AS chỉ tác động 3 trong số đó. Không hiểu điều này là mua sai đồ suốt game.',
+    blocks:[
+      { h:'8 giai đoạn của cast', p:'Target acquisition → pathing/di chuyển → mana fill → action queue → cast windup → projectile/channel → resolve → recovery và mana lock. Cộng thời gian tuyến tính là sai — nhiều giai đoạn chồng nhau.' },
+      { h:'Bốn vai trò tạo mana khác nhau', p:'<b>Tank</b>: tạo mana khi ăn đòn, cần được đánh. <b>Fighter</b>: mana chủ yếu khi đánh thường. <b>Marksman</b>: mana đều theo AS. <b>Caster</b>: dựa nhiều vào starting mana và Mana Regen.' },
+      { h:'Starting mana ≠ Mana Regen', p:'Starting mana quyết định <b>cast đầu</b> tới sớm cỡ nào. Mana Regen quyết định <b>cast thứ hai trở đi</b>. Nhiều tướng cast đầu quyết định giao tranh — chọn augment/wisp phải nhìn đúng thứ.' },
+      { h:'Mana lock — nút thắt bị bỏ qua', p:'Sau khi cast, tướng bị khoá mana một khoảng ngắn. AS quá cao có thể lãng phí đòn vào mana lock. Đó là lý do một số carry dừng đắp AS ở mốc nhất định — thêm nữa không nhân được cast.' },
+      { h:'AS có 4 tác dụng khác nhau', p:'Tăng nhịp đánh thường, tăng mana per second (marksman), tăng tần suất trigger hiệu ứng on-hit, và tăng số autos trong window trước cast — không phải mọi carry đều hưởng cả 4.' },
+    ],
+    tip:'Tính cast đầu: (max mana - starting mana) chia mana/second dự kiến. Nếu > 3 giây, cast đầu sẽ tới sau khi tank vỡ.',
+    apply:['Carry cast đầu cần bao nhiêu giây?','Có bị mana lock đè lên AS không?','Cast của carry đến từ đánh thường hay ăn đòn?','Item nào hiện đang lãng phí vào mana lock?'],
+    quiz:['Starting mana và Mana Regen khác nhau ở đâu?','Vì sao tank cần được đánh mới tạo mana?','AS quá cao có bao giờ là xấu không?'],
+  },
+  shopmath: {
+    num:'06', title:'Shop math — outs, hit và roll sâu', skill:'Xác suất', read:'9 phút đọc',
+    lead:'Tỉ lệ shop công bố là xác suất thô. Xác suất thực tính theo outs, contest và pool thinning. Roll không có outs là đốt vàng.',
+    blocks:[
+      { h:'Outs là gì', p:'Outs = số bản sao của tướng bạn cần còn trong pool. Pool 4-cost bắt đầu 12 bản; hai người tranh, mỗi người đã có 5 → còn 2 outs. Chi 30 vàng roll với 2 outs không cùng chuyện chi 30 với 8 outs.' },
+      { h:'Ba cấp độ hit', p:'<b>Hit trực tiếp</b>: tướng bạn cần. <b>Hit thay thế</b>: tướng khác dùng được ngay ở slot đó. <b>Hit tùy chọn</b>: tướng đẹp mà không cần. Chỉ hit trực tiếp mới xứng đáng phá kinh tế.' },
+      { h:'Survival horizon', p:'Máu cao thua nhẹ: 4–5 round. Máu trung bình thua 10–15 mỗi round: 2–3 round. Máu thấp: 1 round. Quyết định roll phải nằm trong horizon còn lại, không tính theo cảm giác.' },
+      { h:'Contest theo bậc', p:'Nhẹ (2 người dùng chung frontline) không đau. Chức năng (2 người dùng chung 1 trait) đau vừa. Trực tiếp (cùng main carry) đau. Chết người (cùng carry và cùng frontline) — một trong hai phải bỏ.' },
+    ],
+    tip:'Trước khi roll, nói to: số vàng dừng, tướng cần hit, và slot sẽ nâng cấp. Không nói được thì đừng roll.',
+    apply:['Outs của tướng cần còn bao nhiêu?','Contest ở cấp nào?','Còn bao nhiêu round trong survival horizon?','Roll này là hit trực tiếp hay hit đẹp?'],
+    quiz:['Vì sao tỉ lệ shop công bố không đủ để quyết định?','Contest chức năng khác gì contest trực tiếp?','Máu 30 mà thua 20/round, được roll bao lâu?'],
+  },
+  lobby: {
+    num:'07', title:'Lobby ecology — 5 tranh chấp', skill:'Scout', read:'8 phút đọc',
+    lead:'8 người trong lobby là một hệ sinh thái. Bạn không chỉ tranh carry — bạn còn tranh frontline, utility, nhịp level và tài nguyên item.',
+    blocks:[
+      { h:'5 loại tranh chấp', p:'<b>Tranh carry</b>: cùng main. <b>Tranh frontline</b>: cùng dàn tank. <b>Tranh utility</b>: cùng nguồn Shred/CC hiếm. <b>Tranh nhịp level</b>: cùng plan fast 8. <b>Tranh item</b>: cùng dùng nhiều Rod/Tear.' },
+      { h:'Tempo map của lobby', p:'Ai đang thắng liên tục ở HP > 80? Ai đang thua streak với HP < 50? Ai giữ lãi 50? Ai đã roll xuống 0 ở stage 3? Bạn cần biết ba nhóm này trước 4-1.' },
+      { h:'Scout tạo ra thay đổi', p:'Không phải scout là đọc tướng. Scout là đổi 1 quyết định: đổi vị trí carry, đổi item next, đổi target roll, hoặc đổi hạng mục tiêu. Scout xong không đổi gì = không scout.' },
+    ],
+    tip:'Ở 3-5 luôn dành 15 giây scout 3 người HP cao nhất — họ định giá trần của bạn.',
+    apply:['3 người HP cao nhất đang chơi gì?','Có ai tranh carry với mình?','Ai đang cạn vàng — họ chơi tất tay lần này?','Frontline mình đang chia với ai?'],
+    quiz:['Contest utility nghĩa là gì?','Tranh frontline có bao giờ nặng hơn tranh carry?','Lần cuối bạn scout xong đổi được quyết định nào?'],
+  },
+};
+const MODULE_ORDER = ['tempo','economy','boardstrength','items','mana','shopmath','lobby'];
+
+const CHECKS = {
+  lobby: ['Lõi nào dẫn tới board 8 người mình muốn?','Lobby có mấy người tranh cùng hướng với mình?','Mình vào trận này với kế hoạch top 1 hay top 4?','Đồ đầu game đẩy mình về hướng nào?'],
+  stage2: ['Board hiện tại có phải mạnh nhất mình dựng được không?','Mình đã slam ít nhất 1 đồ chưa, hay đang chờ hoàn hảo?','Mình đang win streak hay lose streak — và mình chọn cái nào?','Vàng cuối stage 2 mình muốn dừng ở mức nào?'],
+  stage3: ['Mình mạnh hay yếu so với 3 người có HP cao nhất?','HP cho mình chờ thêm mấy vòng nữa?','Nếu roll bây giờ, mình nâng cấp chính xác slot nào?','Đến 4-1 mình sẽ ở cấp mấy?'],
+  stage4: ['Kế hoạch của mình còn khả thi không, hay đã tới lúc pivot?','Ai trong lobby có thể giết mình 2 vòng tới?','Sau khi scout, mình đổi vị trí hay đổi đồ?','Mình đang tranh tướng chủ lực với ai?'],
+  late: ['Mình đánh để lên hạng nào, và cần thắng ai để tới đó?','Vị trí carry của mình đã đổi so với vòng trước chưa?','Còn nâng cấp nào rẻ mà mình bỏ qua không?','Mình all-in vòng này hay giữ máu?'],
+  post: ['Lỗi đầu tiên có thể sửa nằm ở stage nào?','Đó là quyết định xấu, hay quyết định tốt gặp kết quả xấu?','Nếu chơi lại, mình đổi đúng một quyết định nào?','Trận sau mình mang theo bài học gì?'],
+};
+
+const TAB_LABELS = { lobby:'Lobby', stage2:'Stage 2', stage3:'Stage 3', stage4:'Stage 4', late:'Late game', post:'Sau trận' };
+const ERRS = ['Economy','Tempo','Item','Augment','Pivot','Scout','Positioning','Rolldown','Tilt'];
+const STAGE_NOTES = {
+  '2':'Stage 2: thường là lỗi board yếu hoặc giữ đồ quá lâu.',
+  '3':'Stage 3: thường là lỗi nhịp lên cấp và đọc streak.',
+  '4':'Stage 4: thường là pivot muộn hoặc rolldown không mục tiêu.',
+  '5':'Stage 5+: thường là positioning và chọn hạng mục tiêu sai.',
+};
+const SOON = {
+  curriculum:['Lộ trình học','15 module xếp theo thứ tự, mỗi module có trạng thái chưa học / đang luyện / cần review lại. Mình đang dựng bản đồ leo rank cho trang này.'],
+  templates:['Biểu mẫu luyện tập','7 phiếu: trước phiên, một trận 60 giây, board strength, trước rolldown, phiếu patch, phiếu 20 trận, review sâu. Sẽ có copy Markdown và lưu local.'],
+  patch:['Hệ thống cập nhật patch','Phiếu mùa 60 phút và phiếu patch 30 phút, kèm cách đọc average placement, top-4 rate và sample size mà không bị số liệu dắt mũi.'],
+  resources:['Nguồn học và cách dùng','Riot official, tactics.tools, TFT Academy, LoLCHESS — kèm cách dùng đúng. Nguồn dữ liệu không thay bạn ra quyết định, nó chỉ cho biết nên đặt câu hỏi ở đâu.'],
+};
+
+const SPOTS = [
+  { id:'stage', label:'Giai đoạn', box:[39.2,0,21.3,4.9],
+    desc:'Thanh giai đoạn: đang ở vòng mấy (1-3), sắp gặp quái hay gặp người, và bao lâu nữa tới vòng đánh.',
+    tip:'Chỉ nhìn đồng hồ mà quên vòng nào là vòng quái — đó là lúc rẻ nhất để tiêu vàng.' },
+  { id:'bench-items', label:'Kho đồ', box:[0,22.5,4.2,52],
+    desc:'Kho trang bị: các mảnh đồ rơi ra từ quái. Kéo hai mảnh vào một tướng để ghép thành đồ hoàn chỉnh.',
+    tip:'Giữ mảnh tới stage 4 vì sợ ghép sai. Đồ nằm trong kho là đồ 0 sức mạnh.' },
+  { id:'board', label:'Bàn đấu', box:[28.5,17.5,37,47],
+    desc:'Bàn đấu: nơi tướng thực sự chiến đấu. Số tướng được đặt bằng đúng cấp của bạn.',
+    tip:'Đặt thiếu tướng so với cấp — mất sức mạnh miễn phí mỗi vòng.' },
+  { id:'bench', label:'Ghế dự bị', box:[19,67.5,55,9],
+    desc:'Ghế dự bị: 9 ô chứa tướng chưa ra sân. Ba tướng giống nhau tự động ghép thành 2 sao.',
+    tip:'Để ghế đầy rác 1 vàng rồi không mua được tướng cần.' },
+  { id:'level', label:'Cấp & KN', box:[13.7,80.5,10.9,19],
+    desc:'Cấp và kinh nghiệm: mua KN 4 vàng để lên cấp, mỗi cấp cho thêm một ô trên bàn đấu và tỉ lệ tướng mạnh hơn.',
+    tip:'Không bao giờ mua KN, hoặc mua KN liên tục mà không còn vàng để roll.' },
+  { id:'odds', label:'Tỉ lệ shop', box:[24.5,80.8,15.5,3.8],
+    desc:'Tỉ lệ ra tướng theo giá tiền ở cấp hiện tại. Cấp càng cao, tỉ lệ tướng 4–5 vàng càng lớn.',
+    tip:'Roll tìm tướng 4 vàng ở cấp 6 — tỉ lệ quá thấp, cháy vàng vô ích.' },
+  { id:'gold', label:'Vàng & lãi', box:[46.5,80.8,15,3.8],
+    desc:'Vàng hiện có. Mỗi 10 vàng dư cho 1 vàng lãi mỗi vòng, tối đa 5 vàng ở mốc 50.',
+    tip:'Roll xuống 0 vàng ở stage 2 — mất toàn bộ lãi cho cả phần còn lại của trận.' },
+  { id:'shop', label:'Cửa hàng', box:[24.5,84.5,50,15.5],
+    desc:'Cửa hàng: 5 tướng ngẫu nhiên. Đổi lại (roll) 2 vàng để lấy 5 tướng mới.',
+    tip:'Roll theo cảm giác. Trước khi roll phải nói được mình đang tìm tướng nào.' },
+  { id:'players', label:'Cột máu người chơi', box:[87.5,22,12.5,42],
+    desc:'Cột bên phải: 7 đối thủ cùng lượng máu còn lại. Bấm mũi tên để mở rộng, bấm vào tên để scout đội hình của họ.',
+    tip:'Chỉ nhìn máu của mình. Máu của lobby mới cho biết bạn còn bao nhiêu vòng để sửa sai.' },
+  { id:'scoreboard', label:'Sơ đồ đối thủ', box:[90.5,84,9.5,16],
+    desc:'Bảng nhỏ: vị trí và biểu tượng của từng người chơi, cho biết vòng sau bạn gặp ai.',
+    tip:'Không xem trước đối thủ vòng sau nên không kịp đổi vị trí carry.' },
+];
+
+class Component extends DCLogic {
+  state = {
+    page: 'home', hover: null, popupStyle: null,
+    module: 'tempo', setTab: 'champions', tab: 'lobby', checks: {}, focus: false, spot: null, spotPopupStyle: null,
+    review: { placement:'', comp:'', turning:'3', tags:[], alt:'' },
+    paletteOpen: false, query: '', copied: false,
+    theme: (typeof localStorage !== 'undefined' && localStorage.getItem('baron-tft-theme')) || 'light',
+  };
+
+  applyTheme() {
+    if (typeof document === 'undefined') return;
+    if (this.state.theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  componentDidUpdate(_p, prev) { if (!prev || prev.theme !== this.state.theme) this.applyTheme(); }
+
+  componentDidMount() {
+    this.applyTheme();
+    this._key = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); this.setState(s => ({ paletteOpen: !s.paletteOpen, query: '' })); }
+      if (e.key === 'Escape') this.setState({ paletteOpen: false });
+    };
+    window.addEventListener('keydown', this._key);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this._key); }
+
+  go(page) { this.setState({ page: page || 'home', paletteOpen: false }); window.scrollTo(0, 0); }
+
+  renderVals() {
+    const S = this.state;
+    const page = S.page;
+    const rows = [SKILLS.slice(0, 4), SKILLS.slice(4, 7), SKILLS.slice(7, 10)];
+    const enter = (sk) => (e) => {
+      const el = e.currentTarget, box = el.offsetParent;
+      const W = 340;
+      let left = el.offsetLeft + el.offsetWidth + 14;
+      if (box && left + W > box.clientWidth) left = el.offsetLeft - W - 14;
+      if (left < 0) left = Math.max(0, (box ? box.clientWidth : W) - W);
+      this.setState({ hover: sk.id, popupStyle: { position:'absolute', left: left + 'px', top: Math.max(0, el.offsetTop - 18) + 'px', width: W + 'px', zIndex: 30 } });
+    };
+    const hexRows = rows.map((cells, ri) => ({
+      rowStyle: 'display:flex;gap:8px;margin-left:' + (ri % 2 === 1 ? '56px' : '0'),
+      cells: cells.map((sk) => ({ ...sk, num: String(SKILLS.indexOf(sk) + 1).padStart(2, '0'), onEnter: enter(sk) })),
+    }));
+
+    const activeModule = LESSONS[S.module] || LESSONS.tempo;
+
+    const items = (CHECKS[S.tab] || []).slice(0, S.focus ? 3 : 99).map((text, i) => {
+      const id = S.tab + ':' + i, done = !!S.checks[id];
+      return {
+        text, id, mark: done ? '✓' : '',
+        boxStyle: `flex:none;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:2px solid ${done ? 'var(--gold-500)' : 'var(--border-strong)'};border-radius:6px;background:${done ? 'var(--gold-500)' : 'transparent'};color:var(--text-on-gold);font-size:15px;font-weight:700`,
+        textStyle: `font-size:${S.focus ? '21px' : '17px'};line-height:1.45;color:${done ? 'var(--text-subtle)' : 'var(--text-strong)'};text-decoration:${done ? 'line-through' : 'none'}`,
+        toggle: () => this.setState(s => ({ checks: { ...s.checks, [id]: !s.checks[id] } })),
+      };
+    });
+    const doneCount = (CHECKS[S.tab] || []).filter((_, i) => S.checks[S.tab + ':' + i]).length;
+
+    const rv = S.review;
+    const summary = ['## Review trận', '- Hạng: ' + (rv.placement || '—'), '- Đội hình: ' + (rv.comp || '—'), '- Turning point: Stage ' + rv.turning, '- Lỗi: ' + (rv.tags.length ? rv.tags.join(', ') : '—'), '- Lần sau: ' + (rv.alt || '—')].join('\n');
+    const setR = (k) => (e) => { const v = e.target.value; this.setState(s => ({ review: { ...s.review, [k]: v }, copied: false })); };
+
+    const actions = ['home','lesson','checklist','review','curriculum','templates','patch','resources'];
+    const actionList = [
+      { kind:'NHẬP MÔN', label:'Màn hình TFT có gì — hướng dẫn cho người mới', page:'guide' },
+      { kind:'SET 18', label:'Tra cứu tướng, item, tộc hệ, Linh hoả', page:'set18' },
+      { kind:'SET 18', label:'Ma trận Tộc × Hệ', page:'set18' },
+      { kind:'SET 18', label:'7 đội hình evergreen Set 18', page:'set18' },
+      { kind:'BÀI HỌC', label:'Đọc bài Tempo và nhịp quyết định', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Kinh tế — vàng, lãi, ba chế độ', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Sức mạnh bàn đấu — 6 trụ', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Trang bị — slam, fit và loãng chỉ số', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Mana, cast và thời gian chết', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Shop math — outs và hit', page:'lesson' },
+      { kind:'BÀI HỌC', label:'Lobby ecology — 5 tranh chấp', page:'lesson' },
+      { kind:'CHECKLIST', label:'Mở checklist trước rolldown', page:'checklist' },
+      { kind:'CHECKLIST', label:'Checklist Lobby: đọc lõi và đối thủ', page:'checklist' },
+      { kind:'PATCH', label:'Phiếu patch 30 phút', page:'patch' },
+      { kind:'NGUỒN', label:'Cách dùng tactics.tools cho đúng', page:'resources' },
+    ];
+    const q = S.query.trim().toLowerCase();
+    const results = actionList.filter(a => !q || (a.label + a.kind).toLowerCase().includes(q))
+      .map(a => ({ ...a, go: () => this.go(a.page) }));
+
+    const soon = SOON[page] || SOON.curriculum;
+
+    return {
+      page, isHome: page === 'home', isLesson: page === 'lesson', isChecklist: page === 'checklist',
+      isReview: page === 'review', isGuide: page === 'guide', isSet18: page === 'set18', isSoon: !!SOON[page],
+      soonTitle: soon[0], soonDesc: soon[1],
+      navLinks: [
+        { key:'guide', label:'Nhập môn' },
+        { key:'set18', label:'Kiến thức Set 18' },
+        { key:'lesson', label:'Bài học' },
+        { key:'patch', label:'Patch' },
+        { key:'resources', label:'Nguồn học' },
+      ],
+      goto: (k) => this.go(k),
+      gotoHome: () => this.go('home'),
+      gotoLesson: () => this.go('lesson'),
+      gotoChecklist: () => this.go('checklist'),
+      gotoReview: () => this.go('review'),
+      gotoSet18: () => this.go('set18'),
+      navActions: React.createElement(React.Fragment, null,
+        React.createElement(window.BaronTFTDesignSystem_5d933f.Button, {
+          size:'sm', variant:'ghost',
+          title: S.theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối',
+          style: { color: 'var(--text-on-gold)', borderColor: 'rgba(246,241,228,.35)' },
+          onClick: () => this.setState(s => {
+            const theme = s.theme === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('baron-tft-theme', theme); } catch (e) {}
+            return { theme };
+          }),
+        }, S.theme === 'dark' ? '☀ Sáng' : '☾ Tối'),
+        React.createElement(window.BaronTFTDesignSystem_5d933f.Button, {
+          size:'sm', variant:'secondary', onClick: () => this.setState({ paletteOpen: true, query: '' }),
+        }, 'Ctrl + K'),
+      ),
+
+      spots: SPOTS.map(sp => {
+        const on = S.spot === sp.id;
+        return {
+          ...sp,
+          boxStyle: `position:absolute;left:${sp.box[0]}%;top:${sp.box[1]}%;width:${sp.box[2]}%;height:${sp.box[3]}%;border:3px dashed ${on ? '#8CFF3D' : '#22E4FF'};border-radius:4px;background:${on ? 'rgba(140,255,61,.18)' : 'rgba(34,228,255,.10)'};box-shadow:0 0 0 2px rgba(9,20,32,.75),inset 0 0 0 1px rgba(9,20,32,.5);cursor:pointer;transition:background var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out)`,
+          tagStyle: `position:absolute;${sp.box[0] + sp.box[2] > 88 ? 'right:-2px;' : 'left:-2px;'}${sp.box[1] < 6 ? 'top:calc(100% + 2px);' : 'top:-2px;transform:translateY(-100%);'}font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;background:${on ? '#8CFF3D' : '#22E4FF'};color:#0A1620;font-weight:700;white-space:nowrap;box-shadow:0 0 0 1px rgba(27,27,27,.7)`,
+          onEnter: (e) => {
+            const el = e.currentTarget, box = el.offsetParent, W = 320;
+            let left = el.offsetLeft + el.offsetWidth + 12;
+            if (box && left + W > box.clientWidth) left = el.offsetLeft - W - 12;
+            if (left < 0) left = 12;
+            const top = Math.min(Math.max(8, el.offsetTop), (box ? box.clientHeight : 600) - 210);
+            this.setState({ spot: sp.id, spotPopupStyle: { position:'absolute', left: left + 'px', top: top + 'px', width: W + 'px', zIndex: 30 } });
+          },
+        };
+      }),
+      spotCount: SPOTS.length,
+      players: [
+        { name:'Cái Quạt Mây', hp:100 }, { name:'2imtrangiuu', hp:100 }, { name:'ACHIKA one top', hp:100 },
+        { name:'nmcuong2006', hp:100 }, { name:'그린자 망', hp:100 }, { name:'Aha15', hp:100 }, { name:'JakicP1311', hp:100 },
+      ],
+      activeSpot: SPOTS.find(sp => sp.id === S.spot) || null,
+      spotPopupStyle: S.spotPopupStyle,
+      clearSpot: () => this.setState({ spot: null }),
+      moduleCount: MODULE_ORDER.length + ' BÀI HỌC',
+      setTabs: [
+        { key:'champions', label:'Tướng' },
+        { key:'items', label:'Trang bị' },
+        { key:'traits', label:'Tộc hệ' },
+        { key:'matrix', label:'Ma trận' },
+        { key:'wisp', label:'Linh hoả' },
+        { key:'augments', label:'Nâng cấp' },
+        { key:'comps', label:'Đội hình' },
+      ],
+      setTab: S.setTab,
+      setTabIs: { champions: S.setTab === 'champions', items: S.setTab === 'items', traits: S.setTab === 'traits', matrix: S.setTab === 'matrix', wisp: S.setTab === 'wisp', augments: S.setTab === 'augments', comps: S.setTab === 'comps' },
+      selectSetTab: (k) => this.setState({ setTab: k }),
+      roleRows: [
+        { tag:'MAIN CARRY', title:'Aphelios · Ahri · Morgana · Ezreal · Aphelios · Alune', desc:'Carry chính của 7 khung đội hình evergreen — mỗi tướng có đường item và trait riêng.' },
+        { tag:'OFF-CARRY', title:'Kayle · Karma · Cassiopeia · Soraka · Varus', desc:'Nguồn damage phụ khi carry chính bị scout hoặc chưa 2 sao. Hầu hết là 3–4 vàng.' },
+        { tag:'MAIN TANK', title:'Leona · Rammus · Elise · Lillia · Sejuani', desc:'Frontline chính, sống ≥ 4 giây để carry cast. Fit 1 giáp + 1 kháng + 1 hồi.' },
+        { tag:'UTILITY / CC', title:'Fiddlesticks · Pebbles · Kog’Maw · Karma · Rammus', desc:'CC dài, Shred hoặc Sunder — utility budget hạng S/A, không cần bảng damage đẹp.' },
+        { tag:'REROLL 3★', title:'Solar · Rapidfire 3 sao', desc:'Đổi vàng lấy nhiều mốc 3 sao thay vì ép một carry đơn — cần contest nhẹ và HP an toàn.' },
+        { tag:'LEGENDARY CAP', title:'Alune · The Elder Dragon · Ancient (Riftbeast)', desc:'Slot 5 vàng thay quân synergy yếu; Riftbeast dùng Elder Dragon 2 slot để đạt 10 vertical.' },
+      ],
+      itemGroups: [
+        { tag:'AD CARRY', title:'2 damage + 1 tank', desc:'Ưu tiên: Infinity Edge / Deathblade / Rageblade + Bloodthirster. Slam sớm ở 2-5.' },
+        { tag:'AP CARRY', title:'1 mana + 1 sát thương + 1 tank', desc:'Blue Buff hoặc Shojin + Jeweled Gauntlet/Hextech Gunblade + Dragon Claw.' },
+        { tag:'TANK', title:'Giáp + Kháng + Hồi/Utility', desc:'Warmog + Dragon Claw + Sunfire hoặc Redemption. Không xếp hai lớp máu.' },
+        { tag:'GENERIC SLAM', title:'Đồ không cần carry cụ thể', desc:'Deathblade, Rageblade, Warmog, Dragon Claw, Redemption — slam ở 2-5 hầu như không sai.' },
+        { tag:'LOÃNG CHỈ SỐ', title:'Kiểm toán trước ván', desc:'5 lớp AS trên 1 carry, không sửa nút thắt mana, không đạt breakpoint mới — cả ba là loãng.' },
+        { tag:'CÔNG THỨC', title:'9 component × 9 = 45 đồ', desc:'Nhớ trục dọc/ngang: BF+Rod → Hextech Gunblade; Bow+Tear → Statikk; Vest+Cloak → Bramble.' },
+      ],
+      traitCats: [
+        { count:'HỆ · 14 TRAIT', title:'Class (hệ)', desc:'Spellweaver, Rapidfire, Defender, Vanguard, Invoker, Executioner, Brawler, Marksman, Shapeshifter, Bruiser, Bastion, Mage, Slayer, Rogue.' },
+        { count:'TỘC · 12 TRAIT', title:'Origin (tộc)', desc:'Solar, Lunar, Blossom, Elderwood, Coven, Riftbeast, Inferno, Ocean, Storm, Mountain, Crystal, Ashenwood.' },
+        { count:'ĐẶC BIỆT · 10 TRAIT', title:'Trait phụ / capstone', desc:'Emblem-only, prismatic, hoặc chỉ mở khi có unit 5-cost đặc biệt (Elder Dragon, Alune).' },
+      ],
+      wispTiers: [
+        { gold:'0 VÀNG', count:'20', note:'Miễn phí — kèm rủi ro hoặc hiệu ứng phụ.' },
+        { gold:'8–15 VÀNG', count:'~80', note:'Buff nhẹ, sửa trụ thiếu tạm thời.' },
+        { gold:'20–25 VÀNG', count:'~60', note:'Đổi hướng đội hình hoặc thêm chức năng lớn.' },
+        { gold:'30–35 VÀNG', count:'~30', note:'Định hình ván — thường chỉ trong tầm ở stage 4+.' },
+        { gold:'45 VÀNG', count:'≤10', note:'Đổi hẳn thế trận (ví dụ: nhận trọn dàn tướng 5 vàng).' },
+      ],
+      augTiers: [
+        { tier:'BẬC 1 · BẠC', name:'Silver', desc:'Buff nhỏ, không đòi commit. An toàn cho nhiều đội hình — chọn khi chưa đọc rõ hướng.' },
+        { tier:'BẬC 2 · VÀNG', name:'Gold', desc:'Buff trung, thường gắn với một trait hoặc archetype. Chọn khi hướng đã rõ ở 3-2.' },
+        { tier:'BẬC 3 · LĂNG KÍNH', name:'Prismatic', desc:'Buff mạnh, đòi commit sâu. Chọn khi board sẵn sàng gánh cả rủi ro và điều kiện trait cụ thể.' },
+      ],
+      comps: [
+        { name:'Solar Rapidfire Reroll', pitch:'Đổi vàng thành nhiều mốc 3 sao — Solar tăng cả damage lẫn độ bền cho dàn Rapidfire.' },
+        { name:'Ahri Spellweaver Control', pitch:'Chuỗi CC dài mua thời gian cho Ahri tìm cụm mục tiêu và tung cú nổ phép quyết định.' },
+        { name:'Morgana Coven Invoker', pitch:'Kéo dài giao tranh bằng Vanguard để Morgana chồng lời nguyền, Invoker duy trì nhịp cast.' },
+        { name:'Aphelios Solar Rapidfire', pitch:'Rapidfire tạo nhịp bắn cho Aphelios, Solar và CC giữ đủ thời gian cho chuỗi đòn.' },
+        { name:'Ezreal Elderwood Executioner', pitch:'Elderwood làm nền, Executioner làm engine kết liễu — Ezreal không phải nguồn damage đơn.' },
+        { name:'Legendary AP / Utility Cap', pitch:'Giữ Spellweaver lõi, thay slot yếu bằng 5 vàng có CC, bảo kê và khuếch đại thật.' },
+        { name:'Riftbeast 10 Cap', pitch:'Mốc vertical cao nhất bằng Elder Dragon 2 slot — sức mạnh đến từ cả đàn, không từ carry đơn.' },
+      ],
+
+      basics: (() => {
+        const base = 'position:absolute;z-index:6;width:22%;padding:12px 14px;background:rgba(10,16,24,.78);border:1px dashed rgba(140,255,61,.7);border-radius:6px;backdrop-filter:blur(3px);pointer-events:none';
+        return [
+          { num:'01', title:'Mục tiêu của ván', text:'8 người, mỗi vòng đánh 1v1 tự động. Thua thì mất máu. Người cuối cùng còn máu thắng — top 4 là thứ bạn cần ổn định trước.', overlayStyle: base + ';left:5%;top:5%' },
+          { num:'02', title:'Vàng đẻ ra vàng', text:'Mỗi 10 vàng dư cho 1 vàng lãi mỗi vòng, tối đa ở mốc 50. Giữ mốc 50 sớm là lợi thế lớn nhất người mới thường bỏ qua.', overlayStyle: base + ';right:14%;top:5%' },
+          { num:'03', title:'Ba tướng thành một', text:'Ba tướng giống nhau tự ghép thành 2 sao, mạnh gấp nhiều lần. Ba tướng 2 sao thành 3 sao — toàn bộ cơ chế nâng cấp.', overlayStyle: base + ';left:5%;top:44%' },
+        ];
+      })(),
+
+      hexRows,
+      hoverSkill: SKILLS.find(s => s.id === S.hover) || null,
+      popupStyle: S.popupStyle,
+      clearHover: () => this.setState({ hover: null }),
+
+      paths: [
+        { num:'01', title:'Tôi mới chơi TFT', desc:'Bắt đầu từ trang nhập môn: màn hình có gì, vàng chạy ra sao, ghép tướng thế nào.', cta:'Bắt đầu ở đây', go: () => this.go('guide') },
+        { num:'04', title:'Tra cứu Set 18', desc:'Tướng, trang bị, tộc hệ, ma trận, Linh hoả và Nâng cấp gom về một chỗ để tra nhanh trong ván.', cta:'Vào tra cứu', go: () => this.go('set18') },
+        { num:'02', title:'Tôi đang kẹt rank', desc:'Chẩn đoán lỗi quyết định lặp lại của bạn rồi luyện đúng một kỹ năng trong 10 trận.', cta:'Mở checklist', go: () => this.go('checklist') },
+        { num:'03', title:'Tôi vừa thua và muốn review', desc:'Tìm lỗi đầu tiên có thể sửa trong 15 phút, không xem lại cả trận.', cta:'Vào review lab', go: () => this.go('review') },
+      ],
+      leaks: [
+        { num:'01', text:'Roll không có mục tiêu rõ, hết vàng mới nhận ra.' },
+        { num:'02', text:'Giữ component quá lâu vì sợ ghép sai meta.' },
+        { num:'03', text:'Không biết khi nào nên lên cấp, chỉ lên theo cảm giác.' },
+        { num:'04', text:'Pivot quá muộn, sau 4-5 mới đổi hướng.' },
+        { num:'05', text:'Scout xong nhưng không đổi positioning.' },
+        { num:'06', text:'Thua xong không biết lỗi đầu tiên nằm ở đâu.' },
+      ],
+      weeks: [
+        { num:'1', title:'Strongest board', goal:'Luôn dựng board mạnh nhất có thể mỗi vòng.' },
+        { num:'2', title:'Kinh tế và chuỗi', goal:'Chọn win streak hay lose streak có chủ đích.' },
+        { num:'3', title:'Trang bị', goal:'Slam đúng lúc, ngừng chờ đồ hoàn hảo.' },
+        { num:'4', title:'Level và roll', goal:'Mỗi lần roll đều có slot mục tiêu và mốc dừng.' },
+        { num:'5', title:'Flex và pivot', goal:'Đặt hạn chót pivot và tôn trọng nó.' },
+        { num:'6', title:'Scouting', goal:'Mỗi lần scout tạo ra một thay đổi cụ thể.' },
+        { num:'7', title:'Positioning', goal:'Đổi vị trí theo đối thủ kế tiếp, không đứng cố định.' },
+        { num:'8', title:'Review và ổn định', goal:'Một phiếu review mỗi phiên, ổn định thứ hạng.' },
+      ],
+
+      modules: MODULE_ORDER.map(k => {
+        const m = LESSONS[k];
+        return {
+          num: m.num, title: m.title, key: k,
+          rowStyle: `display:flex;gap:9px;align-items:baseline;padding:8px 10px;border-radius:8px;cursor:pointer;color:${k === S.module ? 'var(--text-on-gold)' : 'var(--text-muted)'};background:${k === S.module ? 'var(--gold-500)' : 'transparent'}`,
+          go: () => this.setState({ module: k }),
+        };
+      }),
+      activeModule,
+
+      clTabs: Object.keys(TAB_LABELS).map(k => ({ key: k, label: TAB_LABELS[k] })),
+      tab: S.tab, tabLabel: TAB_LABELS[S.tab],
+      setTab: (k) => this.setState({ tab: k }),
+      clItems: items,
+      clProgress: doneCount + '/' + (CHECKS[S.tab] || []).length + ' đã trả lời',
+      resetChecks: () => this.setState({ checks: {} }),
+      toggleFocus: () => this.setState(s => ({ focus: !s.focus })),
+      focusLabel: S.focus ? 'Tắt focus mode' : 'Focus 3 câu',
+
+      rv, summary,
+      setPlacement: setR('placement'), setComp: setR('comp'), setAlt: setR('alt'),
+      stages: ['2','3','4','5'].map(n => ({
+        label: 'Stage ' + n,
+        wrapStyle: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;position:relative',
+        dotStyle: `width:22px;height:25px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);background:${rv.turning === n ? 'var(--teal-500)' : 'var(--ink-500)'}`,
+        labelStyle: `font-family:var(--font-mono);font-size:12px;color:${rv.turning === n ? 'var(--teal-300)' : 'var(--text-subtle)'}`,
+        pick: () => this.setState(s => ({ review: { ...s.review, turning: n }, copied: false })),
+      })),
+      stageNote: STAGE_NOTES[rv.turning],
+      errTags: ERRS.map(label => ({
+        label, on: rv.tags.includes(label),
+        toggle: () => this.setState(s => {
+          const t = s.review.tags.includes(label) ? s.review.tags.filter(x => x !== label) : [...s.review.tags, label];
+          return { review: { ...s.review, tags: t }, copied: false };
+        }),
+      })),
+      copyLabel: S.copied ? 'Đã copy ✓' : 'Copy review summary',
+      copySummary: () => {
+        try { navigator.clipboard.writeText(summary); } catch (e) {}
+        this.setState({ copied: true });
+      },
+      resetReview: () => this.setState({ review: { placement:'', comp:'', turning:'3', tags:[], alt:'' }, copied: false }),
+
+      paletteOpen: S.paletteOpen, query: S.query, results,
+      setQuery: (e) => this.setState({ query: e.target.value }),
+      closePalette: () => this.setState({ paletteOpen: false }),
+      stop: (e) => e.stopPropagation(),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

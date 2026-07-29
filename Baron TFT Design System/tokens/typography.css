@@ -1,0 +1,50 @@
+/* Baron TFT — Typography tokens. Zine direction.
+   Display = Epilogue (heavy geometric grotesk, poster-weight). Body/UI = Libre Franklin.
+   Mono = JetBrains Mono for numeric game data. */
+:root {
+  --font-display: 'Epilogue', 'Libre Franklin', system-ui, sans-serif;
+  --font-body:    'Libre Franklin', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Weights */
+  --fw-regular: 400; /* @kind font */
+  --fw-medium:  500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:    700; /* @kind font */
+  --fw-extra:   800; /* @kind font */
+
+  /* Type scale (px) — display is condensed so it runs large */
+  --fs-display: 72px;
+  --fs-h1:      52px;
+  --fs-h2:      38px;
+  --fs-h3:      27px;   /* off-grid on purpose */
+  --fs-h4:      21px;
+  --fs-lg:      18px;
+  --fs-body:    16px;
+  --fs-sm:      14px;
+  --fs-xs:      13px;
+  --fs-2xs:     11px;
+
+  /* Line heights */
+  --lh-tight:   1.02; /* @kind font */
+  --lh-snug:    1.18; /* @kind font */
+  --lh-body:    1.6; /* @kind font */
+  --lh-relaxed: 1.72; /* @kind font */
+
+  /* Tracking */
+  --ls-tight:   -0.01em; /* @kind font */
+  --ls-normal:  0; /* @kind font */
+  --ls-wide:    0.04em; /* @kind font */
+  --ls-caps:    0.12em; /* @kind font */
+}
+
+/* Ready-made text classes consumers can apply directly */
+.tft-display { font-family: var(--font-display); font-weight: var(--fw-extra); font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); text-transform: uppercase; color: var(--text-strong); }
+.tft-h1 { font-family: var(--font-display); font-weight: var(--fw-extra); font-size: var(--fs-h1); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); text-transform: uppercase; color: var(--text-strong); }
+.tft-h2 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); line-height: var(--lh-snug); text-transform: uppercase; color: var(--text-strong); }
+.tft-h3 { font-family: var(--font-display); font-weight: var(--fw-semibold); font-size: var(--fs-h3); line-height: var(--lh-snug); color: var(--text-strong); }
+.tft-eyebrow { font-family: var(--font-body); font-weight: var(--fw-semibold); font-size: var(--fs-2xs); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--accent); }
+.tft-body { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-body); }
+.tft-lead { font-family: var(--font-body); font-weight: var(--fw-regular); font-size: var(--fs-lg); line-height: var(--lh-relaxed); color: var(--text-muted); }
+.tft-caption { font-family: var(--font-body); font-weight: var(--fw-medium); font-size: var(--fs-xs); line-height: var(--lh-snug); color: var(--text-subtle); }
+.tft-mono { font-family: var(--font-mono); font-weight: var(--fw-medium); font-feature-settings: 'tnum' 1; color: var(--text-body); }

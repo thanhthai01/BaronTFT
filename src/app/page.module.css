@@ -1,0 +1,151 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-line);
+  background: var(--grad-paper);
+  padding-block: clamp(3.5rem, 9vw, 6.5rem);
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -12rem;
+  top: -14rem;
+  width: 32rem;
+  height: 32rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  pointer-events: none;
+}
+
+.heroGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 0.86fr 1.14fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.hero h1 {
+  margin: 0.85rem 0 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  line-height: 0.94;
+  text-transform: uppercase;
+}
+
+.hero h1 em {
+  color: var(--accent-primary);
+  font-style: normal;
+}
+
+.lead {
+  max-width: 46rem;
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+  font-size: var(--fs-lg);
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.entryGrid,
+.problemGrid,
+.weekGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.entryGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.problemGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.weekGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.card,
+.week {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-offset-ink);
+  padding: 1.15rem;
+}
+
+.card h3,
+.week strong {
+  display: block;
+  margin: 0 0 0.55rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: var(--fw-extra);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+}
+
+.card p,
+.week span {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.quickChecklist {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 2rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xl);
+  background: var(--text-primary);
+  color: var(--text-on-accent);
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.quickChecklist h2 {
+  margin: 0 0 0.5rem;
+  color: var(--text-on-accent);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  text-transform: uppercase;
+}
+
+.quickChecklist p {
+  margin: 0;
+  color: rgba(246, 241, 228, 0.78);
+}
+
+@media (max-width: 1000px) {
+  .heroGrid,
+  .quickChecklist {
+    grid-template-columns: 1fr;
+  }
+
+  .entryGrid,
+  .problemGrid,
+  .weekGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .entryGrid,
+  .problemGrid,
+  .weekGrid {
+    grid-template-columns: 1fr;
+  }
+}

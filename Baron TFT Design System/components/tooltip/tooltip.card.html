@@ -1,0 +1,22 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Tooltips — Unit · Item" subtitle="Champion & item hover cards" -->
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--bg-app);padding:22px;font-family:var(--font-body)}.row{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const { UnitTooltip, ItemTooltip } = window.BaronTFTDesignSystem_5d933f;
+function Demo(){return(<div className="row">
+<UnitTooltip name="Ahri" cost={4} title="Cửu Vĩ Hồ" traits={['Pháp Sư','Học Giả']}
+  stats={[{label:'Máu',value:'700'},{label:'Sát thương',value:'55'},{label:'Giáp',value:'30'},{label:'Mana',value:'0/80'}]}
+  ability={{name:'Cầu Lửa Hồ Ly',mana:'80',desc:'Bắn cầu lửa vào kẻ địch xa nhất, gây <b>250</b> sát thương phép và giảm <b>20%</b> giáp.'}}/>
+<ItemTooltip name="Sách Cũ Nát" kind="Trang bị hoàn chỉnh"
+  stats={['+20 SM Phép','+150 Máu','+20 Mana']}
+  description="Khi tướng thi triển kỹ năng, gây <b>cháy lan</b> lên kẻ địch xung quanh."
+  recipe={['🗡','⚡']}/>
+</div>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

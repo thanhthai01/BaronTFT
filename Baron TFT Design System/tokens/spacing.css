@@ -1,0 +1,40 @@
+/* Baron TFT — Spacing, radii, layout, z-index tokens. 4px base with intentional off-grid stops. */
+:root {
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+  --sp-32: 128px;
+
+  /* Radii — zine cards favour a soft 10–12px round */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 12px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-pill: 999px;
+
+  /* Hex clip-path for TFT board units */
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* @kind other */
+
+  /* Layout */
+  --container: 1200px;
+  --container-wide: 1360px;
+  --gutter: 24px;
+
+  /* Z-index */
+  --z-base: 1; /* @kind other */
+  --z-sticky: 100; /* @kind other */
+  --z-nav: 200; /* @kind other */
+  --z-overlay: 800; /* @kind other */
+  --z-tooltip: 900; /* @kind other */
+  --z-modal: 1000; /* @kind other */
+}

@@ -1,0 +1,32 @@
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-card);
+}
+
+.tab {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: var(--fw-bold);
+  min-height: 2.5rem;
+  padding: 0.5rem 0.95rem;
+  transition: background var(--dur-fast), color var(--dur-fast);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab[aria-selected='true'] {
+  background: var(--grad-accent);
+  color: var(--text-on-accent);
+}

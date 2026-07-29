@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="design_doc_mode" content="canvas">
+<title>Baron TFT — Hướng nhận diện thay thế</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,500&family=Libre+Franklin:wght@400;600;800&family=Bitter:wght@500;700;900&family=Be+Vietnam+Pro:wght@400;600;800&family=Archivo:wght@500;700;900&family=JetBrains+Mono:wght@500;700&family=Epilogue:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Be Vietnam Pro',sans-serif}
+  .frame{position:absolute;width:540px;border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+  .badge{position:absolute;top:14px;right:14px;z-index:5;font:700 12px/1 'JetBrains Mono',monospace;letter-spacing:.05em;padding:6px 9px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff}
+  .hd{padding:22px 26px 18px}
+  .hd .kick{font:700 11px/1 'JetBrains Mono',monospace;letter-spacing:.22em;text-transform:uppercase;opacity:.7}
+  .hd h2{font-size:34px;line-height:1;margin:9px 0 8px;letter-spacing:-.01em}
+  .hd p{font-size:13.5px;line-height:1.5;max-width:44ch;opacity:.85}
+  .sw{display:flex;height:34px}
+  .sw span{flex:1}
+  .body{padding:22px 26px 26px}
+  .spec{font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.55;margin-bottom:10px;font-weight:700}
+  .big{font-size:44px;line-height:.98;letter-spacing:-.015em;margin-bottom:10px}
+  .lede{font-size:14px;line-height:1.6;margin-bottom:22px;max-width:46ch}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+  .btn{font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;border:0;cursor:pointer}
+  .btn.ghost{background:transparent}
+  .card{border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .card .ct{display:flex;justify-content:space-between;align-items:baseline}
+  .card .ct .nm{font-weight:800;font-size:17px}
+  .card .ct .tier{font:800 13px/1 'JetBrains Mono',monospace;padding:4px 8px;border-radius:5px}
+  .units{display:flex;gap:7px}
+  .unit{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:800 13px/1 'JetBrains Mono',monospace}
+  .note{position:absolute;font-family:'Be Vietnam Pro';color:#5b5b52;font-size:13px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="note" style="left:60px;top:20px;width:1120px">
+  <strong style="font-size:18px;color:#2a2a24">Baron TFT — 4 hướng nhận diện thay thế.</strong>&nbsp; Cả 4 đều tránh công thức "nền navy tối + vàng hextech" mà tftacademy/mobalytics dùng. Nói cho mình biết hướng nào (hoặc kết hợp) hợp gu, mình sẽ dựng lại toàn bộ token + component theo hướng đó.
+</div>
+
+<!-- 1a — EDITORIAL -->
+<div class="frame" id="1a" style="left:60px;top:88px;background:#F4EFE6;color:#17150F">
+  <div class="badge">1a</div>
+  <div class="hd">
+    <div class="kick" style="color:#DA3B22">Hướng 01 · Biên tập</div>
+    <h2 style="font-family:'Spectral';font-weight:700">Chiến Thư</h2>
+    <p>Như một tạp chí cờ / sách chiến lược. Nền giấy kem, mực đen, một điểm nhấn son đỏ. Nghiêm túc, dễ đọc, khác hẳn mọi trang TFT.</p>
+  </div>
+  <div class="sw"><span style="background:#F4EFE6"></span><span style="background:#E6DFCE"></span><span style="background:#26415E"></span><span style="background:#DA3B22"></span><span style="background:#17150F"></span></div>
+  <div class="body">
+    <div class="spec" style="color:#DA3B22">Spectral · Libre Franklin</div>
+    <div class="big" style="font-family:'Spectral';font-weight:700">Đọc vị<br>ván đấu.</div>
+    <div class="lede" style="font-family:'Libre Franklin'">Từ vị trí quân đến cách xoay vàng — mọi nước đi đều có lý do. Học để hiểu, không chỉ để chép comp.</div>
+    <div class="row">
+      <button class="btn" style="background:#DA3B22;color:#fff;font-family:'Libre Franklin'">Bắt đầu học</button>
+      <button class="btn ghost" style="color:#26415E;border:1.5px solid #26415E;font-family:'Libre Franklin'">Xem meta</button>
+    </div>
+    <div class="card" style="background:#fff;border:1px solid #E0D8C6">
+      <div class="ct"><span class="nm" style="font-family:'Spectral'">Đội hình Sát Thủ</span><span class="tier" style="background:#DA3B22;color:#fff">S</span></div>
+      <div class="units"><div class="unit" style="background:#F0EADD;color:#8D96A5;border:1px solid #E0D8C6">1</div><div class="unit" style="background:#F0EADD;color:#B15CF0;border:1px solid #E0D8C6">4</div><div class="unit" style="background:#F0EADD;color:#DA3B22;border:1px solid #E0D8C6">5</div><div class="unit" style="background:#F0EADD;color:#3B82F6;border:1px solid #E0D8C6">3</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 1b — TABLETOP -->
+<div class="frame" id="1b" style="left:640px;top:88px;background:#EEE4CE;color:#33271B">
+  <div class="badge">1b</div>
+  <div class="hd">
+    <div class="kick" style="color:#C25B36">Hướng 02 · Bàn cờ vật lý</div>
+    <h2 style="font-family:'Bitter';font-weight:900">Bàn Đấu Pháp</h2>
+    <p>Cảm giác board game giấy: da bò, gỗ nâu, xanh rừng. Ấm, thủ công, "cầm nắm được" — gợi ván cờ thật hơn là app game.</p>
+  </div>
+  <div class="sw"><span style="background:#EEE4CE"></span><span style="background:#C89A4B"></span><span style="background:#C25B36"></span><span style="background:#2F5D50"></span><span style="background:#33271B"></span></div>
+  <div class="body">
+    <div class="spec" style="color:#C25B36">Bitter · Be Vietnam Pro</div>
+    <div class="big" style="font-family:'Bitter';font-weight:900">Dựng thế<br>trận của bạn.</div>
+    <div class="lede">Mỗi ô trên bàn là một quyết định. Baron dạy bạn tư duy như một kỳ thủ, từng lượt một.</div>
+    <div class="row">
+      <button class="btn" style="background:#2F5D50;color:#F4ECD8">Vào bàn đấu</button>
+      <button class="btn ghost" style="color:#C25B36;border:1.5px solid #C25B36">Cẩm nang</button>
+    </div>
+    <div class="card" style="background:#F6EFDD;border:1.5px solid #DCCBA6">
+      <div class="ct"><span class="nm" style="font-family:'Bitter'">Đội hình Sát Thủ</span><span class="tier" style="background:#2F5D50;color:#F4ECD8">S</span></div>
+      <div class="units"><div class="unit" style="background:#EAE0C6;color:#8D7A52;border:1px solid #DCCBA6">1</div><div class="unit" style="background:#EAE0C6;color:#7B4FA0;border:1px solid #DCCBA6">4</div><div class="unit" style="background:#EAE0C6;color:#C25B36;border:1px solid #DCCBA6">5</div><div class="unit" style="background:#EAE0C6;color:#2F5D50;border:1px solid #DCCBA6">3</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 1c — NEON ARCADE -->
+<div class="frame" id="1c" style="left:60px;top:760px;background:#0A0A11;color:#ECEAF2">
+  <div class="badge" style="background:rgba(255,255,255,.12)">1c</div>
+  <div class="hd">
+    <div class="kick" style="color:#FF3D8B">Hướng 03 · Arcade</div>
+    <h2 style="font-family:'Archivo';font-weight:900;letter-spacing:-.02em">ĐẤU TRƯỜNG</h2>
+    <p>Vẫn nền tối như đối thủ, nhưng đổi màu: song sắc hồng điện + lơ cyan thay cho vàng. Trẻ, high-energy, đậm chất gamer.</p>
+  </div>
+  <div class="sw"><span style="background:#0A0A11"></span><span style="background:#1A1A2A"></span><span style="background:#2FE1E6"></span><span style="background:#FF3D8B"></span><span style="background:#ECEAF2"></span></div>
+  <div class="body">
+    <div class="spec" style="color:#2FE1E6">Archivo · JetBrains Mono</div>
+    <div class="big" style="font-family:'Archivo';font-weight:900;background:linear-gradient(90deg,#FF3D8B,#2FE1E6);-webkit-background-clip:text;background-clip:text;color:transparent">LÊN HẠNG<br>NGAY LƯỢT NÀY</div>
+    <div class="lede" style="color:#B9B6C8">Chọn tướng, xoay vàng, chốt đội hình. Baron biến lý thuyết meta thành phản xạ.</div>
+    <div class="row">
+      <button class="btn" style="background:#FF3D8B;color:#0A0A11">Chơi thử</button>
+      <button class="btn ghost" style="color:#2FE1E6;border:1.5px solid #2FE1E6;font-family:'JetBrains Mono'">// META</button>
+    </div>
+    <div class="card" style="background:#13131F;border:1px solid rgba(255,255,255,.09)">
+      <div class="ct"><span class="nm" style="font-family:'Archivo'">Đội hình Sát Thủ</span><span class="tier" style="background:#FF3D8B;color:#0A0A11">S</span></div>
+      <div class="units"><div class="unit" style="background:#1E1E2E;color:#8D96A5">1</div><div class="unit" style="background:#1E1E2E;color:#B15CF0">4</div><div class="unit" style="background:#1E1E2E;color:#2FE1E6">5</div><div class="unit" style="background:#1E1E2E;color:#FF3D8B">3</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 1d — RISOGRAPH ZINE -->
+<div class="frame" id="1d" style="left:640px;top:760px;background:#F1ECDF;color:#1B1B1B">
+  <div class="badge">1d</div>
+  <div class="hd">
+    <div class="kick" style="color:#2A44C8">Hướng 04 · Risograph / Zine</div>
+    <h2 style="font-family:'Epilogue';font-weight:800;letter-spacing:-.02em">Zine Đấu Sĩ</h2>
+    <p>Hai mực in phẳng — lơ cobalt + cam huỳnh quang — trên giấy ngà, chữ grotesk đậm. Indie, táo bạo, rất "riêng".</p>
+  </div>
+  <div class="sw"><span style="background:#F1ECDF"></span><span style="background:#2A44C8"></span><span style="background:#FF5A1F"></span><span style="background:#1B1B1B"></span><span style="background:#E9E2D0"></span></div>
+  <div class="body">
+    <div class="spec" style="color:#2A44C8">Epilogue · Libre Franklin</div>
+    <div class="big" style="font-family:'Epilogue';font-weight:800">Không giấu<br>bài.</div>
+    <div class="lede" style="font-family:'Libre Franklin'">Mọi công thức, mọi tỉ lệ, mọi nước đi — bày hết ra bàn. Học TFT theo cách thẳng thắn nhất.</div>
+    <div class="row">
+      <button class="btn" style="background:#2A44C8;color:#F1ECDF;font-family:'Libre Franklin'">Mở cẩm nang</button>
+      <button class="btn" style="background:#FF5A1F;color:#1B1B1B;font-family:'Libre Franklin'">Tier list</button>
+    </div>
+    <div class="card" style="background:#fff;border:2px solid #1B1B1B;box-shadow:5px 5px 0 #2A44C8">
+      <div class="ct"><span class="nm" style="font-family:'Epilogue'">Đội hình Sát Thủ</span><span class="tier" style="background:#FF5A1F;color:#1B1B1B">S</span></div>
+      <div class="units"><div class="unit" style="background:#F1ECDF;color:#1B1B1B;border:2px solid #1B1B1B">1</div><div class="unit" style="background:#F1ECDF;color:#2A44C8;border:2px solid #1B1B1B">4</div><div class="unit" style="background:#F1ECDF;color:#FF5A1F;border:2px solid #1B1B1B">5</div><div class="unit" style="background:#F1ECDF;color:#1B1B1B;border:2px solid #1B1B1B">3</div></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
