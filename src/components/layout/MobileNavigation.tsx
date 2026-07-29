@@ -1,17 +1,32 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { isNavigationRouteActive } from '@/lib/navigation';
 import { useCommandPalette } from '../features/command-palette/CommandPaletteProvider';
 import styles from './MobileNavigation.module.css';
 
+const links = [
+  { href: '/kien-thuc-nen-tang', label: 'Học' },
+  { href: '/checklist', label: 'Checklist' },
+  { href: '/review', label: 'Review' },
+];
+
 export function MobileNavigation() {
+  const pathname = usePathname();
   const { openPalette } = useCommandPalette();
 
   return (
     <nav aria-label="Điều hướng nhanh trên điện thoại" className={styles.nav}>
-      <Link className={styles.item} href="/kien-thuc-nen-tang">Học</Link>
-      <Link className={styles.item} href="/checklist">Checklist</Link>
-      <Link className={styles.item} href="/review">Review</Link>
+      {links.map((link) => {
+        const isActive = isNavigationRouteActive(pathname, link.href);
+
+        return (
+          <Link aria-current={isActive ? 'page' : undefined} className={styles.item} href={link.href} key={link.href}>
+            {link.label}
+          </Link>
+        );
+      })}
       <button className={styles.item} type="button" onClick={openPalette}>Tìm</button>
     </nav>
   );

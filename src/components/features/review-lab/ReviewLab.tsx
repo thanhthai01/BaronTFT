@@ -21,16 +21,19 @@ const tags = ['Economy', 'Tempo', 'Item', 'Augment', 'Pivot', 'Scout', 'Position
 
 export function ReviewLab() {
   const [draft, setDraft] = useState<ReviewSummaryInput>(defaultDraft);
+  const [draftLoaded, setDraftLoaded] = useState(false);
   const [copied, setCopied] = useState(false);
   const markdown = useMemo(() => createReviewMarkdown(draft), [draft]);
 
   useEffect(() => {
-    setDraft(readJson<ReviewSummaryInput>(storageKeys.reviewDraft, defaultDraft));
+    setDraft((current) => (current === defaultDraft ? readJson<ReviewSummaryInput>(storageKeys.reviewDraft, defaultDraft) : current));
+    setDraftLoaded(true);
   }, []);
 
   useEffect(() => {
+    if (!draftLoaded) return;
     writeJson(storageKeys.reviewDraft, draft);
-  }, [draft]);
+  }, [draft, draftLoaded]);
 
   function update<K extends keyof ReviewSummaryInput>(key: K, value: ReviewSummaryInput[K]) {
     setDraft((current) => ({ ...current, [key]: value }));

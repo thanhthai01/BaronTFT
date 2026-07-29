@@ -12,21 +12,24 @@ export function ChecklistApp() {
   const [activeStage, setActiveStage] = useState(checklistStages[0].id);
   const [focusMode, setFocusMode] = useState(false);
   const [checked, setChecked] = useState<ChecklistState>({});
+  const [checkedLoaded, setCheckedLoaded] = useState(false);
   const currentStage = checklistStages.find((stage) => stage.id === activeStage) ?? checklistStages[0];
   const visibleItems = focusMode ? currentStage.items.filter((item) => item.focus).slice(0, 3) : currentStage.items;
   const total = useMemo(() => checklistStages.flatMap((stage) => stage.items).length, []);
   const done = Object.values(checked).filter(Boolean).length;
 
   useEffect(() => {
-    setChecked(readJson<ChecklistState>(storageKeys.checklist, {}));
+    setChecked((current) => (Object.keys(current).length === 0 ? readJson<ChecklistState>(storageKeys.checklist, {}) : current));
+    setCheckedLoaded(true);
   }, []);
 
   useEffect(() => {
+    if (!checkedLoaded) return;
     writeJson(storageKeys.checklist, checked);
-  }, [checked]);
+  }, [checked, checkedLoaded]);
 
   return (
-    <section className={styles.shell} data-surface={focusMode ? 'focus' : undefined}>
+    <section aria-label="Checklist theo giai đoạn" className={styles.shell} data-surface={focusMode ? 'focus' : undefined}>
       <div className={styles.toolbar}>
         <Tabs
           label="Chọn giai đoạn trận đấu"
@@ -48,7 +51,7 @@ export function ChecklistApp() {
           </button>
         </div>
       </div>
-      <p className={styles.progress}>{done}/{total} câu đã tick · dữ liệu lưu trên máy của bạn</p>
+      <p aria-atomic="true" aria-live="polite" className={styles.progress}>{done}/{total} câu đã tick · dữ liệu lưu trên máy của bạn</p>
       <div
         aria-labelledby={`${currentStage.id}-tab`}
         className={styles.panel}

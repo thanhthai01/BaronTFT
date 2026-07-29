@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { isNavigationRouteActive } from '@/lib/navigation';
 import { useCommandPalette } from '../features/command-palette/CommandPaletteProvider';
 import { Button } from '../design-system/Button/Button';
 import styles from './SiteHeader.module.css';
@@ -15,6 +17,7 @@ const links = [
 ];
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const { openPalette } = useCommandPalette();
 
   return (
@@ -25,11 +28,15 @@ export function SiteHeader() {
           BARON <em>TFT</em>
         </Link>
         <nav aria-label="Điều hướng chính" className={styles.nav}>
-          {links.map((link) => (
-            <Link className={styles.link} href={link.href} key={link.href}>
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const isActive = isNavigationRouteActive(pathname, link.href);
+
+            return (
+              <Link aria-current={isActive ? 'page' : undefined} className={styles.link} href={link.href} key={link.href}>
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className={styles.actions}>
           <button className={styles.searchButton} type="button" onClick={openPalette}>

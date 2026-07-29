@@ -17,7 +17,7 @@
   display: grid;
   min-height: 3.25rem;
   place-items: center;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--r-md);
   background: var(--surface-card);
   color: var(--text-primary);
@@ -29,9 +29,10 @@
   text-transform: uppercase;
 }
 
-.item:last-child {
-  color: var(--text-on-accent);
+.item[aria-current='page'] {
+  border-color: var(--accent-primary);
   background: var(--grad-accent);
+  color: var(--text-on-accent);
 }
 
 @media (min-width: 981px) {
