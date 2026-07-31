@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Augment card — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=Libre+Franklin:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --surface-canvas: #f1ecdf;
+    --surface-card: #ffffff;
+    --surface-raised: #f6f1e4;
+    --text-primary: #1b1b1b;
+    --text-muted: #5b564a;
+    --text-subtle: #837c64;
+    --text-disabled: #a89e85;
+    --accent-primary: #2a44c8;
+    --accent-secondary: #ff5a1f;
+    --border-line: rgba(27, 27, 27, 0.22);
+    --border-strong: rgba(27, 27, 27, 0.55);
+    --font-display: "Epilogue", "Libre Franklin", system-ui, sans-serif;
+    --font-body: "Libre Franklin", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --r-lg: 0.875rem;
+    --r-md: 0.75rem;
+    --r-pill: 999px;
+    /* rarity Gold, lấy đúng giá trị rarityColor của augment demo trong set18-codex.ts —
+       toàn bộ accent của card (plate, viền, tên) ăn theo màu này để bám màu icon thật. */
+    --rarity-color: #a18e21;
+
+    /* Bộ màu 5 loại phân loại augment, tham khảo metatft.com/new-set#Augments.
+       category (data hiện có) -> nhóm gần nhất trong 5 loại này, xem chú thích ở
+       .category-icons trong HTML. */
+    --cat-combat: #c9463c;
+    --cat-items: #3d72b4;
+    --cat-econ: #b8891b;
+    --cat-traits: #c97a2e;
+    --cat-strategic: #3f9e86;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--surface-canvas);
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .page-head {
+    max-width: 30rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-head h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .page-head p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .stage-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* ---------- Augment card ---------- */
+
+  .augment-card {
+    width: 17.5rem;
+    background: var(--surface-card);
+    border: 1.5px solid var(--border-line);
+    border-radius: var(--r-lg);
+    padding: 0.9rem 0.9rem 1.1rem;
+    box-shadow: 5px 5px 0 var(--rarity-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  /* Trái: icon phân loại (combat/items/econ/traits/strategic), tham khảo chip
+     màu của metatft.com/new-set#Augments. Mỗi augment chỉ hiện đúng số chip nó
+     thật sự có (data hiện tại luôn là 1); layout wrap sẵn cho trường hợp >1. */
+  .category-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    max-width: 8.5rem;
+  }
+
+  .category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border-radius: var(--r-pill);
+    padding: 0.2rem 0.55rem 0.2rem 0.4rem;
+    background: color-mix(in srgb, var(--cat-color) 14%, white);
+    border: 1.5px solid color-mix(in srgb, var(--cat-color) 55%, white);
+  }
+
+  .category-chip svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    stroke: var(--cat-color);
+    fill: none;
+    stroke-width: 2;
+    flex-shrink: 0;
+  }
+
+  .category-chip span {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--cat-color);
+  }
+
+  /* Phải: "thời điểm xuất hiện" — PLACEHOLDER MINH HOẠ, dữ liệu cào về không
+     có field này (xem set18-codex.ts, augment.description). Không được coi
+     là số liệu thật cho tới khi có nguồn. */
+  .stage-pills {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+
+  .stage-pill {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-pill);
+    padding: 0.12rem 0.55rem;
+  }
+
+  .stage-pill.is-primary {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+    font-weight: 700;
+  }
+
+  /* Icon augment chính giữa — phóng to làm điểm nhìn chính, plate ăn theo màu
+     rarity/màu icon thay vì nền xám trung tính. */
+  .icon-plate {
+    align-self: center;
+    width: 9rem;
+    height: 9rem;
+    border-radius: var(--r-md);
+    background: radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--rarity-color) 55%, #1b1b1b) 0%, color-mix(in srgb, var(--rarity-color) 25%, #14120c) 78%);
+    border: 1.5px solid color-mix(in srgb, var(--rarity-color) 60%, black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .icon-plate img {
+    width: 7.6rem;
+    height: 7.6rem;
+    object-fit: contain;
+  }
+
+  /* Tên tiếng Việt + tiếng Anh */
+  .name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .name-vi {
+    background: color-mix(in srgb, var(--rarity-color) 10%, var(--surface-raised));
+    border: 1px solid color-mix(in srgb, var(--rarity-color) 40%, var(--border-line));
+    border-radius: var(--r-md);
+    padding: 0.45rem 0.7rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .name-en {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  /* Nội dung chính / phụ */
+  .content-block {
+    border-top: 1px solid var(--border-line);
+    padding-top: 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .content-main {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--text-primary);
+  }
+
+  .content-secondary {
+    margin: 0;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border-line);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .content-secondary strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .card-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .card-caption {
+    width: 17.5rem;
+    text-align: center;
+  }
+
+  .card-caption .rarity-word {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--rarity-color);
+  }
+
+  .card-caption .variant-note {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    margin-top: 0.15rem;
+  }
+
+  .card-note {
+    width: 17.5rem;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .card-note b { color: var(--accent-secondary); }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .legend .category-chip {
+    padding: 0.3rem 0.7rem 0.3rem 0.5rem;
+  }
+
+  .legend .category-chip svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .legend .category-chip span {
+    font-size: 0.75rem;
+  }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <span class="eyebrow">Demo · Card lõi nâng cấp</span>
+    <h1>3 rarity, nội dung dài ngắn khác nhau</h1>
+    <p>
+      3 augment thật lấy từ <code>set18-codex.ts</code>, chọn cố ý để so sánh chiều cao card khi
+      nội dung ngắn/dài và có/không có nội dung phụ. Card không set height cố định nên tự giãn theo
+      nội dung. Phần đánh dấu <b>*</b> là placeholder, chưa có dữ liệu thật.
+    </p>
+  </div>
+
+  <div class="stage-row">
+    <div class="card-col">
+      <article class="augment-card" style="--rarity-color: #477dcb">
+        <div class="card-top">
+          <div class="category-icons">
+            <span class="category-chip" style="--cat-color: var(--cat-items)" title="Items (map từ category = Items)">
+              <svg viewBox="0 0 24 24"><path d="M7 9h10l-1 10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 9z" /><path d="M9 9V7a3 3 0 0 1 6 0v2" /></svg>
+              <span>Items</span>
+            </span>
+          </div>
+          <div class="stage-pills">
+            <span class="stage-pill is-primary">2-1*</span>
+          </div>
+        </div>
+
+        <div class="icon-plate">
+          <img src="../public/set18/assets/auguments/da_bandofthieves.png" alt="Băng Trộm" onerror="this.style.display='none'" />
+        </div>
+
+        <div class="name-block">
+          <div class="name-vi">Băng Trộm</div>
+          <div class="name-en">Band of Thieves</div>
+        </div>
+
+        <div class="content-block">
+          <p class="content-main">Nhận <strong>1 Găng Đạo Tặc</strong>.</p>
+        </div>
+      </article>
+      <div class="card-caption">
+        <span class="rarity-word">Silver</span>
+        <span class="variant-note">Nội dung 1 dòng, không có phần phụ</span>
+      </div>
+    </div>
+
+    <div class="card-col">
+      <article class="augment-card" style="--rarity-color: #a18e21">
+        <div class="card-top">
+          <div class="category-icons">
+            <span class="category-chip" style="--cat-color: var(--cat-econ)" title="Econ (map từ category = Economic)">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M9 9.5c0-1 1-1.6 2.4-1.6 1.6 0 2.4.7 2.4 1.6 0 2-4.8 1-4.8 3 0 1 1 1.6 2.4 1.6 1.4 0 2.4-.6 2.4-1.6" /></svg>
+              <span>Econ</span>
+            </span>
+          </div>
+          <div class="stage-pills">
+            <span class="stage-pill is-primary">3-2*</span>
+          </div>
+        </div>
+
+        <div class="icon-plate">
+          <img src="../public/set18/assets/auguments/da_advancedloan.png" alt="Vay Tạm Ứng" onerror="this.style.display='none'" />
+        </div>
+
+        <div class="name-block">
+          <div class="name-vi">Vay Tạm Ứng</div>
+          <div class="name-en">Advanced Loan</div>
+        </div>
+
+        <div class="content-block">
+          <p class="content-main">Nhận <strong>20 Vàng</strong>.</p>
+          <p class="content-secondary"><strong>Kèm theo:</strong> Nâng cấp tiếp theo của bạn bị giảm 1 bậc.</p>
+        </div>
+      </article>
+      <div class="card-caption">
+        <span class="rarity-word">Gold</span>
+        <span class="variant-note">Nội dung vừa, có phần phụ 1 dòng</span>
+      </div>
+    </div>
+
+    <div class="card-col">
+      <article class="augment-card" style="--rarity-color: #6838ff">
+        <div class="card-top">
+          <div class="category-icons">
+            <span class="category-chip" style="--cat-color: var(--cat-strategic)" title="Strategic (map từ category = Reroll)">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M15 9l-2 5-5 2 2-5 5-2z" /></svg>
+              <span>Strategic</span>
+            </span>
+          </div>
+          <div class="stage-pills">
+            <span class="stage-pill is-primary">4-2*</span>
+          </div>
+        </div>
+
+        <div class="icon-plate">
+          <img src="../public/set18/assets/auguments/da_starringup.png" alt="Lên Sao" onerror="this.style.display='none'" />
+        </div>
+
+        <div class="name-block">
+          <div class="name-vi">Lên Sao</div>
+          <div class="name-en">Starring Up</div>
+        </div>
+
+        <div class="content-block">
+          <p class="content-main">Sau khi nâng <strong>5 tướng lên 3 sao</strong>, hãy đặt cấp độ của bạn thành <strong>9</strong>.</p>
+          <p class="content-secondary"><strong>Kèm theo:</strong> Nhận 2 đổi lại ngay bây giờ và vào đầu mỗi vòng.</p>
+        </div>
+      </article>
+      <div class="card-caption">
+        <span class="rarity-word">Prismatic</span>
+        <span class="variant-note">Nội dung dài 2 câu, có phần phụ</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-note" style="width: 34rem; text-align:left;">
+    <b>*</b> "2-1 / 3-2 / 4-2" là số mẫu minh hoạ layout — dữ liệu cào về không có field stage cho
+    augment, cần nguồn khác trước khi đưa vào thật. Chip phân loại map tạm từ field <code>category</code>
+    hiện có sang 5 nhóm combat/items/econ/traits/strategic tham khảo metatft.com — bảng màu cả 5 loại
+    xem bên dưới.
+  </div>
+
+  <div class="legend">
+    <span class="eyebrow" style="margin-bottom: 0.75rem;">Bảng màu 5 loại phân loại</span>
+    <div class="legend-row">
+      <span class="category-chip" style="--cat-color: var(--cat-combat)">
+        <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5h-4M19 5v4" /><path d="M19 19L5 5M5 5h4M5 5v4" /></svg>
+        <span>Combat</span>
+      </span>
+      <span class="category-chip" style="--cat-color: var(--cat-items)">
+        <svg viewBox="0 0 24 24"><path d="M7 9h10l-1 10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 9z" /><path d="M9 9V7a3 3 0 0 1 6 0v2" /></svg>
+        <span>Items</span>
+      </span>
+      <span class="category-chip" style="--cat-color: var(--cat-econ)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M9 9.5c0-1 1-1.6 2.4-1.6 1.6 0 2.4.7 2.4 1.6 0 2-4.8 1-4.8 3 0 1 1 1.6 2.4 1.6 1.4 0 2.4-.6 2.4-1.6" /></svg>
+        <span>Econ</span>
+      </span>
+      <span class="category-chip" style="--cat-color: var(--cat-traits)">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3z" /></svg>
+        <span>Traits</span>
+      </span>
+      <span class="category-chip" style="--cat-color: var(--cat-strategic)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M15 9l-2 5-5 2 2-5 5-2z" /></svg>
+        <span>Strategic</span>
+      </span>
+    </div>
+  </div>
+</body>
+</html>

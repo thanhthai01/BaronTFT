@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set 18 — 7 đội hình theo khung Evergreen</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--gray-150:#F0EEE6;--gray-300:#D1CFC5;--gray-500:#87867F;--gray-700:#3D3D3A;--white:#FFF;--rust:#B04A3F;--sky:#6A8CAF;--serif:'Source Serif 4',ui-serif,Georgia,serif;--sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:ui-monospace,'SF Mono',Menlo,Monaco,monospace;--ease:cubic-bezier(.34,1.56,.64,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ivory);color:var(--gray-700);font-family:var(--sans);padding:52px 24px 130px}.page{max-width:1160px;margin:auto}.eyebrow{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--gray-500)}h1,h2,h3{font-family:var(--serif);font-weight:500;color:var(--slate)}h1{font-size:clamp(34px,5vw,62px);line-height:1.02;max-width:880px;margin:10px 0 18px;letter-spacing:-.025em}h2{font-size:27px;margin:64px 0 8px}h3{font-size:24px;margin:7px 0 7px}h4{font-size:13px;color:var(--slate);margin:0 0 8px}.subtitle{font-size:16px;line-height:1.65;max-width:760px;color:var(--gray-500)}a{color:inherit}.hero{position:relative;padding-bottom:24px}.hero::after{content:'';display:block;width:160px;height:5px;background:linear-gradient(90deg,var(--clay) 0 50%,var(--sky) 50%);margin-top:26px;border-radius:4px}.count-strip{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.count-strip span,.meta-badge,.trait-line span{font-family:var(--mono);font-size:10.5px;border:1px solid var(--gray-300);border-radius:7px;background:var(--white);padding:4px 8px}.caveat,.prompt-box{border:1.5px solid var(--gray-300);border-left:4px solid var(--sky);background:var(--white);border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.55}.prompt-box{border-left-color:var(--clay);background:var(--gray-150)}.framework-grid,.diagnosis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.framework-card,.diagnosis-card{background:var(--white);border:1.5px solid var(--gray-300);border-radius:12px;padding:18px}.framework-card b{font-family:var(--mono);font-size:11px;color:var(--clay)}.framework-card p,.diagnosis-card p{font-size:13px;line-height:1.55;margin:8px 0 0}.diagnosis-card.damage{border-top:4px solid var(--rust)}.diagnosis-card.time{border-top:4px solid var(--olive)}
+.toc-nav,.side-nav{position:fixed;z-index:40;font-family:var(--mono);font-size:10.5px}.toc-nav{left:max(14px,calc(50vw - 760px));top:25%;display:grid;gap:5px}.toc-nav a{padding:5px 8px;text-decoration:none;color:var(--gray-500);border-left:2px solid transparent}.toc-nav a.is-active{color:var(--slate);border-left-color:var(--clay)}.side-nav{right:16px;top:24%;display:grid;gap:7px}.side-nav a{background:var(--white);border:1px solid var(--gray-300);border-radius:8px;padding:7px 9px;text-decoration:none;box-shadow:0 2px 10px rgba(20,20,19,.05)}
+.filter-panel{position:sticky;top:8px;z-index:25;background:rgba(250,249,245,.94);backdrop-filter:blur(10px);border:1.5px solid var(--gray-300);border-radius:14px;padding:12px;margin:20px 0}.filters{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.filters fieldset{border:0;padding:0;margin:0;min-width:0}.filters legend{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--gray-500);margin-bottom:5px}.segmented{display:flex;flex-wrap:wrap;gap:4px}.filter-button,.reset-button{border:1px solid var(--gray-300);background:var(--white);border-radius:7px;padding:7px 10px;font:11px var(--mono);cursor:pointer}.filter-button[aria-pressed=true]{background:var(--slate);color:var(--white);border-color:var(--slate)}.reset-button{margin-left:auto}.filter-status{font:11px var(--mono);color:var(--gray-500);padding:7px}.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.comp-card{background:var(--white);border:1.5px solid var(--gray-300);border-radius:14px;padding:20px;min-width:0}.comp-card[hidden]{display:none}.comp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.comp-head p{font-size:13.5px;line-height:1.5;margin:0;color:var(--gray-500)}.comp-head .eyebrow{display:flex;flex-wrap:wrap;gap:5px}.meta-badge{display:inline-block}.badge-ap{background:#E7EEF6}.badge-ad{background:#F8E5DD}.badge-mixed{background:linear-gradient(90deg,#F8E5DD,#E7EEF6)}.badge-confidence{background:var(--gray-150)}.compare-check{display:grid;justify-items:center;gap:3px;font:9px var(--mono);color:var(--gray-500);cursor:pointer}.compare-check input{width:20px;height:20px;accent-color:var(--clay)}.trait-line{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0}.trait-line span{background:var(--gray-150)}.board{display:flex;gap:11px;overflow-x:auto;padding:8px 2px 13px;scrollbar-width:thin}.board-unit{position:relative;min-width:68px;text-align:center}.champ-trigger{border:0;background:transparent;padding:0;cursor:pointer;position:relative;color:inherit}.hex-wrap{--hex:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:block;width:56px;height:56px;clip-path:var(--hex);background:var(--cost-color);padding:3px;margin:auto;filter:drop-shadow(0 1px 2px rgba(20,20,19,.15))}.hex-wrap img{display:block;width:100%;height:100%;object-fit:cover;clip-path:var(--hex)}.unit-role,.unit-slot{position:absolute;right:-7px;top:-4px;background:var(--slate);color:#fff;border-radius:4px;padding:2px 4px;font:7px var(--mono);max-width:62px}.unit-slot{top:11px;background:var(--clay)}.unit-name{display:block;font:9.5px var(--mono);color:var(--slate);margin-top:5px;white-space:normal}.unit-star{font:9px var(--mono);color:var(--gray-500)}.unit-note{display:none}.core-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}.core-strip span{background:var(--gray-150);border-radius:8px;padding:7px;font-size:10.5px;min-width:0}.core-strip b{display:block;font:8px var(--mono);text-transform:uppercase;color:var(--gray-500);margin-bottom:3px}.ledger{display:grid;grid-template-columns:1fr 112px 1fr;border:1px solid var(--gray-300);border-radius:12px;overflow:hidden;background:var(--ivory)}.ledger-side{padding:12px;min-width:0}.ledger-damage{border-top:4px solid var(--rust)}.ledger-time{border-top:4px solid var(--olive)}.ledger-kicker{font:9px var(--mono);text-transform:uppercase}.ledger-side p{font-size:11.5px;line-height:1.45;margin:6px 0}.ledger-side ul{list-style:none;padding:0;margin:0;display:grid;gap:4px}.ledger-side li{display:flex;justify-content:space-between;gap:5px;font-size:9.5px}.ledger-bridge{display:flex;flex-direction:column;justify-content:center;text-align:center;background:var(--slate);color:#fff;padding:10px}.ledger-bridge span{font:8px var(--mono);text-transform:uppercase;color:var(--oat)}.ledger-bridge strong{font-size:10px;line-height:1.35;margin-top:5px}.coverage{font:8px var(--mono);white-space:nowrap;border-radius:4px;padding:2px 4px;background:var(--gray-150);color:var(--gray-700)}.coverage-native{border-left:3px solid var(--olive)}.coverage-partial{border-left:3px solid var(--sky)}.coverage-missing{border-left:3px solid var(--rust)}.coverage-item-dependent,.coverage-upgrade-dependent{border-left:3px solid var(--clay)}.card-summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:15px 0}.card-summary ul,.detail-grid ul,.detail-grid ol{font-size:11.5px;line-height:1.5;padding-left:18px;margin:0}.score-profile{border-top:1px solid var(--gray-150);padding-top:11px}.score-row{display:grid;grid-template-columns:minmax(92px,1fr) auto 28px;align-items:center;gap:8px;font-size:10.5px;margin:5px 0}.score-row b{font:9px var(--mono);color:var(--gray-500)}.score-dots{display:flex;gap:4px}.score-dot{width:11px;height:5px;border-radius:5px;background:var(--oat)}.score-dot.is-on{background:var(--sky)}.analysis-details{border-top:1px solid var(--gray-150);margin-top:14px;padding-top:10px}.analysis-details summary{font:11px var(--mono);cursor:pointer;color:var(--clay);padding:6px 0}.detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}.detail-grid section{background:var(--gray-150);border-radius:9px;padding:12px}.economy-list{font-size:10.5px;margin:0}.economy-list dt{font:8px var(--mono);text-transform:uppercase;color:var(--gray-500);margin-top:7px}.economy-list dd{margin:2px 0;line-height:1.45}.requirement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.requirement-card{border:1px solid var(--gray-300);border-radius:9px;padding:10px}.requirement-card header{display:flex;justify-content:space-between;gap:5px}.requirement-card p,.requirement-card li{font-size:10px;line-height:1.45}.requirement-card p{margin:6px 0}.requirement-card ul{padding-left:16px;margin:0}.empty-state{border:1.5px dashed var(--gray-300);border-radius:12px;text-align:center;padding:30px;color:var(--gray-500)}
+.compare-wrap{overflow:auto;border:1.5px solid var(--gray-300);border-radius:12px;background:var(--white)}.compare-table{border-collapse:collapse;min-width:820px;width:100%;font-size:11.5px}.compare-table caption{text-align:left;padding:14px;font-family:var(--serif);font-size:17px;color:var(--slate)}.compare-table th,.compare-table td{border-top:1px solid var(--gray-150);padding:9px 11px;text-align:left;vertical-align:top}.compare-table th[scope=row]{position:sticky;left:0;background:var(--white);width:150px;color:var(--slate);z-index:2}.compare-table th[scope=col]{font-family:var(--serif);font-size:14px;color:var(--slate)}.compare-tray{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:none;align-items:center;gap:8px;background:var(--slate);color:#fff;border-radius:12px;padding:9px 12px;box-shadow:0 12px 30px rgba(20,20,19,.25);max-width:calc(100vw - 24px)}.compare-tray.is-visible{display:flex}.tray-items{display:flex;gap:5px;overflow:auto}.tray-chip,.tray-action{border:1px solid #555;background:#292928;color:#fff;border-radius:7px;padding:6px 8px;font:9px var(--mono);white-space:nowrap}.tray-chip{cursor:pointer}.tray-action{background:var(--clay);border-color:var(--clay);cursor:pointer}.tray-action.secondary{background:transparent;border-color:#777}.guide-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.guide-grid article{background:var(--white);border:1px solid var(--gray-300);border-radius:10px;padding:14px}.guide-grid b{font:10px var(--mono);color:var(--clay)}.guide-grid p{font-size:12px;line-height:1.5}.methodology{display:grid;grid-template-columns:1fr 1fr;gap:12px}.methodology>div{background:var(--white);border:1px solid var(--gray-300);border-radius:12px;padding:16px;font-size:12px;line-height:1.55}.champ-tooltip{position:fixed;z-index:90;width:300px;display:none;background:var(--white);border:1.5px solid var(--gray-300);border-radius:12px;padding:14px;box-shadow:0 14px 32px rgba(20,20,19,.2)}.champ-tooltip.is-visible{display:block}.tt-head{display:flex;gap:10px;align-items:center}.tt-head img{width:46px;height:46px;object-fit:cover;border-radius:9px}.tt-name{font-family:var(--serif);font-size:16px;color:var(--slate)}.tt-meta{font:10px var(--mono);color:var(--gray-500)}.tt-ability{font-size:11.5px;line-height:1.5}.tt-tags{display:flex;gap:5px;flex-wrap:wrap}.tt-tags span{font:9px var(--mono);border:1px solid var(--gray-300);border-radius:5px;padding:2px 5px}.tt-close{position:absolute;right:7px;top:7px;border:0;background:var(--gray-150);border-radius:50%;width:26px;height:26px;cursor:pointer}.footer{margin-top:60px;border-top:1px solid var(--gray-300);padding-top:18px;font-size:11px;color:var(--gray-500)}
+:focus-visible{outline:3px solid var(--clay);outline-offset:3px}@media(max-width:1320px){.toc-nav{display:none}.side-nav{top:auto;bottom:14px;right:14px;display:flex}.side-nav a{padding:7px}}@media(max-width:850px){body{padding:32px 14px 145px}.comp-grid{grid-template-columns:1fr}.framework-grid,.diagnosis-grid,.methodology{grid-template-columns:1fr}.guide-grid{grid-template-columns:repeat(2,1fr)}.filter-panel{position:static}.detail-grid{grid-template-columns:1fr}.requirement-grid{grid-template-columns:1fr}}@media(max-width:560px){h1{font-size:38px}.comp-card{padding:14px}.comp-head{align-items:flex-start}.ledger{grid-template-columns:1fr}.ledger-bridge{min-height:62px}.core-strip,.card-summary{grid-template-columns:1fr}.guide-grid{grid-template-columns:1fr}.side-nav{left:8px;right:8px;justify-content:center;overflow:auto}.side-nav a{font-size:9px;white-space:nowrap}.compare-tray{bottom:54px}.filters{display:grid}.reset-button{margin-left:0}.score-row{grid-template-columns:1fr auto 28px}.champ-tooltip{width:calc(100vw - 20px);left:10px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}@media(forced-colors:active){.score-dot.is-on,.filter-button[aria-pressed=true]{forced-color-adjust:none;border:1px solid CanvasText}.comp-card,.framework-card,.diagnosis-card{border:1px solid CanvasText}}
+</style>
+</head>
+<body>
+<nav class="toc-nav" aria-label="Mục lục báo cáo"><a href="#framework">Khung evergreen</a><a href="#choose">Chọn đội hình</a><a href="#comps">7 đội hình</a><a href="#compare">So sánh</a><a href="#methodology">Dữ liệu</a></nav>
+<nav class="side-nav" aria-label="Tra cứu nhanh"><a href="tft_set18_synergy_grid.html">Ma trận</a><a href="TFT_Set18_Champion_Role_Report.html">Vai trò</a><a href="tft_set18_synergy_grid.html#items">Item</a></nav>
+<main class="page">
+<header class="hero"><span class="eyebrow">TFT Set 18 · Evergreen composition lab · Preview hypothesis</span><h1>Đừng chọn đội hình vì bảng Tộc/Hệ đẹp.</h1><p class="subtitle">Chọn line có đủ <b>sát thương</b>, đủ <b>thời gian tuyến trước</b>, và một kế hoạch economy phù hợp với HP, item, bản sao và tempo lobby.</p><div class="count-strip"><span>1 Reroll</span><span>2 AP Fast 8</span><span>2 AD Fast 8</span><span>2 Fast 9</span></div><div class="caveat"><b>Giới hạn dữ liệu:</b> Set 18 hiện là preview. Nguồn có cost, trait, mana và mô tả kỹ năng nhưng thiếu base stats và nhiều hệ số. Điểm 1–5 bên dưới là hồ sơ định tính để so cấu trúc, không phải win rate, average placement, tier list hay BIS đã kiểm chứng.</div></header>
+<section id="framework"><h2>Khung evergreen trước khi gọi tên đội hình</h2><p class="subtitle">Trait chỉ có giá trị khi nó phục vụ một vai trò cụ thể. Đọc board theo sáu trụ và hai ngân sách giao tranh.</p><div class="framework-grid"><article class="framework-card"><b>01 · Carry</b><p>Nguồn sát thương chính có đúng stat, target và uptime không?</p></article><article class="framework-card"><b>02 · Frontline</b><p>Tuyến trước có sống đủ cho pattern bắn/cast hoàn tất không?</p></article><article class="framework-card"><b>03 · Nâng sao</b><p>Vàng đang đổi thành breakpoint thật hay chỉ giữ nhiều pair?</p></article><article class="framework-card"><b>04 · Item</b><p>Item bù stat/chức năng thiếu hay overstack thứ đã đủ?</p></article><article class="framework-card"><b>05 · Trait</b><p>Breakpoint có tăng damage, time hoặc utility hữu dụng không?</p></article><article class="framework-card"><b>06 · Positioning</b><p>Carry có góc bắn/cast và tank có nhận đúng nguồn damage không?</p></article></div><div class="diagnosis-grid" style="margin-top:12px"><article class="diagnosis-card damage"><h3>Thiếu sát thương</h3><p>Tank còn sống nhưng đối thủ không chết: bù AD/AP, mana/AS, crit, damage amp, Sunder/Shred hoặc targeting.</p></article><article class="diagnosis-card time"><h3>Thiếu thời gian</h3><p>Carry bị chạm trước khi vận hành: bù sao tank, item thủ, hồi phục/khiên, CC, chia target hoặc đổi vị trí.</p></article></div></section>
+<section id="choose"><h2>Chọn đội hình theo điều kiện hiện tại</h2><div class="prompt-box"><b>Thứ tự quyết định:</b> bản sao & người tranh → item holder → HP/economy → tempo lobby → cửa roll → cap cuối. Không ép Fast 8 nếu lên 8 còn quá ít vàng; không Fast 9 nếu board cấp 8 chưa ổn định.</div><div class="filter-panel"><div class="filters"><fieldset><legend>Nhịp economy</legend><div class="segmented" data-filter-group="economy"><button class="filter-button" data-value="all" aria-pressed="true">Tất cả</button><button class="filter-button" data-value="reroll" aria-pressed="false">Reroll</button><button class="filter-button" data-value="fast-8" aria-pressed="false">Fast 8</button><button class="filter-button" data-value="fast-9" aria-pressed="false">Fast 9</button></div></fieldset><fieldset><legend>Loại sát thương</legend><div class="segmented" data-filter-group="damage"><button class="filter-button" data-value="all" aria-pressed="true">Tất cả</button><button class="filter-button" data-value="ap" aria-pressed="false">AP</button><button class="filter-button" data-value="ad" aria-pressed="false">AD</button><button class="filter-button" data-value="mixed" aria-pressed="false">Hỗn hợp</button></div></fieldset><fieldset><legend>Lối vận hành</legend><div class="segmented" data-filter-group="tags" data-multi="true"><button class="filter-button" data-value="control" aria-pressed="false">Control</button><button class="filter-button" data-value="rapidfire" aria-pressed="false">Rapidfire</button><button class="filter-button" data-value="vertical" aria-pressed="false">Vertical</button><button class="filter-button" data-value="legendary-cap" aria-pressed="false">Legendary</button><button class="filter-button" data-value="scaling" aria-pressed="false">Scaling</button></div></fieldset><button class="reset-button" id="resetFilters">Xóa bộ lọc</button><span class="filter-status" id="filterStatus" aria-live="polite">7 đội hình</span></div></div></section>
+<section id="comps"><h2>7 đội hình thử nghiệm</h2><div class="comp-grid" id="compGrid">
+<article class="comp-card" id="comp-solar-rapidfire-reroll" data-id="solar-rapidfire-reroll" data-group="reroll" data-economy="reroll" data-damage="mixed" data-tags="rapidfire scaling vertical">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-reroll">Reroll</span><span class="meta-badge badge-mixed">Hỗn hợp</span><span class="meta-badge badge-confidence">Giả thuyết medium</span></span><h3>Solar Rapidfire Reroll</h3><p>Đổi vàng thành nhiều mốc 3 sao để Solar nâng cả sát thương lẫn độ bền, thay vì cố ép một carry đơn lẻ.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="solar-rapidfire-reroll"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>3 Solar</span><span>3 Rapidfire</span><span>2 Defender</span><span>2 Inferno</span></div>
+  <div class="board" aria-label="Đội hình Solar Rapidfire Reroll">
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Leona" aria-label="Xem kỹ năng Leona">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_leona.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main tank</span>
+      </button>
+      <span class="unit-name">Leona</span>
+      <span class="unit-star">3★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Kayle" aria-label="Xem kỹ năng Kayle">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_kayle.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Carry phép</span>
+      </button>
+      <span class="unit-name">Kayle</span>
+      <span class="unit-star">3★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Sejuani" aria-label="Xem kỹ năng Sejuani">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_sejuani.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Off-tank</span>
+      </button>
+      <span class="unit-name">Sejuani</span>
+      <span class="unit-star">2–3★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Xayah" aria-label="Xem kỹ năng Xayah">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_xayah.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Carry vật lý / Sunder</span>
+      </button>
+      <span class="unit-name">Xayah</span>
+      <span class="unit-star">3★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Varus" aria-label="Xem kỹ năng Varus">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_varus.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Rapidfire phụ</span>
+      </button>
+      <span class="unit-name">Varus</span>
+      <span class="unit-star">2–3★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Shen" aria-label="Xem kỹ năng Shen">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_shen.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Khiên / hỗ trợ AS</span>
+      </button>
+      <span class="unit-name">Shen</span>
+      <span class="unit-star">2–3★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Kayle, Xayah</span><span><b>Tank</b>Leona, Sejuani</span><span><b>Nhịp</b>Reroll cấp thấp</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Kayle tạo sát thương phép và Shred sau khi thăng hoa; Xayah gây sát thương vật lý liên tục và giảm Giáp.</p><ul><li><span>Tốc đánh</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Giảm Giáp</span><b class="coverage coverage-native">Có sẵn</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Thời gian tuyến trước · Giảm chống chịu · Hồi phục carry · Giảm Kháng Phép</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>Leona 3★ cùng Sejuani/Shen giữ nhịp đầu giao tranh để hai Rapidfire tích đủ uptime.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-upgrade-dependent">Phụ thuộc nâng sao</b></li><li><span>Uptime carry</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Hồi phục carry</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Solar thưởng trực tiếp cho số lượng tướng 3 sao, khớp đúng kế hoạch reroll.</li><li>Sát thương hỗn hợp và có cả giảm Giáp lẫn giảm Kháng Phép sau nâng cấp.</li><li>Nhiều quân rẻ dùng chung khung, dễ nhận biết tín hiệu vào bài từ Stage 2.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Cần nhiều bản sao và bench rộng; hụt một trong ba mục tiêu chính làm board giảm lực rõ.</li><li>Lõi 6 quân cần thêm CC/frontline chất lượng khi lobby bắt đầu lên cap 8–9.</li><li>Varus có chu kỳ tung chiêu dài; backline dễ bị phá nếu đứng quá tham.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Solar Rapidfire Reroll"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>2/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Đếm số bản sao và người tranh trước khi phá mốc lợi tức.</dd><dt>Cửa roll</dt><dd>Reroll ở cấp có tỉ lệ tốt cho gói 1–2 vàng; không mặc định roll cạn.</dd><dt>Dừng</dt><dd>Dừng khi carry/tank đủ ổn định hoặc việc roll sâu không còn cứu nhiều máu.</dd><dt>Đẩy cấp</dt><dd>Đẩy cấp sau khi Leona/Xayah/Kayle đạt mục tiêu chính.</dd><dt>Bỏ line</dt><dd>Bỏ line nếu bị tranh nặng, ít bản sao và HP không cho phép chờ.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>Carry đủ uptime</li><li>Tank đủ sống</li><li>Sunder/Shred nếu chưa hit nâng cấp</li><li>Damage amp chống tank</li></ol><h4>Positioning</h4><ul><li>Leona nhận nguồn sát thương chính; Sejuani lệch một ô để chia target.</li><li>Xayah và Kayle tách góc khi gặp AoE; Shen đứng giữa tuyến trước và backline.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Chỉ vào khi có nhiều Leona/Kayle/Xayah tự nhiên và ít người tranh.</li><li>Nếu Kayle không ra nhưng có Aphelios + Sun and Moon, chuyển sang AD Fast 8.</li><li>Cấp 7–8 thêm CC, frontline hoặc carry phụ theo item.</li><li>Sau khi hit lõi 3 sao, ngừng giữ mọi quân phụ và chuyển vàng thành cấp độ.</li></ul><h4>Lưu ý preview</h4><ul><li>Solar và Inferno còn thiếu một số hệ số trong nguồn preview.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-upgrade-dependent">Phụ thuộc nâng sao</span></header>
+          <p><b>Nguồn:</b> Leona 3★, Sejuani, Shen</p><p><b>Lỗ hổng:</b> Leona chưa 3★ khiến carry bị chạm quá sớm.</p>
+          <ul><li>Ưu tiên item tank hoàn chỉnh</li><li>Thêm CC hoặc off-tank ở cấp 7–8</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Inferno nếu hiệu ứng preview giữ nguyên</p><p><b>Lỗ hổng:</b> Nguồn theo trait chưa đủ chắc trong dữ liệu preview.</p>
+          <ul><li>Cho holder đa mục tiêu cầm anti-heal</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm chống chịu</strong><span class="coverage coverage-upgrade-dependent">Phụ thuộc nâng sao</span></header>
+          <p><b>Nguồn:</b> Xayah Sunder, Kayle Shred sau thăng hoa</p><p><b>Lỗ hổng:</b> Phụ thuộc đúng nâng sao và cast cycle.</p>
+          <ul><li>Bổ sung item giảm Giáp/MR nếu chưa hit</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime carry</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Rapidfire, Shen</p><p><b>Lỗ hổng:</b> Carry thiếu sustain và dễ bị áp sát.</p>
+          <ul><li>Thêm sustain</li><li>Đổi góc theo dive/hook</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Hồi phục carry</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có sustain chắc chắn cho Xayah/Kayle.</p>
+          <ul><li>Ưu tiên hút máu hoặc lớp phòng thủ phù hợp</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Tốc đánh</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Rapidfire, Shen</p><p><b>Lỗ hổng:</b> Không nên overstack AS khi đã đủ trait.</p>
+          <ul><li>Bù AD/AP hoặc damage amp thay vì thêm AS thứ ba</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm Giáp</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Xayah</p><p><b>Lỗ hổng:</b> Xayah chưa cast hoặc chưa đứng đúng góc.</p>
+          <ul><li>Thêm nguồn Sunder bằng item</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm Kháng Phép</strong><span class="coverage coverage-upgrade-dependent">Phụ thuộc nâng sao</span></header>
+          <p><b>Nguồn:</b> Kayle</p><p><b>Lỗ hổng:</b> Kayle chưa thăng hoa đúng mốc.</p>
+          <ul><li>Dùng item Shred trong giai đoạn chuyển tiếp</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-ahri-spellweaver-control" data-id="ahri-spellweaver-control" data-group="ap-fast-8" data-economy="fast-8" data-damage="ap" data-tags="control scaling">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-ap-fast-8">AP Fast 8</span><span class="meta-badge badge-ap">AP</span><span class="meta-badge badge-confidence">Giả thuyết medium</span></span><h3>Ahri Spellweaver Control</h3><p>Dùng chuỗi khống chế dài để mua thời gian cho Ahri tìm cụm mục tiêu và tung cú nổ phép quyết định.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="ahri-spellweaver-control"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>4 Spellweaver</span><span>4 Defender</span><span>3 Blossom</span></div>
+  <div class="board" aria-label="Đội hình Ahri Spellweaver Control">
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Ahri" aria-label="Xem kỹ năng Ahri">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ahri.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main AP carry</span>
+      </button>
+      <span class="unit-name">Ahri</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Karma" aria-label="Xem kỹ năng Karma">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_karma.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP holder</span>
+      </button>
+      <span class="unit-name">Karma</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Veigar" aria-label="Xem kỹ năng Veigar">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_veigar.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP phụ</span>
+      </button>
+      <span class="unit-name">Veigar</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Fiddlesticks" aria-label="Xem kỹ năng Fiddlesticks">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_fiddlesticks.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">MR Shred</span>
+      </button>
+      <span class="unit-name">Fiddlesticks</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Leona" aria-label="Xem kỹ năng Leona">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_leona.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">CC / tank</span>
+      </button>
+      <span class="unit-name">Leona</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Rammus" aria-label="Xem kỹ năng Rammus">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_rammus.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Taunt</span>
+      </button>
+      <span class="unit-name">Rammus</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Lillia" aria-label="Xem kỹ năng Lillia">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_lillia.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Sleep / off-tank</span>
+      </button>
+      <span class="unit-name">Lillia</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Sett" aria-label="Xem kỹ năng Sett">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_sett.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main tank</span>
+      </button>
+      <span class="unit-name">Sett</span>
+      <span class="unit-star">2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Ahri, Karma</span><span><b>Tank</b>Sett, Lillia</span><span><b>Nhịp</b>AP Fast 8</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Ahri dồn sát thương phép vào cụm đông; Spellweaver tăng giá trị khi board sống qua nhiều cast.</p><ul><li><span>AP</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Mana / tần suất cast</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li><li><span>MR Shred</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Khuếch đại sát thương</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Giảm hồi máu · Mana / tần suất cast</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>4 Defender cộng chuỗi stun–taunt–sleep kéo dài cửa sổ trước khi đối thủ chạm Ahri.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Uptime Ahri</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Sustain</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Burst diện rộng rõ ràng.</li><li>Có MR Shred trực tiếp từ Fiddlesticks.</li><li>Nhiều lớp CC và holder AP chuyển tiếp tự nhiên.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Ahri cần mana/cast timing và phụ thuộc cách đối thủ xếp cụm.</li><li>Thiếu anti-heal tự nhiên.</li><li>Nếu Ahri chưa 2★, board có thể nhiều utility nhưng thiếu lực kết liễu.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Ahri Spellweaver Control"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Chỉ Fast 8 khi holder AP và frontline giữ được máu.</dd><dt>Cửa roll</dt><dd>Rolldown cấp 8 tìm Ahri + tank 2★; mua mọi carry/tank dùng được item.</dd><dt>Dừng</dt><dd>Dừng khi Ahri hoặc carry thay thế 2★ và frontline đủ ổn định.</dd><dt>Đẩy cấp</dt><dd>Lên 9 khi board thắng vòng và còn vàng mua capstone.</dd><dt>Bỏ line</dt><dd>Ổn định cấp 7 nếu HP thấp hoặc lobby tempo quá cao.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>Mana cast đầu</li><li>AP/damage amp</li><li>Tank item hoàn chỉnh</li><li>Anti-heal</li></ol><h4>Positioning</h4><ul><li>Dùng tuyến trước ép đối thủ tụ cụm cho Ahri.</li><li>Fiddlesticks đủ gần để Shred nhưng không nhận focus đầu; đổi góc Ahri theo dive.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Karma hoặc Veigar giữ AP/mana trước rolldown.</li><li>Nếu Ahri không ra, giữ khung Spellweaver và chơi carry AP 2★ mạnh nhất.</li><li>Có thể đổi Defender yếu thành utility 5 vàng khi board đã đủ thời gian.</li></ul><h4>Lưu ý preview</h4><ul><li>Điểm không phản ánh hệ số sát thương còn thiếu.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> 4 Defender, Sett, Lillia</p><p><b>Lỗ hổng:</b> Tank 1★ khiến chuỗi CC không kịp nối.</p>
+          <ul><li>Dồn item tank vào quân nâng cấp nhất</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có nguồn chắc chắn trong lõi.</p>
+          <ul><li>Cho holder AoE cầm anti-heal</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm Kháng Phép</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Fiddlesticks</p><p><b>Lỗ hổng:</b> Fiddlesticks chết trước khi áp Shred.</p>
+          <ul><li>Đặt Fiddlesticks an toàn hơn</li><li>Dùng item Shred dự phòng</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime Ahri</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> CC chain</p><p><b>Lỗ hổng:</b> Dive/AoE phá cast đầu.</p>
+          <ul><li>Mana khởi đầu</li><li>Tách carry khỏi góc bị đe dọa</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Fiddlesticks tự hồi</p><p><b>Lỗ hổng:</b> Ahri không có hồi phục tự nhiên.</p>
+          <ul><li>Dùng defensive third item nếu lobby nhiều dive</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AP</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Spellweaver</p><p><b>Lỗ hổng:</b> AP cao nhưng cast chậm vẫn không vận hành.</p>
+          <ul><li>Cân bằng AP với mana</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Mana / tần suất cast</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Cast đầu đến muộn.</p>
+          <ul><li>Ưu tiên item mana trước món xa xỉ</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>MR Shred</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Fiddlesticks</p><p><b>Lỗ hổng:</b> Nguồn Shred ở tuyến gần.</p>
+          <ul><li>Giữ Fiddlesticks sống tới cast quan trọng</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Khuếch đại sát thương</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Blossom</p><p><b>Lỗ hổng:</b> Thiếu damage amp chống tank.</p>
+          <ul><li>Bổ sung damage amp hoặc carry phụ</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-morgana-coven-invoker" data-id="morgana-coven-invoker" data-group="ap-fast-8" data-economy="fast-8" data-damage="ap" data-tags="control scaling vertical">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-ap-fast-8">AP Fast 8</span><span class="meta-badge badge-ap">AP</span><span class="meta-badge badge-confidence">Giả thuyết medium</span></span><h3>Morgana Coven Invoker</h3><p>Kéo dài giao tranh bằng Vanguard để Morgana chồng lời nguyền, trong khi Invoker và hai nguồn Shred duy trì nhịp cast.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="morgana-coven-invoker"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>3 Coven</span><span>4 Invoker</span><span>4 Vanguard</span></div>
+  <div class="board" aria-label="Đội hình Morgana Coven Invoker">
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Morgana" aria-label="Xem kỹ năng Morgana">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_morgana.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main AP carry</span>
+      </button>
+      <span class="unit-name">Morgana</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Cassiopeia" aria-label="Xem kỹ năng Cassiopeia">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_cassiopeia.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP DoT phụ</span>
+      </button>
+      <span class="unit-name">Cassiopeia</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Elise" aria-label="Xem kỹ năng Elise">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_elise.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Vanguard</span>
+      </button>
+      <span class="unit-name">Elise</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Pebbles" aria-label="Xem kỹ năng Pebbles">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_pebbles.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">MR Shred</span>
+      </button>
+      <span class="unit-name">Pebbles</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Kog&#x27;Maw" aria-label="Xem kỹ năng Kog&#x27;Maw">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_kogmaw.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Caustic shred</span>
+      </button>
+      <span class="unit-name">Kog&#x27;Maw</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Ancient Sentinel" aria-label="Xem kỹ năng Ancient Sentinel">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ancientsentinel.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Mana / CC tank</span>
+      </button>
+      <span class="unit-name">Ancient Sentinel</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Diana" aria-label="Xem kỹ năng Diana">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_diana.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Vanguard</span>
+      </button>
+      <span class="unit-name">Diana</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Hecarim" aria-label="Xem kỹ năng Hecarim">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_hecarim.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Sustain / CC</span>
+      </button>
+      <span class="unit-name">Hecarim</span>
+      <span class="unit-star">2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Morgana, Cassiopeia</span><span><b>Tank</b>Ancient Sentinel, Hecarim</span><span><b>Nhịp</b>AP Fast 8</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Morgana chồng curse và vùng sát thương; Cassiopeia duy trì DoT trong giao tranh dài.</p><ul><li><span>AP</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Mana</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>MR Shred</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Khuếch đại</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Giảm hồi máu</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>4 Vanguard cộng hồi phục/CC từ Hecarim và Ancient Sentinel cho Invoker đủ nhiều vòng cast.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Uptime Morgana</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Sustain</span><b class="coverage coverage-native">Có sẵn</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Invoker giải quyết tần suất cast.</li><li>Pebbles + Caustic cho nguồn giảm chống chịu dư thừa.</li><li>Ancient Sentinel vừa CC vừa Mana Reave và hỗ trợ mana.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Morgana nhắm kẻ gần nên cần đứng mạo hiểm hơn Ahri.</li><li>Ít burst tức thì.</li><li>Coven reward và hệ số còn thiếu trong preview; anti-heal vẫn phụ thuộc item.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Morgana Coven Invoker"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Đánh giá HP và số Vanguard nâng cấp trước khi tham Fast 8.</dd><dt>Cửa roll</dt><dd>Rolldown cấp 8 cho Morgana và frontline 2★.</dd><dt>Dừng</dt><dd>Dừng khi damage engine + time engine cùng hoạt động.</dd><dt>Đẩy cấp</dt><dd>Lên 9 để thêm carry/utility 5 vàng khi đang thắng.</dd><dt>Bỏ line</dt><dd>Ổn định sớm nếu Morgana phải vào round với toàn tank 1★.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>Mana vừa đủ</li><li>AP/damage amp</li><li>Durability cho Morgana</li><li>Anti-heal</li><li>Tank item</li></ol><h4>Positioning</h4><ul><li>Morgana đứng sau tank chính để vẫn chạm mục tiêu gần.</li><li>Tách Cassiopeia khỏi vùng AoE; Ancient Sentinel đặt nơi knock-up/Mana Reave có giá trị.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Cassiopeia giữ đồ AP trước Morgana.</li><li>Nếu Morgana không ra, chơi Invoker mạnh nhất và dừng roll khi board đã giữ máu.</li><li>Dark Ritual/Coven Acolyte tăng độ đáng chơi nhưng không phải điều kiện bắt buộc.</li></ul><h4>Lưu ý preview</h4><ul><li>Coven reward chưa có đủ hệ số.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> 4 Vanguard, Hecarim, Ancient Sentinel</p><p><b>Lỗ hổng:</b> Frontline chưa nâng sao làm DoT không kịp tích.</p>
+          <ul><li>Ưu tiên tank 2★ trước món AP xa xỉ</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có nguồn chắc chắn.</p>
+          <ul><li>Đặt anti-heal trên Morgana/Cassiopeia</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm chống chịu</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Pebbles, Kog&#x27;Maw</p><p><b>Lỗ hổng:</b> Nguồn phụ bị hạ sớm.</p>
+          <ul><li>Bảo vệ Kog&#x27;Maw/Pebbles</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime Morgana</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Omnivamp kỹ năng, Vanguard</p><p><b>Lỗ hổng:</b> Phải đứng gần nhưng không phải tank.</p>
+          <ul><li>Defensive AP item</li><li>Đặt sau main tank</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Morgana, Hecarim</p><p><b>Lỗ hổng:</b> Hồi phục bị anti-heal đối thủ khắc chế.</p>
+          <ul><li>Bổ sung durability thay vì chỉ thêm hút máu</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AP</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Coven</p><p><b>Lỗ hổng:</b> Thiếu burst nếu chỉ dựa vào stack.</p>
+          <ul><li>Thêm AP/damage amp</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Mana</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> 4 Invoker, Ancient Sentinel</p><p><b>Lỗ hổng:</b> Overcap mana làm thiếu sát thương.</p>
+          <ul><li>Sau khi đủ nhịp cast, ưu tiên AP</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>MR Shred</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Pebbles, Kog&#x27;Maw</p><p><b>Lỗ hổng:</b> Hai nguồn nhưng đều cần uptime.</p>
+          <ul><li>Không bắt buộc ép item Shred nếu hai quân hoạt động</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Khuếch đại</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Morgana curse</p><p><b>Lỗ hổng:</b> Gặp tank hồi phục có thể timeout.</p>
+          <ul><li>Thêm damage amp/anti-heal</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-aphelios-solar-rapidfire" data-id="aphelios-solar-rapidfire" data-group="ad-fast-8" data-economy="fast-8" data-damage="ad" data-tags="rapidfire scaling">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-ad-fast-8">AD Fast 8</span><span class="meta-badge badge-ad">AD</span><span class="meta-badge badge-confidence">Giả thuyết medium</span></span><h3>Aphelios Solar Rapidfire</h3><p>Dùng Rapidfire tạo nhịp bắn liên tục cho Aphelios, còn Solar và dàn CC giữ đủ thời gian để chuỗi đòn chuyển thành sát thương thật.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="aphelios-solar-rapidfire"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>4 Rapidfire</span><span>3 Solar</span><span>2 Lunar</span><span>2 Defender</span></div>
+  <div class="board" aria-label="Đội hình Aphelios Solar Rapidfire">
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Aphelios" aria-label="Xem kỹ năng Aphelios">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_aphelios.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main AD carry</span>
+      </button>
+      <span class="unit-name">Aphelios</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Xayah" aria-label="Xem kỹ năng Xayah">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_xayah.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Sunder / carry phụ</span>
+      </button>
+      <span class="unit-name">Xayah</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Kayle" aria-label="Xem kỹ năng Kayle">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_kayle.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Mixed damage / Shred</span>
+      </button>
+      <span class="unit-name">Kayle</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Raptor" aria-label="Xem kỹ năng Raptor">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_raptor.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Rapidfire / Sunder</span>
+      </button>
+      <span class="unit-name">Raptor</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Diana" aria-label="Xem kỹ năng Diana">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_diana.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Off-tank</span>
+      </button>
+      <span class="unit-name">Diana</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Sejuani" aria-label="Xem kỹ năng Sejuani">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_sejuani.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Tank</span>
+      </button>
+      <span class="unit-name">Sejuani</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Leona" aria-label="Xem kỹ năng Leona">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_leona.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">CC tank</span>
+      </button>
+      <span class="unit-name">Leona</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Rammus" aria-label="Xem kỹ năng Rammus">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_rammus.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Taunt</span>
+      </button>
+      <span class="unit-name">Rammus</span>
+      <span class="unit-star">2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Aphelios, Xayah</span><span><b>Tank</b>Sejuani, Rammus</span><span><b>Nhịp</b>AD Fast 8</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Aphelios dùng chuỗi đòn vật lý và vụ nổ AoE; Xayah/Raptor mở Giáp cho cả tuyến sau.</p><ul><li><span>AD</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li><li><span>Tốc đánh</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Chí mạng</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Sunder</span><b class="coverage coverage-native">Có sẵn</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Giảm hồi máu · Sustain · AD</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>Solar cho lớp chống chịu ban đầu, trong khi Leona/Rammus tạo stun–taunt và bốn body chia target.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Uptime Aphelios</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Sustain</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>4 Rapidfire là engine AS rõ.</li><li>Có nhiều đường vào Sunder và sát thương phép phụ.</li><li>Chuỗi CC bảo vệ góc bắn.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Frontline chủ yếu là quân 1–3 vàng.</li><li>Solar ít giá trị hơn nếu không có 3 sao nhưng Fast 8 không nên ép reroll.</li><li>Thiếu anti-heal và sustain tự nhiên cho Aphelios.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Aphelios Solar Rapidfire"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Fast 8 khi holder AD + frontline giữ được HP.</dd><dt>Cửa roll</dt><dd>Rolldown cấp 8 tìm Aphelios và ít nhất hai frontline nâng cấp.</dd><dt>Dừng</dt><dd>Dừng khi carry 2★ hoặc holder mạnh cùng tank item đã ổn định.</dd><dt>Đẩy cấp</dt><dd>Lên 9 nếu đủ vàng thay tank thấp cost.</dd><dt>Bỏ line</dt><dd>Roll cấp 7 nếu HP không chịu được một vòng thua lớn.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>AD/damage amp</li><li>Sustain</li><li>Crit vừa đủ</li><li>Tank item</li><li>Anti-heal</li></ol><h4>Positioning</h4><ul><li>Aphelios đứng góc có đường bắn liên tục; tách Xayah để không cùng ăn AoE.</li><li>Rammus kéo target khỏi carry; đổi bên theo backline access.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Xayah/Kayle hoặc holder Rapidfire giữ đồ trước Aphelios.</li><li>Nếu không ra Aphelios nhưng Ezreal 2★, chuyển holder theo đồ vật lý.</li><li>Không chase Solar 3 sao trong line Fast 8.</li><li>Đổi frontline thấp cost thành tank chất lượng cao khi không phá engine chính.</li></ul><h4>Lưu ý preview</h4><ul><li>Không có ghi chú riêng ngoài caveat chung.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Solar, Leona, Rammus</p><p><b>Lỗ hổng:</b> Tank thấp cost không nâng cấp sẽ tan nhanh.</p>
+          <ul><li>Ưu tiên tank item</li><li>Flex tank 4–5 vàng khi có</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có nguồn chắc chắn.</p>
+          <ul><li>Cho holder chạm nhiều mục tiêu cầm anti-heal</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm Giáp</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Xayah, Raptor</p><p><b>Lỗ hổng:</b> Nguồn phụ có thể chưa cast.</p>
+          <ul><li>Dùng item Sunder dự phòng</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime Aphelios</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Rapidfire, CC chain</p><p><b>Lỗ hổng:</b> Thiếu sustain và dễ bị dive.</p>
+          <ul><li>Thêm sustain</li><li>Scout và đổi góc</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Carry chết giữa chuỗi bắn.</p>
+          <ul><li>Hút máu hoặc defensive third item</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AD</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Trait cho AS nhưng không thay thế AD.</p>
+          <ul><li>Ưu tiên AD/damage amp</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Tốc đánh</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> 4 Rapidfire</p><p><b>Lỗ hổng:</b> Overstack AS làm thiếu damage per hit.</p>
+          <ul><li>Dừng thêm AS khi engine đã đủ</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Chí mạng</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Item profile</p><p><b>Lỗ hổng:</b> Thiếu scaling kết liễu.</p>
+          <ul><li>Bổ sung crit hoặc damage amp</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sunder</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Xayah, Raptor</p><p><b>Lỗ hổng:</b> Hai nguồn đều là quân phụ.</p>
+          <ul><li>Giữ ít nhất một nguồn sống</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-ezreal-elderwood-executioner" data-id="ezreal-elderwood-executioner" data-group="ad-fast-8" data-economy="fast-8" data-damage="mixed" data-tags="scaling vertical">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-ad-fast-8">AD Fast 8</span><span class="meta-badge badge-mixed">Hỗn hợp</span><span class="meta-badge badge-confidence">Giả thuyết medium</span></span><h3>Ezreal Elderwood Executioner</h3><p>Ghép Elderwood làm nền board với Executioner làm engine kết liễu, để Ezreal có đủ nhiều cast mà không biến đội hình thành một nguồn sát thương đơn.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="ezreal-elderwood-executioner"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>5 Elderwood</span><span>4 Executioner</span></div>
+  <div class="board" aria-label="Đội hình Ezreal Elderwood Executioner">
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Ezreal" aria-label="Xem kỹ năng Ezreal">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ezreal.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main AD carry</span>
+      </button>
+      <span class="unit-name">Ezreal</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Soraka" aria-label="Xem kỹ năng Soraka">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_soraka.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP carry phụ</span>
+      </button>
+      <span class="unit-name">Soraka</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Azir" aria-label="Xem kỹ năng Azir">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_azir.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Summon / AP phụ</span>
+      </button>
+      <span class="unit-name">Azir</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Yunara" aria-label="Xem kỹ năng Yunara">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_yunara.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Executioner</span>
+      </button>
+      <span class="unit-name">Yunara</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Ornn" aria-label="Xem kỹ năng Ornn">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ornn.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Elderwood tank</span>
+      </button>
+      <span class="unit-name">Ornn</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Xayah" aria-label="Xem kỹ năng Xayah">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_xayah.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Sunder</span>
+      </button>
+      <span class="unit-name">Xayah</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Alistar" aria-label="Xem kỹ năng Alistar">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_alistar.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Heal / CC tank</span>
+      </button>
+      <span class="unit-name">Alistar</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Hecarim" aria-label="Xem kỹ năng Hecarim">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_hecarim.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Sustain / CC</span>
+      </button>
+      <span class="unit-name">Hecarim</span>
+      <span class="unit-star">2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Ezreal, Soraka</span><span><b>Tank</b>Alistar, Hecarim</span><span><b>Nhịp</b>AD Fast 8</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Ezreal tự reposition và tích AS qua cast; Executioner hỗ trợ crit/bleed, Soraka–Azir bổ sung sát thương phép.</p><ul><li><span>AD</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li><li><span>Tốc đánh</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Chí mạng</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Sunder</span><b class="coverage coverage-native">Có sẵn</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Giảm hồi máu · AD</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>Elderwood cộng lớp board value, Alistar/Hecarim đem heal và CC để Ezreal đạt chu kỳ cast lặp.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Uptime Ezreal</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Sustain</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Hai breakpoint 5 Elderwood + 4 Executioner vừa đủ 8 quân.</li><li>Sát thương hỗn hợp và có Sunder từ Xayah.</li><li>Ezreal có reposition giúp tự bảo toàn uptime.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Frontline vẫn dựa nhiều vào quân thấp cost.</li><li>Xayah là nguồn Sunder chính.</li><li>Ezreal cần nhiều cast; anti-heal thiếu và Ornn quest mang tính preview.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Ezreal Elderwood Executioner"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Chỉ đẩy 8 khi Elderwood transition đã giảm mất máu.</dd><dt>Cửa roll</dt><dd>Rolldown tìm Ezreal + frontline 2★ và giữ Soraka như carry phụ nếu item phù hợp.</dd><dt>Dừng</dt><dd>Dừng khi board có một damage engine ổn định và một tank cầm đủ item.</dd><dt>Đẩy cấp</dt><dd>Lên 9 thêm tank/utility nếu đang thắng.</dd><dt>Bỏ line</dt><dd>Ổn định cấp 7 khi board chỉ có synergy nhưng thiếu nâng cấp.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>AD/damage amp</li><li>Sustain</li><li>Tank item</li><li>Sunder dự phòng</li><li>Anti-heal</li></ol><h4>Positioning</h4><ul><li>Giữ đường reposition của Ezreal không đưa carry vào vùng nguy hiểm.</li><li>Xayah đứng góc khác; Alistar/Hecarim tách target tuyến trước.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Yunara/Xayah giữ đồ vật lý trước Ezreal.</li><li>Nếu Ezreal không ra, dùng Executioner 2★ mạnh nhất và giữ vàng theo breakpoint.</li><li>Ornn là slot giá trị nhưng không ép quest nếu làm board yếu.</li></ul><h4>Lưu ý preview</h4><ul><li>Giá trị quest của Ornn cần dữ liệu live.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Alistar, Hecarim, Elderwood</p><p><b>Lỗ hổng:</b> Tank thấp cost không đủ sao/item.</p>
+          <ul><li>Dồn item vào tank 2★</li><li>Thêm tank premium ở cấp 9</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có anti-heal chắc chắn.</p>
+          <ul><li>Cho Soraka/Azir holder anti-heal</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm chống chịu</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Xayah</p><p><b>Lỗ hổng:</b> Chỉ có Sunder ổn định, thiếu Shred phép.</p>
+          <ul><li>Bổ sung Shred nếu Soraka/Azir là carry phụ</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime Ezreal</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Self-reposition, Alistar CC</p><p><b>Lỗ hổng:</b> Dive vẫn có thể theo sau reposition.</p>
+          <ul><li>Sustain</li><li>Đổi góc theo đối thủ</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Alistar, Hecarim</p><p><b>Lỗ hổng:</b> Heal tuyến trước không bảo đảm cho Ezreal.</p>
+          <ul><li>Carry sustain item</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AD</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> AS tự tích nhưng thiếu damage mỗi hit.</p>
+          <ul><li>Ưu tiên AD/damage amp</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Tốc đánh</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Ezreal tự tích</p><p><b>Lỗ hổng:</b> Cast đầu chậm làm engine đến muộn.</p>
+          <ul><li>AS/mana vừa đủ, không overstack</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Chí mạng</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Executioner</p><p><b>Lỗ hổng:</b> Crit không thay thế AD.</p>
+          <ul><li>Cân bằng AD và crit</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sunder</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Xayah</p><p><b>Lỗ hổng:</b> Xayah chết hoặc chưa cast.</p>
+          <ul><li>Item Sunder dự phòng</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-legendary-ap-utility-cap" data-id="legendary-ap-utility-cap" data-group="fast-9" data-economy="fast-9" data-damage="ap" data-tags="legendary-cap control scaling">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-fast-9">Fast 9</span><span class="meta-badge badge-ap">AP</span><span class="meta-badge badge-confidence">Giả thuyết low</span></span><h3>Legendary AP / Utility Cap</h3><p>Giữ Spellweaver làm lõi sát thương rồi thay các quân synergy yếu bằng 5 vàng có CC, bảo kê và khuếch đại thực sự.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="legendary-ap-utility-cap"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>4 Spellweaver</span><span>3 Blossom</span><span>2 Defender</span><span>2 Brawler</span></div>
+  <div class="board" aria-label="Đội hình Legendary AP / Utility Cap">
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Ahri" aria-label="Xem kỹ năng Ahri">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ahri.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP carry</span>
+      </button>
+      <span class="unit-name">Ahri</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Karma" aria-label="Xem kỹ năng Karma">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_karma.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Spellweaver</span>
+      </button>
+      <span class="unit-name">Karma</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Fiddlesticks" aria-label="Xem kỹ năng Fiddlesticks">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_fiddlesticks.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">MR Shred</span>
+      </button>
+      <span class="unit-name">Fiddlesticks</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#F2A93B">
+      <button class="champ-trigger" type="button" data-champion="Alune" aria-label="Xem kỹ năng Alune">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_alune.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP carry 5 vàng</span>
+      </button>
+      <span class="unit-name">Alune</span>
+      <span class="unit-star">1–2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Lillia" aria-label="Xem kỹ năng Lillia">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_lillia.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">CC tank</span>
+      </button>
+      <span class="unit-name">Lillia</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Sett" aria-label="Xem kỹ năng Sett">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_sett.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main tank</span>
+      </button>
+      <span class="unit-name">Sett</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#F2A93B">
+      <button class="champ-trigger" type="button" data-champion="Gnar" aria-label="Xem kỹ năng Gnar">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_gnar.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">CC / dual shred</span>
+      </button>
+      <span class="unit-name">Gnar</span>
+      <span class="unit-star">1–2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#F2A93B">
+      <button class="champ-trigger" type="button" data-champion="Ivern" aria-label="Xem kỹ năng Ivern">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ivern.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Shield / amp</span>
+      </button>
+      <span class="unit-name">Ivern</span>
+      <span class="unit-star">1–2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#F2A93B">
+      <button class="champ-trigger" type="button" data-champion="Taric" aria-label="Xem kỹ năng Taric">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_taric.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Carry protection</span>
+      </button>
+      <span class="unit-name">Taric</span>
+      <span class="unit-star">1–2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>Ahri, Alune</span><span><b>Tank</b>Sett, Gnar, Taric</span><span><b>Nhịp</b>Fast 9</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Ahri và Alune chia hai nhịp sát thương phép; Spellweaver tăng giá trị khi combat được kéo dài.</p><ul><li><span>AP</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Mana</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li><li><span>MR Shred</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Khuếch đại</span><b class="coverage coverage-native">Có sẵn</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Giảm hồi máu · Mana</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>Gnar/Lillia khống chế diện rộng, Ivern/Taric bảo kê và Sett hấp thụ sát thương chính.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Uptime carry</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Sustain</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Utility phân tán qua nhiều quân premium.</li><li>Có hai nguồn MR Shred và nhiều CC/bảo kê.</li><li>Có thể nâng cap bằng chất lượng quân thay vì breakpoint trang trí.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Yêu cầu cấp 9 và nhiều quân đắt 2★.</li><li>Nhiều tướng tranh cùng item AP/mana.</li><li>Không phải board cứu nguy khi thấp máu; thiếu anti-heal mặc định.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Legendary AP / Utility Cap"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>2/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>2/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Chỉ mua XP khi board hiện tại đang thắng hoặc thua rất nhẹ.</dd><dt>Cửa roll</dt><dd>Lên 9 với đủ vàng còn lại để mua và nâng quân đắt.</dd><dt>Dừng</dt><dd>Dừng roll khi carry và time engine đủ giữ top; không chase mọi 5 vàng.</dd><dt>Đẩy cấp</dt><dd>Tiếp tục cap bằng 2★ premium nếu HP và vàng cho phép.</dd><dt>Bỏ line</dt><dd>Ở lại cấp 8 nếu board chưa ổn định hoặc lên 9 sẽ còn quá ít vàng.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>Ổn định board trước cấp 9</li><li>Một carry AP chính</li><li>Tank item</li><li>Mana có chủ đích</li><li>Anti-heal</li></ol><h4>Positioning</h4><ul><li>Taric ghép carry cần sống nhất; Ivern ở vùng an toàn nhưng buff đúng cụm.</li><li>Gnar/Lillia đặt theo cụm đối thủ; tách hai carry khỏi cùng vùng AoE.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Đi từ Ahri Spellweaver Fast 8 đã ổn định.</li><li>Không bán board 2★ để thay ngay bằng nhiều 5 vàng 1★.</li><li>Thiếu Alune dùng AP carry 2★ hiện có.</li><li>Thiếu Ivern/Taric giữ tank/utility đã nâng cấp.</li></ul><h4>Lưu ý preview</h4><ul><li>5 vàng và hệ số kỹ năng chưa đủ để xác nhận thứ tự ưu tiên live.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Sett, Gnar, Taric, Lillia</p><p><b>Lỗ hổng:</b> Nhiều 5 vàng 1★ không tự động tạo tank tốt.</p>
+          <ul><li>Ưu tiên nâng tank 2★ và item đúng lobby</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có nguồn chắc chắn.</p>
+          <ul><li>Đặt anti-heal trên caster AoE</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm Kháng Phép</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Fiddlesticks, Gnar</p><p><b>Lỗ hổng:</b> Nguồn ở tuyến nguy hiểm.</p>
+          <ul><li>Bảo đảm ít nhất một nguồn cast</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime carry</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Ivern, Taric, CC chain</p><p><b>Lỗ hổng:</b> Bảo kê sai mục tiêu hoặc xếp cùng AoE.</p>
+          <ul><li>Ghép Taric đúng carry</li><li>Tách Ahri/Alune</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Taric, Fiddlesticks</p><p><b>Lỗ hổng:</b> Backline vẫn có thể bị burst.</p>
+          <ul><li>Defensive item theo matchup</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AP</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Spellweaver, Ivern amp</p><p><b>Lỗ hổng:</b> Dàn đều item làm không ai đủ lực.</p>
+          <ul><li>Chọn một main carry theo nâng sao</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Mana</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Quá nhiều caster cần Tear.</p>
+          <ul><li>Phân quyền item rõ giữa Ahri và Alune</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>MR Shred</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Fiddlesticks, Gnar</p><p><b>Lỗ hổng:</b> Shred đến muộn.</p>
+          <ul><li>Đặt cast timing trước damage spike</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Khuếch đại</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Ivern, Blossom</p><p><b>Lỗ hổng:</b> Ivern 1★ có thể chưa đủ ổn định.</p>
+          <ul><li>Không hy sinh tank chỉ để greed amp</li></ul>
+        </article></div>
+  </details>
+</article>
+
+<article class="comp-card" id="comp-riftbeast-10-cap" data-id="riftbeast-10-cap" data-group="fast-9" data-economy="fast-9" data-damage="mixed" data-tags="vertical summon-stall legendary-cap">
+  <header class="comp-head">
+    <div><span class="eyebrow"><span class="meta-badge badge-fast-9">Fast 9</span><span class="meta-badge badge-mixed">Hỗn hợp</span><span class="meta-badge badge-confidence">Giả thuyết low</span></span><h3>Riftbeast 10 Cap</h3><p>Đạt mốc vertical cao nhất bằng Elder Dragon hai slot; sức mạnh đến từ đủ chức năng của cả đàn, không từ một carry duy nhất.</p></div>
+    <label class="compare-check"><input type="checkbox" data-compare="riftbeast-10-cap"><span>So sánh</span></label>
+  </header>
+  <div class="trait-line"><span>10 Riftbeast (diễn giải preview)</span></div>
+  <div class="board" aria-label="Đội hình Riftbeast 10 Cap">
+    <div class="board-unit" style="--cost-color:#F2A93B">
+      <button class="champ-trigger" type="button" data-champion="The Elder Dragon" aria-label="Xem kỹ năng The Elder Dragon">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_elderdragon.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Capstone / carry</span><span class="unit-slot">2 slot</span>
+      </button>
+      <span class="unit-name">The Elder Dragon</span>
+      <span class="unit-star">1–2★</span><span class="unit-note">Chiếm 2 slot; tự có Riftbeast và cho thêm +2.</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Ancient Sentinel" aria-label="Xem kỹ năng Ancient Sentinel">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_ancientsentinel.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Main tank / mana</span>
+      </button>
+      <span class="unit-name">Ancient Sentinel</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#C240B4">
+      <button class="champ-trigger" type="button" data-champion="Brambleback" aria-label="Xem kỹ năng Brambleback">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_brambleback.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AD carry</span>
+      </button>
+      <span class="unit-name">Brambleback</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Raptor" aria-label="Xem kỹ năng Raptor">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_raptor.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AD / summon</span>
+      </button>
+      <span class="unit-name">Raptor</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#3E8ED0">
+      <button class="champ-trigger" type="button" data-champion="Krug" aria-label="Xem kỹ năng Krug">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_krug.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Tank</span>
+      </button>
+      <span class="unit-name">Krug</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Scuttlecrab" aria-label="Xem kỹ năng Scuttlecrab">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_scuttlecrab.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">Shield / stall</span>
+      </button>
+      <span class="unit-name">Scuttlecrab</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#2F9E68">
+      <button class="champ-trigger" type="button" data-champion="Gromp" aria-label="Xem kỹ năng Gromp">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_gromp.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP / slow</span>
+      </button>
+      <span class="unit-name">Gromp</span>
+      <span class="unit-star">2★</span>
+    </div>
+    <div class="board-unit" style="--cost-color:#9AA4AF">
+      <button class="champ-trigger" type="button" data-champion="Pebbles" aria-label="Xem kỹ năng Pebbles">
+        <span class="hex-wrap"><img src="../web_assets/tactics_tools_set18/champions/tft18_pebbles.jpg" alt="" loading="lazy"></span>
+        <span class="unit-role">AP / MR Shred</span>
+      </button>
+      <span class="unit-name">Pebbles</span>
+      <span class="unit-star">2★</span>
+    </div></div>
+  <div class="core-strip"><span><b>Carry</b>The Elder Dragon, Brambleback, Raptor</span><span><b>Tank</b>Ancient Sentinel, Krug, Scuttlecrab</span><span><b>Nhịp</b>Fast 9</span></div>
+  
+    <div class="ledger" aria-label="Sổ bù đắp sát thương và thời gian">
+      <div class="ledger-side ledger-damage"><span class="ledger-kicker">Sát thương</span><p>Elder Dragon/Brambleback/Raptor dùng đồ vật lý; Pebbles/Gromp bổ sung phép và debuff.</p><ul><li><span>AD</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Tốc đánh</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Chí mạng</span><b class="coverage coverage-item-dependent">Phụ thuộc item</b></li><li><span>Sunder</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+      <div class="ledger-bridge"><span>Cần bù</span><strong>Chí mạng</strong></div>
+      <div class="ledger-side ledger-time"><span class="ledger-kicker">Thời gian</span><p>Nhiều Riftbeast tuyến trước, summon/stall, khiên và CC tạo thời gian cho các buff màu phát huy.</p><ul><li><span>Thời gian tuyến trước</span><b class="coverage coverage-native">Có sẵn</b></li><li><span>Uptime carry</span><b class="coverage coverage-partial">Một phần</b></li><li><span>Sustain</span><b class="coverage coverage-partial">Một phần</b></li></ul></div>
+    </div>
+  <div class="card-summary"><div><h4>Điểm mạnh</h4><ul><li>Mốc vertical cao nhất theo mô tả preview.</li><li>Bao phủ Sunder, Shred, Mana Reave, summon, shield/heal và hard CC.</li><li>Nhiều holder vật lý/phép/tank để tận dụng item rơi lệch.</li></ul></div><div><h4>Rủi ro</h4><ul><li>Cần đúng Elder Dragon và bảy quân tên cụ thể.</li><li>Hai slot của Elder Dragon gần như xóa khả năng thêm flex ngoài vertical.</li><li>Item routing phức tạp và phép tính 10 Riftbeast chưa được xác nhận live.</li></ul></div></div>
+  <div class="score-profile" aria-label="Hồ sơ định tính của Riftbeast 10 Cap"><div class="score-row" title="Khả năng giữ máu trước khi board hoàn thiện."><span>Ổn định</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>2/5</b></div><div class="score-row" title="Khả năng nâng cap damage khi có đủ nâng cấp."><span>Trần sát thương</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Thời gian board có thể mua cho damage engine."><span>Tuyến trước</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>4/5</b></div><div class="score-row" title="Mức độ bao phủ khống chế, shred và bảo kê."><span>CC &amp; utility</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i></span><b>5/5</b></div><div class="score-row" title="Khả năng dùng nhiều hướng component hợp lý."><span>Linh hoạt item</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>3/5</b></div><div class="score-row" title="Mức độ board còn vận hành khi thiếu một mảnh."><span>Chịu sai số</span><span class="score-dots"><i class="score-dot is-on" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i><i class="score-dot" aria-hidden="true"></i></span><b>1/5</b></div></div>
+  <details class="analysis-details"><summary>Xem phân tích vận hành</summary>
+    <div class="detail-grid">
+      <section><h4>Economy & rolldown</h4><dl class="economy-list"><dt>Quyết định đầu</dt><dd>Chỉ hướng tới 10 khi đã có nền Riftbeast và board đủ khỏe.</dd><dt>Cửa roll</dt><dd>Lên 9 rồi roll với lượng vàng còn đủ mua Elder Dragon và nâng frontline.</dd><dt>Dừng</dt><dd>Dừng ở mốc 7 nếu Elder Dragon chưa xuất hiện nhưng board đã ổn định.</dd><dt>Đẩy cấp</dt><dd>Hoàn tất 10 khi thấy Elder Dragon mà không phải bán toàn bộ board.</dd><dt>Bỏ line</dt><dd>Bỏ kế hoạch 10 nếu thấp HP, không có Elder Dragon hoặc lên 9 sẽ hết vàng.</dd></dl></section>
+      <section><h4>Ưu tiên stat / item</h4><ol><li>Tank Ancient Sentinel/Krug</li><li>Carry vật lý mạnh nhất</li><li>AP/mana cho Pebbles/Gromp</li><li>Anti-heal</li><li>Sunder dự phòng</li></ol><h4>Positioning</h4><ul><li>Elder Dragon và Ancient Sentinel chia nguồn focus; không xếp toàn bộ đàn vào một vùng AoE.</li><li>Pebbles/Gromp giữ khoảng cách; Raptor đứng nơi summon không kéo target vào carry.</li></ul></section>
+      <section><h4>Chuyển bài & fallback</h4><ul><li>Chơi mốc 7 Riftbeast ổn định trước khi thấy Elder Dragon.</li><li>Nếu không có Elder Dragon, không hy sinh board mạnh chỉ để giữ đủ bảy quân chờ.</li><li>Fallback là 7 Riftbeast + utility/tank chất lượng ở cấp 8–9.</li></ul><h4>Lưu ý preview</h4><ul><li>Diễn giải: 7 Riftbeast thường + Elder Dragon tự tính 1 và cho thêm +2 = 10.</li><li>Tám quân hiển thị chiếm chín slot vì Elder Dragon chiếm hai slot.</li></ul></section>
+    </div>
+    <div class="requirement-grid">
+        <article class="requirement-card">
+          <header><strong>Thời gian tuyến trước</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Elder Dragon, Ancient Sentinel, Krug, Scuttlecrab</p><p><b>Lỗ hổng:</b> Vertical đủ tên nhưng toàn 1★ vẫn yếu.</p>
+          <ul><li>Nâng Ancient Sentinel/tank chính</li><li>Dồn item tank</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm hồi máu</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Riftbeast buff tùy màu</p><p><b>Lỗ hổng:</b> Không thể giả định luôn có đúng buff.</p>
+          <ul><li>Chuẩn bị anti-heal bằng item</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Giảm chống chịu</strong><span class="coverage coverage-native">Có sẵn</span></header>
+          <p><b>Nguồn:</b> Pebbles, Raptor, Ancient Sentinel</p><p><b>Lỗ hổng:</b> Tùy buff và cast.</p>
+          <ul><li>Giữ nguồn item giảm chống chịu nếu cần</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Uptime carry</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Scuttlecrab, Summon/stall</p><p><b>Lỗ hổng:</b> Không có slot flex bảo kê riêng.</p>
+          <ul><li>Chọn buff/positioning bảo vệ holder chính</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sustain</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Scuttlecrab, Riftbeast buffs</p><p><b>Lỗ hổng:</b> Sustain phân tán, không chắc cho carry.</p>
+          <ul><li>Carry sustain item</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>AD</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Brambleback steroid</p><p><b>Lỗ hổng:</b> Nhiều carry vật lý tranh Sword/Bow.</p>
+          <ul><li>Chọn holder theo nâng sao</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Tốc đánh</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Raptor/Riftbeast buff</p><p><b>Lỗ hổng:</b> Không đồng đều giữa các round/buff.</p>
+          <ul><li>Không chia item AS quá mỏng</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Chí mạng</strong><span class="coverage coverage-item-dependent">Phụ thuộc item</span></header>
+          <p><b>Nguồn:</b> Chưa có nguồn nội tại</p><p><b>Lỗ hổng:</b> Không có engine crit chắc chắn.</p>
+          <ul><li>Chỉ thêm crit cho carry đã chọn</li></ul>
+        </article>
+        <article class="requirement-card">
+          <header><strong>Sunder</strong><span class="coverage coverage-partial">Một phần</span></header>
+          <p><b>Nguồn:</b> Raptor buff</p><p><b>Lỗ hổng:</b> Phụ thuộc màu buff.</p>
+          <ul><li>Item Sunder dự phòng</li></ul>
+        </article></div>
+  </details>
+</article></div><div class="empty-state" id="emptyState" hidden>Không có đội hình khớp bộ lọc. Hãy xóa một điều kiện để xem lại các line.</div></section>
+<section id="compare"><h2>So sánh theo chức năng, không theo tier</h2><p class="subtitle">Chọn tối đa ba đội hình ở card. Khi chưa chọn, bảng hiển thị cả bảy để làm table view accessible.</p><div class="compare-wrap"><table class="compare-table"><caption id="compareCaption">So sánh 7 đội hình</caption><thead id="compareHead"></thead><tbody id="compareBody"></tbody></table></div></section>
+<section><h2>Quy tắc chốt line</h2><div class="guide-grid"><article><b>Reroll</b><p>Chơi khi có nhiều bản sao, ít tranh, item hợp và mốc 3 sao thực sự đổi sức mạnh.</p></article><article><b>AP Fast 8</b><p>Cần holder AP/mana, frontline chuyển tiếp và nhiều carry/tank có thể dùng chung item.</p></article><article><b>AD Fast 8</b><p>Cần damage per hit, uptime, Sunder và tank đủ lâu; AS không tự thay thế AD.</p></article><article><b>Fast 9</b><p>Chỉ từ board mạnh, HP cao và còn vàng mua/nâng quân sau khi lên cấp.</p></article></div></section>
+<section id="methodology"><h2>Dữ liệu & cách đọc điểm</h2><div class="methodology"><div><b>Điểm hồ sơ định tính 1–5</b><p>1 = thấp, 3 = trung bình, 5 = rất cao trong phạm vi bảy cấu trúc này. Không cộng thành điểm tổng vì các chiều không thay thế nhau.</p><p>Điểm cao về damage không cứu board thiếu frontline; utility cao không cứu carry chưa đủ item.</p></div><div><b>Nguồn và caveat</b><p>Dữ liệu tướng/tộc hệ lấy từ `champ_dump.json` và `trait_dump.json`; visual dùng asset local hiện có. Phân tích áp dụng khung trong `TFT_Evergreen_Rank_Manual.md`.</p><p>Riftbeast 10 là diễn giải preview: 7 quân thường + Elder Dragon tự tính 1 và cho thêm +2; tám quân chiếm chín slot. Cần xác nhận khi dữ liệu live phát hành.</p></div></div></section>
+<footer class="footer">Báo cáo giả thuyết Set 18 · Không dùng như tier list · Hãy cập nhật lại role, hệ số và breakpoint khi dữ liệu chính thức thay đổi.</footer>
+</main>
+<div class="compare-tray" id="compareTray" aria-live="polite"><div class="tray-items" id="trayItems"></div><button class="tray-action" id="compareNow">So sánh ngay</button><button class="tray-action secondary" id="clearCompare">Xóa</button></div>
+<aside class="champ-tooltip" id="champTooltip" role="tooltip" aria-hidden="true"><button class="tt-close" type="button" aria-label="Đóng">×</button><div id="tooltipContent"></div></aside>
+<script>
+const COMPS=[{"id": "solar-rapidfire-reroll", "name": "Solar Rapidfire Reroll", "group": "Reroll", "economy": "Reroll cấp thấp", "damage": "Hỗn hợp", "carry": "Kayle, Xayah", "tank": "Leona, Sejuani", "upgrade": "Dừng khi carry/tank đủ ổn định hoặc việc roll sâu không còn cứu nhiều máu.", "shred": "Phụ thuộc nâng sao", "anti_heal": "Một phần", "sustain": "Phụ thuộc item", "decision": "Đếm số bản sao và người tranh trước khi phá mốc lợi tức.", "stop": "Dừng khi carry/tank đủ ổn định hoặc việc roll sâu không còn cứu nhiều máu.", "damage_diagnosis": "Kayle tạo sát thương phép và Shred sau khi thăng hoa; Xayah gây sát thương vật lý liên tục và giảm Giáp.", "frontline_diagnosis": "Leona 3★ cùng Sejuani/Shen giữ nhịp đầu giao tranh để hai Rapidfire tích đủ uptime.", "scores": {"stability": 4, "damage_ceiling": 3, "frontline": 3, "utility": 3, "item_flexibility": 3, "forgiveness": 2}}, {"id": "ahri-spellweaver-control", "name": "Ahri Spellweaver Control", "group": "AP Fast 8", "economy": "AP Fast 8", "damage": "AP", "carry": "Ahri, Karma", "tank": "Sett, Lillia", "upgrade": "Dừng khi Ahri hoặc carry thay thế 2★ và frontline đủ ổn định.", "shred": "Có sẵn", "anti_heal": "Phụ thuộc item", "sustain": "Một phần", "decision": "Chỉ Fast 8 khi holder AP và frontline giữ được máu.", "stop": "Dừng khi Ahri hoặc carry thay thế 2★ và frontline đủ ổn định.", "damage_diagnosis": "Ahri dồn sát thương phép vào cụm đông; Spellweaver tăng giá trị khi board sống qua nhiều cast.", "frontline_diagnosis": "4 Defender cộng chuỗi stun–taunt–sleep kéo dài cửa sổ trước khi đối thủ chạm Ahri.", "scores": {"stability": 3, "damage_ceiling": 4, "frontline": 4, "utility": 5, "item_flexibility": 4, "forgiveness": 3}}, {"id": "morgana-coven-invoker", "name": "Morgana Coven Invoker", "group": "AP Fast 8", "economy": "AP Fast 8", "damage": "AP", "carry": "Morgana, Cassiopeia", "tank": "Ancient Sentinel, Hecarim", "upgrade": "Dừng khi damage engine + time engine cùng hoạt động.", "shred": "Có sẵn", "anti_heal": "Phụ thuộc item", "sustain": "Có sẵn", "decision": "Đánh giá HP và số Vanguard nâng cấp trước khi tham Fast 8.", "stop": "Dừng khi damage engine + time engine cùng hoạt động.", "damage_diagnosis": "Morgana chồng curse và vùng sát thương; Cassiopeia duy trì DoT trong giao tranh dài.", "frontline_diagnosis": "4 Vanguard cộng hồi phục/CC từ Hecarim và Ancient Sentinel cho Invoker đủ nhiều vòng cast.", "scores": {"stability": 3, "damage_ceiling": 4, "frontline": 4, "utility": 5, "item_flexibility": 4, "forgiveness": 3}}, {"id": "aphelios-solar-rapidfire", "name": "Aphelios Solar Rapidfire", "group": "AD Fast 8", "economy": "AD Fast 8", "damage": "AD", "carry": "Aphelios, Xayah", "tank": "Sejuani, Rammus", "upgrade": "Dừng khi carry 2★ hoặc holder mạnh cùng tank item đã ổn định.", "shred": "Có sẵn", "anti_heal": "Phụ thuộc item", "sustain": "Phụ thuộc item", "decision": "Fast 8 khi holder AD + frontline giữ được HP.", "stop": "Dừng khi carry 2★ hoặc holder mạnh cùng tank item đã ổn định.", "damage_diagnosis": "Aphelios dùng chuỗi đòn vật lý và vụ nổ AoE; Xayah/Raptor mở Giáp cho cả tuyến sau.", "frontline_diagnosis": "Solar cho lớp chống chịu ban đầu, trong khi Leona/Rammus tạo stun–taunt và bốn body chia target.", "scores": {"stability": 3, "damage_ceiling": 4, "frontline": 3, "utility": 3, "item_flexibility": 4, "forgiveness": 3}}, {"id": "ezreal-elderwood-executioner", "name": "Ezreal Elderwood Executioner", "group": "AD Fast 8", "economy": "AD Fast 8", "damage": "Hỗn hợp", "carry": "Ezreal, Soraka", "tank": "Alistar, Hecarim", "upgrade": "Dừng khi board có một damage engine ổn định và một tank cầm đủ item.", "shred": "Một phần", "anti_heal": "Phụ thuộc item", "sustain": "Một phần", "decision": "Chỉ đẩy 8 khi Elderwood transition đã giảm mất máu.", "stop": "Dừng khi board có một damage engine ổn định và một tank cầm đủ item.", "damage_diagnosis": "Ezreal tự reposition và tích AS qua cast; Executioner hỗ trợ crit/bleed, Soraka–Azir bổ sung sát thương phép.", "frontline_diagnosis": "Elderwood cộng lớp board value, Alistar/Hecarim đem heal và CC để Ezreal đạt chu kỳ cast lặp.", "scores": {"stability": 4, "damage_ceiling": 4, "frontline": 3, "utility": 4, "item_flexibility": 5, "forgiveness": 4}}, {"id": "legendary-ap-utility-cap", "name": "Legendary AP / Utility Cap", "group": "Fast 9", "economy": "Fast 9", "damage": "AP", "carry": "Ahri, Alune", "tank": "Sett, Gnar, Taric", "upgrade": "Dừng roll khi carry và time engine đủ giữ top; không chase mọi 5 vàng.", "shred": "Có sẵn", "anti_heal": "Phụ thuộc item", "sustain": "Một phần", "decision": "Chỉ mua XP khi board hiện tại đang thắng hoặc thua rất nhẹ.", "stop": "Dừng roll khi carry và time engine đủ giữ top; không chase mọi 5 vàng.", "damage_diagnosis": "Ahri và Alune chia hai nhịp sát thương phép; Spellweaver tăng giá trị khi combat được kéo dài.", "frontline_diagnosis": "Gnar/Lillia khống chế diện rộng, Ivern/Taric bảo kê và Sett hấp thụ sát thương chính.", "scores": {"stability": 2, "damage_ceiling": 5, "frontline": 5, "utility": 5, "item_flexibility": 3, "forgiveness": 2}}, {"id": "riftbeast-10-cap", "name": "Riftbeast 10 Cap", "group": "Fast 9", "economy": "Fast 9", "damage": "Hỗn hợp", "carry": "The Elder Dragon, Brambleback, Raptor", "tank": "Ancient Sentinel, Krug, Scuttlecrab", "upgrade": "Dừng ở mốc 7 nếu Elder Dragon chưa xuất hiện nhưng board đã ổn định.", "shred": "Có sẵn", "anti_heal": "Một phần", "sustain": "Một phần", "decision": "Chỉ hướng tới 10 khi đã có nền Riftbeast và board đủ khỏe.", "stop": "Dừng ở mốc 7 nếu Elder Dragon chưa xuất hiện nhưng board đã ổn định.", "damage_diagnosis": "Elder Dragon/Brambleback/Raptor dùng đồ vật lý; Pebbles/Gromp bổ sung phép và debuff.", "frontline_diagnosis": "Nhiều Riftbeast tuyến trước, summon/stall, khiên và CC tạo thời gian cho các buff màu phát huy.", "scores": {"stability": 2, "damage_ceiling": 5, "frontline": 4, "utility": 5, "item_flexibility": 3, "forgiveness": 1}}];
+const CHAMPIONS={"Ahri": {"name": "Ahri", "cost": "4", "traits": "Blossom, Spellweaver", "ability_name": "Spirit Bomb", "mana": "20 / 100", "ability": "Launch a spirit bomb at the target within hexes that has the most surrounding enemies. It deals magic damage to enemies in a hex radius, reduced by per hex away from the epicenter.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_ahri.jpg", "tags": []}, "Alistar": {"name": "Alistar", "cost": "2", "traits": "Elderwood, Brawler", "ability_name": "Triumphant Roar", "mana": "30 / 90", "ability": "Roar, restoring Health, cleansing disables, and healing the two lowest percent Health allies for. Then slam the current target, dealing magic damage and Stunning them for seconds.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_alistar.jpg", "tags": ["Khống chế", "Khiên/Hồi máu"]}, "Alune": {"name": "Alune", "cost": "5", "traits": "Attuned, Lunar, Spellweaver", "ability_name": "Moonfall", "mana": "0 / 35", "ability": "Rain moonshards split among the nearest enemies, dealing magic damage each. If the moon is full, instead crash it onto the board, dealing magic damage split among all enemies.", "range": "Tầm xa", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_alune.jpg", "tags": []}, "Ancient Sentinel": {"name": "Ancient Sentinel", "cost": "4", "traits": "Riftbeast, Vanguard, Invoker", "ability_name": "Azure Shockwave", "mana": "50 / 140", "ability": "Gain Shield for seconds. Slam the ground, sending a fissure in the direction of the most enemies. Enemies hit are briefly knocked up, take magic damage, and are Mana Reaved for. Blue Buff: Each time Sentinel casts, allies gain Mana Regen. Mana Reave: Increase the Mana cost of the next Ability cast.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_ancientsentinel.jpg", "tags": ["Khống chế", "Xuyên/giảm PT", "Khiên/Hồi máu"]}, "Aphelios": {"name": "Aphelios", "cost": "4", "traits": "Lunar, Rapidfire", "ability_name": "Moonlight's Onslaught", "mana": "0 / 60", "ability": "Equip Severum and swipe the target times over seconds, each dealing + max Health physical damage. After the onslaught finishes, fire a blast that deals physical damage split among all enemies in a 2 Hex radius.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_aphelios.jpg", "tags": ["Khiên/Hồi máu"]}, "Azir": {"name": "Azir", "cost": "3", "traits": "Eldritch, Executioner, Summoner", "ability_name": "Arise!", "mana": "0 / 35", "ability": "Gain Attack Speed and summon soldiers for the next attacks. These attacks are replaced by commands which direct each soldier to deal magic damage per attack.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_azir.jpg", "tags": ["Triệu hồi"]}, "Brambleback": {"name": "Brambleback", "cost": "4", "traits": "Riftbeast, Ravager", "ability_name": "Crimson Fury", "mana": "0 / 40", "ability": "Passive: When the target dies, leap at the next target, dealing physical damage. Active: Gain Attack Damage for seconds. During this time ignore Armor. Red Buff: Attacks% Burn enemies and heal Brambleback for max Health.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_brambleback.jpg", "tags": ["Thiêu đốt", "Khiên/Hồi máu"]}, "Cassiopeia": {"name": "Cassiopeia", "cost": "3", "traits": "Coven, Spellweaver", "ability_name": "Noxious Blast", "mana": "0 / 30", "ability": "Poison the target and the nearest non-poisoned enemy, dealing magic damage over seconds. Poisons stack.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_cassiopeia.jpg", "tags": []}, "Diana": {"name": "Diana", "cost": "3", "traits": "Lunar, Ravager, Vanguard", "ability_name": "Pale Barrier", "mana": "0 / 40", "ability": "Gain shield for seconds and send out a moonlight orb to the closest enemies, dealing magic damage.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_diana.jpg", "tags": ["Khiên/Hồi máu"]}, "Elise": {"name": "Elise", "cost": "2", "traits": "Coven, Vanguard", "ability_name": "Spider Queen", "mana": "20 / 70", "ability": "Transform into a spider and gain max Health. Attacks while in Spider Form deal bonus magic damage and heal for. Subsequent casts grant decaying Attack Speed for seconds.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_elise.jpg", "tags": ["Khiên/Hồi máu"]}, "Ezreal": {"name": "Ezreal", "cost": "4", "traits": "Elderwood, Executioner", "ability_name": "Nature's Wrath", "mana": "0 / 30", "ability": "Blink away from the current target, deal physical damage to them, and gain Attack Speed. Every 5th cast consumes the Attack Speed granted from Nature's Wrath and fires a blast through the target that deals physical damage, reduced by for each enemy it passes through (minimum ).", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_ezreal.jpg", "tags": []}, "Fiddlesticks": {"name": "Fiddlesticks", "cost": "3", "traits": "Flora Fatalis, Defender, Spellweaver", "ability_name": "Harvest", "mana": "30 / 90", "ability": "Reduce the Magic Resist of the nearest enemies by. Then drain life from them over seconds, healing for Health and dealing magic damage to each over the duration.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_fiddlesticks.jpg", "tags": ["Xuyên/giảm PT", "Khiên/Hồi máu"]}, "Gnar": {"name": "Gnar", "cost": "5", "traits": "Elderwood, Sprykin, Brawler", "ability_name": "Rage Gene", "mana": "0 / 70", "ability": "Passive: Gain Rage per second and Rage per attack. Active: Transform into Mega Gnar and leap into the largest group of enemies within hexes. Then, deal physical damage to enemies within hexes, reduce their Armor and Magic Resist by, and Stun them for second. Mega Gnar gains Health, and replaces his Ability with Grab n' Throw. Grab n' Throw: Throw the target at the farthest enemy, dealing physical damage to them and physical damage to enemies they pass through. If there's only 1 enemy left, throw them off the battlefield instead.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_gnar.jpg", "tags": ["Khống chế", "Xuyên/giảm PT", "Khiên/Hồi máu"]}, "Gromp": {"name": "Gromp", "cost": "2", "traits": "Riftbeast, Adaptor", "ability_name": "Belchy Bubble", "mana": "0 / 45", "ability": "Adaptor: Belch a noxious bubble at the current target that explodes on the first enemy hit, dealing magic damage. Enemies within a 1 hex radius of the explosion take magic damage over seconds. Adaptor: Heavily slows the target. Purple Buff: Every seconds, Gromp gains Ability Power.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_gromp.jpg", "tags": ["Làm chậm"]}, "Hecarim": {"name": "Hecarim", "cost": "3", "traits": "Elderwood, Vanguard", "ability_name": "Spirit of Dread", "mana": "30 / 110", "ability": "Gain Armor and Magic Resist for 3 seconds and restore Health over the duration. Launch spectral riders at the nearest enemies, dealing magic damage and Stunning them for seconds.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_hecarim.jpg", "tags": ["Khống chế", "Khiên/Hồi máu"]}, "Ivern": {"name": "Ivern", "cost": "5", "traits": "Greenfather", "ability_name": "Triggerseed", "mana": "0 / 50", "ability": "Passive: Shields from this ability can critically strike with Precision. Active: Grant allies Shield and Damage Amp for seconds. Then deal magic damage to enemies adjacent to them. After casting times, also grant stacking Attack Speed to targets.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_ivern.jpg", "tags": ["Khiên/Hồi máu"]}, "Karma": {"name": "Karma", "cost": "1", "traits": "Blossom, Spellweaver", "ability_name": "Karmic Bond", "mana": "0 / 40", "ability": "Tether the current target, dealing magic damage over seconds. Then release a burst of power around them, dealing magic damage to all enemies in a Hex radius and% Slowing them for seconds. Slow: Reduce Attack Speed", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_karma.jpg", "tags": ["Làm chậm"]}, "Kayle": {"name": "Kayle", "cost": "2", "traits": "Solar, Rapidfire", "ability_name": "Solar Judgement", "mana": "0 / 0", "ability": "Passive: Kayle ascends based on her star level, granting her stacking bonuses. 1st Ascension: Attacks deal bonus magic damage. 2nd Ascension: Attacks% Shred enemies hit for seconds. 3rd Ascension: Attacks fire waves, dealing magic damage to all other units hit. 4th Ascension: Gain infinite range. Every rd wave is much larger. Shred: Reduce Magic Resist", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_kayle.jpg", "tags": ["Xuyên/giảm PT"]}, "Kog'Maw": {"name": "Kog'Maw", "cost": "3", "traits": "Caustic, Invoker, Adaptor", "ability_name": "Raining Artillery", "mana": "15 / 60", "ability": "Adaptor: Launch acid at the two nearest enemies, dealing physical damage. Enemies below max Health take physical damage instead. Adaptor: Damages enemies over time.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_kogmaw.jpg", "tags": ["Khiên/Hồi máu"]}, "Krug": {"name": "Krug", "cost": "3", "traits": "Riftbeast, Brawler", "ability_name": "Rock and Roll", "mana": "80 / 135", "ability": "Passive: On death, split into two Kruglettes with Health. Active: Gain max Health, then roll into the target, dealing damage. Slate Buff: On death, Krug and Kruglettes Shield allies for max Health.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_krug.jpg", "tags": ["Khiên/Hồi máu"]}, "Leona": {"name": "Leona", "cost": "1", "traits": "Solar, Defender", "ability_name": "Shield Bash", "mana": "40 / 100", "ability": "Passive: Start combat with bonus Armor and Magic Resist that decays over seconds. Active: Bash the current target, dealing magic damage and Stunning them for seconds.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_leona.jpg", "tags": ["Khống chế"]}, "Lillia": {"name": "Lillia", "cost": "4", "traits": "Fae, Defender", "ability_name": "Lilting Lullaby", "mana": "50 / 150", "ability": "Restore Health and send butterflies at nearby enemies. Enemies hit take magic damage and Sleep for seconds. If they take damage, they wake up and take an additional max Health magic damage.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_lillia.jpg", "tags": ["Khống chế", "Khiên/Hồi máu"]}, "Morgana": {"name": "Morgana", "cost": "4", "traits": "Coven, Invoker", "ability_name": "Withering Curse", "mana": "0 / 60", "ability": "Passive: Gain Omnivamp. Active: Fire a dark blast at nearby enemies, dealing magic damage to them and cursing them for seconds. Then, spawn a Hex withering zone for the same duration that deals magic damage per second. Cursed enemies take more damage per curse.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_morgana.jpg", "tags": []}, "Ornn": {"name": "Ornn", "cost": "1", "traits": "Elderwood, Defender", "ability_name": "Bellows Breath", "mana": "40 / 100", "ability": "Active: Gain Shield for seconds and deal magic damage to enemies in a cone. Quest: Each player combat, Ornn stores damage blocked as Forge Power, doubled at 3-star. Gain an Artifact Anvil the first time Forge Power reaches. (Forge Power: / )", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_ornn.jpg", "tags": ["Khiên/Hồi máu"]}, "Pebbles": {"name": "Pebbles", "cost": "1", "traits": "Riftbeast, Invoker", "ability_name": "Azure Laser", "mana": "0 / 55", "ability": "Begin consuming max Mana per second and channeling a laser on target. Each second while casting, deal magic damage to them and reduce their Magic Resist by. Teal Buff: Gain Mana Regen for every seconds channeled.", "range": "Tầm xa", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_pebbles.jpg", "tags": ["Xuyên/giảm PT"]}, "Rammus": {"name": "Rammus", "cost": "3", "traits": "Sprykin, Defender", "ability_name": "Defensive Ball Curl", "mana": "30 / 80", "ability": "Taunt, forcing enemies to attack this champion. For seconds, gain Shield and Armor and Magic Resist. When the Shield breaks, deal physical damage to enemies in Hexes.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_rammus.jpg", "tags": ["Khống chế", "Khiên/Hồi máu"]}, "Raptor": {"name": "Raptor", "cost": "3", "traits": "Riftbeast, Summoner, Rapidfire", "ability_name": "Flock Friends", "mana": "40 / 80", "ability": "Summon 4 untargetable Tinybeaks nearby for seconds. Whenever Raptor attacks, Tinybeaks attack the same enemy, dealing physical damage. Orange Buff: Dealing physical damage reduces enemy Armor by.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_raptor.jpg", "tags": ["Xuyên/giảm PT", "Triệu hồi"]}, "Scuttlecrab": {"name": "Scuttlecrab", "cost": "2", "traits": "Riftbeast, Juggernaut", "ability_name": "Can You Dig It?", "mana": "40 / 100", "ability": "Passive: Attacks are replaced by a dance that deals physical damage to all adjacent enemies. Active: Burrow underground, gaining Durability for seconds and healing over the duration. Green Buff: When allies fall below Health, they restore max Health.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_scuttlecrab.jpg", "tags": ["Khiên/Hồi máu"]}, "Sejuani": {"name": "Sejuani", "cost": "2", "traits": "Solar, Juggernaut", "ability_name": "Sun's Wrath", "mana": "40 / 90", "ability": "Gain Shield for seconds. Then, cleave in a cone dealing magic damage and strike in a line, dealing magic damage to enemies hit.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_sejuani.jpg", "tags": ["Khiên/Hồi máu"]}, "Sett": {"name": "Sett", "cost": "4", "traits": "Blossom, Brawler", "ability_name": "Haymaker", "mana": "60 / 150", "ability": "Passive: Upon falling below max Health the first time each combat, gain 100 mana. Active: Wind up a big punch, rapidly healing for before dealing physical damage in a large cone.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_sett.jpg", "tags": ["Khiên/Hồi máu"]}, "Shen": {"name": "Shen", "cost": "2", "traits": "Inferno, Defender", "ability_name": "Ki Barrier", "mana": "30 / 90", "ability": "Grant Shield to Shen and a nearby damaged ally for seconds. Both of their next attacks gain Attack Speed and deal bonus magic damage.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_shen.jpg", "tags": ["Khiên/Hồi máu"]}, "Soraka": {"name": "Soraka", "cost": "4", "traits": "Flora Fatalis, Executioner", "ability_name": "Starcall", "mana": "0 / 30", "ability": "Call down a star on the current target, dealing magic damage. If a star has previously fallen on them, call down additional stars that each deal magic damage.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_soraka.jpg", "tags": []}, "Taric": {"name": "Taric", "cost": "5", "traits": "Emerald Aspect, Vanguard", "ability_name": "Emerald Radiance", "mana": "0 / 65", "ability": "Passive: The first time Taric or his paired ally drops below Health, unleash emerald energy from both of them, granting Shield to allies within Hexes for seconds. Active: Restore Health. Taric and his paired ally deal bonus magic damage on their next attacks.", "range": "Cận chiến", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_taric.jpg", "tags": ["Khiên/Hồi máu"]}, "The Elder Dragon": {"name": "The Elder Dragon", "cost": "5", "traits": "Riftbeast, Apex Predator", "ability_name": "Heat Without Equal", "mana": "0 / 40", "ability": "Passive: Attacks deal damage to enemies adjacent to the target. Active: Become untargetable and fly into the air, gaining Omnivamp. Upon returning, stun all enemies for seconds and Ignite them for seconds. Ignited enemies take max Health physical damage per second. Subsequent casts spew fire at the most enemies in a line through the target, dealing physical damage and Igniting them for seconds The Elder Dragon Buff: Damaging an enemy below Health executes them.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_elderdragon.jpg", "tags": ["Thiêu đốt", "Khống chế", "Khiên/Hồi máu", "Kết liễu/Reset"]}, "Varus": {"name": "Varus", "cost": "1", "traits": "Inferno, Rapidfire", "ability_name": "Piercing Arrow", "mana": "30 / 110", "ability": "Wind up, then fire an arrow at the most enemies in line with the target. It deals physical damage to enemies hit, reduced by for each enemy it passes through (minimum ).", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_varus.jpg", "tags": []}, "Veigar": {"name": "Veigar", "cost": "1", "traits": "Eldritch, Sprykin, Spellweaver", "ability_name": "Primordial Burst", "mana": "0 / 30", "ability": "Launch a giant blast at the target that deals magic damage, increased to if they're below max Health. If they die, permanently gain% Ability Power. Current bonus:%", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_veigar.jpg", "tags": ["Khiên/Hồi máu"]}, "Xayah": {"name": "Xayah", "cost": "1", "traits": "Elderwood, Fae, Rapidfire", "ability_name": "Deadly Plumage", "mana": "0 / 50", "ability": "Gain Attack Speed for the next attacks. These attacks are replaced with feathers that deal physical damage and reduce Armor by.", "range": "Tầm xa", "range_inferred": false, "image": "web_assets/tactics_tools_set18/champions/tft18_xayah.jpg", "tags": ["Xuyên/giảm PT"]}, "Yunara": {"name": "Yunara", "cost": "2", "traits": "Blossom, Executioner", "ability_name": "Cultivation of Spirit", "mana": "0 / 35", "ability": "Dash, then launch an orb at the current target that deals physical damage and splits, dealing physical damage to nearby enemies.", "range": "Cận chiến", "range_inferred": true, "image": "web_assets/tactics_tools_set18/champions/tft18_yunara.jpg", "tags": []}};
+const SCORE_META=[["stability", "Ổn định"], ["damage_ceiling", "Trần sát thương"], ["frontline", "Tuyến trước"], ["utility", "CC & utility"], ["item_flexibility", "Linh hoạt item"], ["forgiveness", "Chịu sai số"]];
+const state={economy:'all',damage:'all',tags:new Set(),selected:new Set()};
+const cards=[...document.querySelectorAll('.comp-card')];
+const statusEl=document.getElementById('filterStatus');
+function syncVisibleState(){let visible=0;cards.forEach(card=>{const economyOK=state.economy==='all'||card.dataset.economy===state.economy;const damageOK=state.damage==='all'||card.dataset.damage===state.damage;const tags=new Set(card.dataset.tags.split(' '));const tagOK=[...state.tags].every(tag=>tags.has(tag));card.hidden=!(economyOK&&damageOK&&tagOK);if(!card.hidden)visible++});statusEl.textContent=`${visible} đội hình`;document.getElementById('emptyState').hidden=visible!==0}
+function initFilters(){document.querySelectorAll('[data-filter-group]').forEach(group=>group.addEventListener('click',event=>{const button=event.target.closest('.filter-button');if(!button)return;const key=group.dataset.filterGroup;if(group.dataset.multi){const on=button.getAttribute('aria-pressed')==='true';button.setAttribute('aria-pressed',String(!on));on?state.tags.delete(button.dataset.value):state.tags.add(button.dataset.value)}else{group.querySelectorAll('.filter-button').forEach(item=>item.setAttribute('aria-pressed','false'));button.setAttribute('aria-pressed','true');state[key]=button.dataset.value}syncVisibleState()}));document.getElementById('resetFilters').addEventListener('click',()=>{state.economy='all';state.damage='all';state.tags.clear();document.querySelectorAll('.filter-button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.value==='all')));syncVisibleState()})}
+const compareRows=[['Nhịp economy','economy'],['Loại damage','damage'],['Carry','carry'],['Tank','tank'],['Breakpoint nâng cấp','upgrade'],['Nguồn giảm chống chịu','shred'],['Anti-heal','anti_heal'],['Sustain','sustain'],['Quyết định đầu','decision'],['Điều kiện dừng','stop'],['Damage engine','damage_diagnosis'],['Time engine','frontline_diagnosis']];
+function renderComparison(){const list=state.selected.size?COMPS.filter(comp=>state.selected.has(comp.id)):COMPS;document.getElementById('compareCaption').textContent=state.selected.size?`So sánh ${list.length} đội hình đã chọn`:'So sánh 7 đội hình';document.getElementById('compareHead').innerHTML='<tr><th scope="col">Tiêu chí</th>'+list.map(comp=>`<th scope="col">${comp.name}</th>`).join('')+'</tr>';let html=compareRows.map(([label,key])=>'<tr><th scope="row">'+label+'</th>'+list.map(comp=>`<td>${comp[key]}</td>`).join('')+'</tr>').join('');SCORE_META.forEach(([key,label])=>{html+='<tr><th scope="row">'+label+'</th>'+list.map(comp=>`<td>${comp.scores[key]}/5</td>`).join('')+'</tr>'});document.getElementById('compareBody').innerHTML=html}
+function syncCompare(){document.querySelectorAll('[data-compare]').forEach(input=>{input.checked=state.selected.has(input.dataset.compare);input.disabled=state.selected.size>=3&&!input.checked});const tray=document.getElementById('compareTray');tray.classList.toggle('is-visible',state.selected.size>0);document.getElementById('trayItems').innerHTML=[...state.selected].map(id=>{const comp=COMPS.find(item=>item.id===id);return `<button class="tray-chip" data-remove="${id}" title="Bỏ khỏi so sánh">${comp.name} ×</button>`}).join('');renderComparison()}
+function initComparison(){document.addEventListener('change',event=>{const input=event.target.closest('[data-compare]');if(!input)return;if(input.checked&&state.selected.size<3)state.selected.add(input.dataset.compare);else state.selected.delete(input.dataset.compare);syncCompare()});document.getElementById('trayItems').addEventListener('click',event=>{const button=event.target.closest('[data-remove]');if(button){state.selected.delete(button.dataset.remove);syncCompare()}});document.getElementById('clearCompare').addEventListener('click',()=>{state.selected.clear();syncCompare()});document.getElementById('compareNow').addEventListener('click',()=>document.getElementById('compare').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}))}
+const tooltip=document.getElementById('champTooltip');const tooltipContent=document.getElementById('tooltipContent');let pinned=false;let activeTrigger=null;
+function positionTooltip(trigger){const rect=trigger.getBoundingClientRect();const width=tooltip.offsetWidth;const height=tooltip.offsetHeight;let left=rect.left+rect.width/2-width/2;left=Math.max(10,Math.min(innerWidth-width-10,left));let top=rect.bottom+10;if(top+height>innerHeight-10)top=Math.max(10,rect.top-height-10);tooltip.style.left=left+'px';tooltip.style.top=top+'px'}
+function showTooltip(trigger,pin=false){const champ=CHAMPIONS[trigger.dataset.champion];if(!champ)return;pinned=pin;activeTrigger=trigger;tooltipContent.innerHTML=`<div class="tt-head"><img src="${champ.image}" alt=""><div><div class="tt-name">${champ.name} · ${champ.cost} vàng</div><div class="tt-meta">${champ.traits}</div><div class="tt-meta">${champ.range}${champ.range_inferred?' · suy đoán':''}</div></div></div><p class="tt-ability"><b>${champ.ability_name}</b> · Mana ${champ.mana}<br>${champ.ability}</p><div class="tt-tags">${champ.tags.map(tag=>`<span>${tag}</span>`).join('')}</div>`;tooltip.classList.add('is-visible');tooltip.setAttribute('aria-hidden','false');requestAnimationFrame(()=>positionTooltip(trigger))}
+function hideTooltip(force=false){if(pinned&&!force)return;tooltip.classList.remove('is-visible');tooltip.setAttribute('aria-hidden','true');activeTrigger=null;pinned=false}
+function initChampionTooltip(){document.addEventListener('pointerover',event=>{const trigger=event.target.closest('.champ-trigger');if(trigger&&!pinned)showTooltip(trigger)});document.addEventListener('pointerout',event=>{if(event.target.closest('.champ-trigger')&&!pinned)hideTooltip()});document.addEventListener('focusin',event=>{const trigger=event.target.closest('.champ-trigger');if(trigger)showTooltip(trigger)});document.addEventListener('focusout',event=>{if(event.target.closest('.champ-trigger')&&!pinned)hideTooltip()});document.addEventListener('click',event=>{const trigger=event.target.closest('.champ-trigger');if(trigger){event.preventDefault();showTooltip(trigger,true)}else if(!event.target.closest('.champ-tooltip'))hideTooltip(true)});tooltip.querySelector('.tt-close').addEventListener('click',()=>{hideTooltip(true);activeTrigger?.focus()});document.addEventListener('keydown',event=>{if(event.key==='Escape')hideTooltip(true)});addEventListener('resize',()=>{if(activeTrigger&&tooltip.classList.contains('is-visible'))positionTooltip(activeTrigger)})}
+function initTOCObserver(){const links=[...document.querySelectorAll('.toc-nav a')];const map=new Map(links.map(link=>[link.getAttribute('href').slice(1),link]));const observer=new IntersectionObserver(entries=>{entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio).slice(0,1).forEach(entry=>{links.forEach(link=>link.classList.remove('is-active'));map.get(entry.target.id)?.classList.add('is-active')})},{rootMargin:'-22% 0px -65% 0px',threshold:[.05,.2,.5]});map.forEach((_,id)=>{const section=document.getElementById(id);if(section)observer.observe(section)})}
+initFilters();initComparison();initChampionTooltip();initTOCObserver();syncVisibleState();syncCompare();
+</script>
+</body></html>
