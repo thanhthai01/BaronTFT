@@ -1,6 +1,6 @@
 export type SearchAction = {
   id: string;
-  group: 'Bài học' | 'Checklist' | 'Review' | 'Biểu mẫu' | 'Cây quyết định' | 'Mùa 18';
+  group: 'Bài học' | 'Checklist' | 'Cây quyết định' | 'Mùa 18' | 'Góp ý';
   label: string;
   description: string;
   href: string;
@@ -65,22 +65,6 @@ export const searchActions: SearchAction[] = [
     keywords: ['roll', 'rolldown', 'vàng', 'gold'],
   },
   {
-    id: 'review-loss',
-    group: 'Review',
-    label: 'Review trận vừa thua',
-    description: 'Tìm lỗi đầu tiên có thể sửa trong 15 phút.',
-    href: '/review',
-    keywords: ['review', 'thua', 'vod', 'lỗi'],
-  },
-  {
-    id: 'template-session',
-    group: 'Biểu mẫu',
-    label: 'Điền phiếu trước phiên',
-    description: 'Chọn một kỹ năng duy nhất để luyện trong phiên leo rank.',
-    href: '/bieu-mau',
-    keywords: ['phiếu', 'template', 'session', 'luyện'],
-  },
-  {
     id: 'decision-roll',
     group: 'Cây quyết định',
     label: 'Xem cây quyết định khi nào roll',
@@ -95,5 +79,13 @@ export const searchActions: SearchAction[] = [
     description: 'Học item theo chức năng thay vì chờ công thức hoàn hảo.',
     href: '/bai-hoc/trang-bi-nang-cap',
     keywords: ['item', 'đồ', 'slam', 'trang bị'],
+  },
+  {
+    id: 'feedback-page',
+    group: 'Góp ý',
+    label: 'Gửi góp ý cho Baron TFT',
+    description: 'Báo lỗi dữ liệu hoặc đề xuất tính năng qua email.',
+    href: '/gop-y',
+    keywords: ['góp ý', 'feedback', 'liên hệ', 'contact', 'báo lỗi'],
   },
 ];

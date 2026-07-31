@@ -33,6 +33,21 @@
   font-size: var(--fs-xs);
 }
 
+.contactRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.contact {
+  display: inline-block;
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
 @media (max-width: 720px) {
   .inner {
     grid-template-columns: 1fr;

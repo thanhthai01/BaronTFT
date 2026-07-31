@@ -1,0 +1,71 @@
+.form {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xl);
+  background: var(--surface-card);
+  padding: clamp(1rem, 3vw, 1.4rem);
+  max-width: 34rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.field label {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  padding: 0.7rem 0.8rem;
+  font-family: inherit;
+}
+
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.submit {
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--r-sm);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-weight: var(--fw-bold);
+  padding: 0.7rem 1.1rem;
+}
+
+.status {
+  margin: 0.6rem 0 0;
+  min-height: 1.2em;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.success {
+  color: var(--success);
+}
+
+.error {
+  color: var(--danger);
+}
