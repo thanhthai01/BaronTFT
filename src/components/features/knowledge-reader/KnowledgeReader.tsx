@@ -148,7 +148,6 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
         </ul>
         <div className={styles.applyActions}>
           <Button href="/checklist" variant="secondary" block>Mở checklist</Button>
-          <Button href="/review" variant="ghost" block>Review trận vừa chơi</Button>
         </div>
       </aside>
     </div>

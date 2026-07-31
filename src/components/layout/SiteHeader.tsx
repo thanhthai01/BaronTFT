@@ -43,8 +43,6 @@ const links = [
   { href: '/kien-thuc-nen-tang', label: 'Kiến thức nền tảng' },
   { href: '/mua-18', label: 'Mùa 18' },
   { href: '/checklist', label: 'Checklist' },
-  { href: '/review', label: 'Review' },
-  { href: '/bieu-mau', label: 'Biểu mẫu' },
   { href: '/patch', label: 'Patch' },
   { href: '/nguon-hoc', label: 'Nguồn học' },
 ];

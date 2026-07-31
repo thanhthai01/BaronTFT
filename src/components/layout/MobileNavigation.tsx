@@ -9,7 +9,6 @@ import styles from './MobileNavigation.module.css';
 const links = [
   { href: '/kien-thuc-nen-tang', label: 'Học' },
   { href: '/checklist', label: 'Checklist' },
-  { href: '/review', label: 'Review' },
 ];
 
 export function MobileNavigation() {

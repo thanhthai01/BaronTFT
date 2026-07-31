@@ -46,7 +46,7 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
           onOpenChange={setOpen}
           overlayClassName={styles.overlay}
         >
-          <Command.Input className={styles.input} placeholder="Tìm bài học, checklist, review, biểu mẫu…" />
+          <Command.Input className={styles.input} placeholder="Tìm bài học, checklist, mùa 18…" />
           <Command.List className={styles.list}>
             <Command.Empty className={styles.empty}>Không tìm thấy hành động phù hợp.</Command.Empty>
             {groups.map((group) => (

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('home decision board updates the diagnostic panel', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /Học cách thắng lobby/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /kiến thức cơ bản/i })).toBeVisible();
   await page.getByRole('button', { name: 'ITEM' }).click();
   const selectedPanel = page.getByRole('complementary').filter({ has: page.getByRole('heading', { name: 'Items' }) });
   await expect(selectedPanel.getByText(/chờ bài hoàn hảo/i)).toBeVisible();
@@ -29,7 +29,7 @@ test('checklist persists a checked item after reload', async ({ page }) => {
   await expect(page.getByLabel(/Lõi\/portal đang khuyến khích tempo/i)).toBeChecked();
 });
 
-test('review lab generates markdown summary', async ({ page }) => {
+test.skip('review lab generates markdown summary — /review is disabled, kept for re-enable', async ({ page }) => {
   await page.goto('/review');
   await page.getByLabel('Placement').fill('6th');
   await page.getByLabel('Comp / line').fill('AD tempo');
