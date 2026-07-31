@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Epilogue, JetBrains_Mono, Libre_Franklin } from 'next/font/google';
 import type { ReactNode } from 'react';
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
     default: 'Baron TFT — Evergreen Rank Manual',
     template: '%s · Baron TFT',
   },
-  description: 'Phòng huấn luyện chiến thuật TFT bằng tiếng Việt: học kỹ năng xuyên mùa, mở checklist trong trận và review lỗi sau mỗi phiên leo rank.',
+  description: 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.',
   icons: {
     icon: '/favicon.svg',
   },
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <SiteFooter />
           <MobileNavigation />
         </CommandPaletteProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
