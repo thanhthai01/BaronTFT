@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     template: '%s · Baron TFT',
   },
   description: 'Phòng huấn luyện chiến thuật TFT bằng tiếng Việt: học kỹ năng xuyên mùa, mở checklist trong trận và review lỗi sau mỗi phiên leo rank.',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

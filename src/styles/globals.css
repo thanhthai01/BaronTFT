@@ -10,6 +10,14 @@ html {
   color: var(--text-primary);
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
+  /* Ẩn thanh cuộn dọc mặc định của trình duyệt — thanh tiến độ đọc ngang dưới
+     navbar (SiteHeader) đã thay thế vai trò báo vị trí cuộn. Trang vẫn cuộn
+     được bình thường bằng chuột/bàn phím/cảm ứng, chỉ là không vẽ thanh cuộn. */
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {

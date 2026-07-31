@@ -7,6 +7,24 @@
   backdrop-filter: blur(16px);
 }
 
+/* Thanh tiến độ đọc trang — dán sát mép dưới navbar (header là containing
+   block do position: sticky), track trong suốt để không đè lên viền dưới
+   header, fill chạy theo % cuộn trang qua ReadingProgressBar. */
+.progressTrack {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  background: transparent;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-primary);
+  transition: width 0.1s linear;
+}
+
 .inner {
   display: flex;
   align-items: center;
@@ -77,6 +95,8 @@
 
 .actions {
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-left: 0.5rem;
 }
 
@@ -96,8 +116,13 @@
     gap: 1rem;
   }
 
-  .actions {
+  .checklistAction,
+  .searchShortcut {
     display: none;
+  }
+
+  .searchButton {
+    padding: 0 0.65rem;
   }
 }
 

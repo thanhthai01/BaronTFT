@@ -5,10 +5,10 @@ import { Button } from '@/components/design-system/Button/Button';
 import { lessons, type LessonBlock } from '@/content/lessons';
 import styles from './KnowledgeReader.module.css';
 
-function BlockRenderer({ block }: { block: LessonBlock }) {
+function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: string }) {
   if (block.type === 'principles') {
     return (
-      <section className={styles.block}>
+      <section className={styles.block} id={anchorId}>
         <h3>{block.title}</h3>
         <ul className={styles.principles}>
           {block.items.map((item) => <li key={item}>{item}</li>)}
@@ -19,7 +19,7 @@ function BlockRenderer({ block }: { block: LessonBlock }) {
 
   if (block.type === 'scenario') {
     return (
-      <section className={styles.block}>
+      <section className={styles.block} id={anchorId}>
         <h3>{block.title}</h3>
         <div className={styles.scenario}>
           <div className={styles.scenarioCard}>
@@ -41,7 +41,7 @@ function BlockRenderer({ block }: { block: LessonBlock }) {
 
   if (block.type === 'checklist') {
     return (
-      <section className={styles.block}>
+      <section className={styles.block} id={anchorId}>
         <h3>{block.title}</h3>
         <ul className={styles.checklist}>
           {block.items.map((item, index) => (
@@ -56,7 +56,7 @@ function BlockRenderer({ block }: { block: LessonBlock }) {
 
   if (block.type === 'drill') {
     return (
-      <section className={styles.block}>
+      <section className={styles.block} id={anchorId}>
         <h3>{block.title}</h3>
         <div className={styles.drill}>
           <p className={styles.drillGoal}>{block.goal}</p>
@@ -69,7 +69,7 @@ function BlockRenderer({ block }: { block: LessonBlock }) {
   }
 
   return (
-    <section className={styles.block}>
+    <section className={styles.block} id={anchorId}>
       <h3>{block.title}</h3>
       <div className={styles.matrix}>
         {block.rows.map((row) => (
@@ -110,8 +110,7 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
       </aside>
 
       <article className={styles.article}>
-        <label className="kicker" htmlFor="lesson-select">Chọn bài học</label>
-        <select className={styles.mobileSelect} id="lesson-select" value={activeSlug} onChange={(event) => setActiveSlug(event.target.value)}>
+        <select aria-label="Chọn bài học" className={styles.mobileSelect} value={activeSlug} onChange={(event) => setActiveSlug(event.target.value)}>
           {lessons.map((lesson) => <option key={lesson.slug} value={lesson.slug}>{lesson.title}</option>)}
         </select>
 
@@ -126,10 +125,21 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
           </div>
         </header>
 
-        {activeLesson.blocks.map((block) => <BlockRenderer block={block} key={`${activeLesson.slug}-${block.title}`} />)}
+        {activeLesson.blocks.map((block, index) => (
+          <BlockRenderer anchorId={`${activeLesson.slug}-block-${index}`} block={block} key={`${activeLesson.slug}-${block.title}`} />
+        ))}
       </article>
 
       <aside className={styles.apply}>
+        <h2 className={styles.applyTitle}>Mục lục nội dung</h2>
+        <div className={styles.jumpList}>
+          {activeLesson.blocks.map((block, index) => (
+            <a className={styles.jumpLink} href={`#${activeLesson.slug}-block-${index}`} key={`${activeLesson.slug}-jump-${index}`}>
+              {block.title}
+            </a>
+          ))}
+        </div>
+
         <h2 className={styles.applyTitle}>Áp dụng ngay</h2>
         <span className={styles.badge}>Lỗi hay gặp</span>
         <p>{activeLesson.commonMistake}</p>

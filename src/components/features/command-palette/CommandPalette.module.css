@@ -1,16 +1,24 @@
+/* cmdk's Command.Dialog portals its Overlay + Content straight to <body>, ngoài
+   mọi div bọc ngoài của ta — nên phải định vị chính 2 phần này bằng
+   overlayClassName/contentClassName (không phải className, cái đó chỉ áp cho
+   listbox <Command> bên trong), thay vì trông cậy vào 1 div wrapper + grid
+   center như trước (không có tác dụng vì dialog không nằm trong div đó). */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: grid;
-  place-items: start center;
   background: rgba(27, 27, 27, 0.32);
-  padding: min(12vh, 6rem) var(--gutter) 2rem;
 }
 
 .dialog {
-  width: min(100%, 44rem);
+  position: fixed;
+  top: min(12vh, 6rem);
+  left: 50%;
+  z-index: 100;
+  width: min(calc(100% - 2 * var(--gutter)), 44rem);
+  max-height: min(72vh, 38rem);
   overflow: hidden;
+  transform: translateX(-50%);
   border: 1px solid var(--border-strong);
   border-radius: var(--r-lg);
   background: var(--surface-card);

@@ -18,7 +18,7 @@ test('foundational knowledge reader switches lessons', async ({ page }) => {
     await page.getByLabel('Chọn bài học').selectOption('kinh-te-level-roll');
   }
   await expect(page.getByRole('heading', { name: 'Kinh tế, lên cấp và roll' })).toBeVisible();
-  await expect(page.getByText(/Trước một rolldown tốt/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Trước một rolldown tốt/i })).toBeVisible();
 });
 
 test('checklist persists a checked item after reload', async ({ page }) => {
@@ -72,6 +72,62 @@ test('visible navigation marks the current route', async ({ page }) => {
   await page.goto('/bai-hoc/kinh-te-level-roll');
   const lessonNav = page.getByRole('navigation', { name: isDesktop ? 'Điều hướng chính' : 'Điều hướng nhanh trên điện thoại' });
   await expect(lessonNav.getByRole('link', { name: isDesktop ? 'Kiến thức nền tảng' : 'Học' })).toHaveAttribute('aria-current', 'page');
+});
+
+test('compact desktop header keeps search visible', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only responsive check');
+
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto('/');
+
+  await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+  const search = page.getByRole('button', { name: 'Mở tìm kiếm nhanh' });
+  await expect(search).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Mở checklist', exact: true })).toBeHidden();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await search.click();
+  await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
+});
+
+test('Set18 section query stays synchronized and supports history', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 flow');
+
+  await page.goto('/mua-18?section=nang-cap');
+  await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
+  await expect(page.getByText('Đang hiển thị 48 / 261 nâng cấp')).toBeVisible();
+
+  await page.getByRole('link', { name: /Chi tiết tướng/ }).click();
+  await expect(page).toHaveURL(/section=chi-tiet-tuong/, { timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Chi tiết tướng' })).toBeVisible();
+
+  const flip = page.getByRole('button', { name: 'Xem số liệu của Akali, dạng AD' });
+  await expect(flip).toHaveAttribute('aria-pressed', 'false');
+  await flip.click();
+  await expect(page.getByRole('button', { name: 'Xem kỹ năng của Akali, dạng AD' })).toHaveAttribute('aria-pressed', 'true');
+
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
+  await page.getByRole('button', { name: /Hiển thị thêm 48/ }).click();
+  await expect(page.getByText('Đang hiển thị 96 / 261 nâng cấp')).toBeVisible();
+});
+
+test('Patch history tabs expose compact facts and detailed analysis', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Patch flow');
+
+  await page.goto('/patch');
+  await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Phân tích thay đổi' })).toBeVisible();
+
+  const history = page.getByRole('tablist', { name: 'Lịch sử bản vá' });
+  const current = history.getByRole('tab', { name: /Patch 18\.3/ });
+  await expect(current).toHaveAttribute('tabindex', '0');
+  await current.focus();
+  await current.press('ArrowRight');
+
+  const previous = history.getByRole('tab', { name: /Patch 18\.2/ });
+  await expect(previous).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByText(/Dữ liệu mẫu cho bản vá trước/)).toBeVisible();
+  await expect(page.getByRole('tabpanel', { name: /Patch 18\.2/ })).toBeVisible();
 });
 
 test('desktop checklist stage fits the initial viewport', async ({ page }, testInfo) => {

@@ -1,0 +1,2117 @@
+.shell {
+  display: grid;
+  grid-template-columns: 13.5rem minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+  align-items: start;
+}
+
+/* ---------- Mục lục trái ---------- */
+
+/* top = chiều cao navbar (4.25rem) + 1rem hở — để mục lục có khoảng cách rõ
+   với navbar khi dính lại lúc cuộn, không bị "dán" sát vào nhau. */
+.tocColumn {
+  position: sticky;
+  top: calc(4.25rem + 1rem);
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+.toc {
+  min-width: 0;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.75rem;
+}
+
+.tocTitle {
+  margin: 0 0 0.55rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.tocList {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.tocItem {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0.6rem 0.65rem;
+  text-align: left;
+  text-decoration: none;
+  transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+}
+
+.tocItem:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.tocItem[aria-current='page'] {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+  color: var(--text-primary);
+}
+
+.tocItem strong,
+.tocItem span {
+  display: block;
+}
+
+.tocItem strong {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.tocItem span {
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.main {
+  min-width: 0;
+}
+
+.loadState {
+  margin: 0;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-card);
+  color: var(--text-muted);
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+
+.mobileSelect {
+  display: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  padding: 0.6rem 0.7rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+}
+
+/* Thanh lọc — nằm ở đầu nội dung chính, dính (sticky) ngay dưới navbar (top
+   trùng chiều cao navbar 4.25rem để không hở khe lộ nội dung cuộn phía sau).
+   Nới thêm đệm dưới + dải mờ (::after) để che gọn phần thẻ trôi qua lúc cuộn
+   — không cắt cứng giữa card (vd lộ nửa dưới mà mất hẳn phần đầu thẻ). */
+.filterBar {
+  position: sticky;
+  top: 4.25rem;
+  z-index: 6;
+  margin-bottom: 1rem;
+  padding: 0.55rem 0.1rem 0.85rem;
+  background: var(--surface-canvas);
+}
+
+.filterBar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1rem;
+  left: 0;
+  height: 1rem;
+  background: linear-gradient(to bottom, var(--surface-canvas), transparent);
+  pointer-events: none;
+}
+
+/* Hàng chip cuộn ngang dùng thanh cuộn tự vẽ (ScrollableRow) thay cho scrollbar
+   mặc định của trình duyệt — xem component ScrollableRow trong Set18Codex.tsx. */
+.scrollableRow {
+  flex: 1;
+  min-width: 0;
+}
+
+.scrollableRowInner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollableRowInner::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollableRowInner .filterChip {
+  flex: 0 0 auto;
+}
+
+.filterScrollTrack {
+  position: relative;
+  height: 4px;
+  margin: 0.4rem 0.1rem 0;
+  border-radius: var(--r-pill);
+  background: var(--border-subtle);
+  transition: opacity var(--dur-fast);
+}
+
+.filterScrollThumb {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  min-width: 28px;
+  border-radius: var(--r-pill);
+  background: var(--accent-primary);
+  cursor: grab;
+  touch-action: none;
+}
+
+.filterScrollThumb:active {
+  cursor: grabbing;
+}
+
+/* ---------- Khung chung của mỗi phần ---------- */
+
+.section {
+  display: grid;
+  gap: 1.1rem;
+  padding-right: 0.75rem;
+}
+
+.sectionHead h2 {
+  margin: 0.25rem 0 0.4rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-snug);
+}
+
+.sectionHead p {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+}
+
+.eyebrow {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.filterChipLabel {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.filterRow {
+  position: sticky;
+  top: 5.25rem;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem;
+  background: var(--surface-canvas);
+  padding: 0.5rem 0;
+}
+
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-pill);
+  background: var(--surface-card);
+  color: var(--text-muted);
+  padding: 0.32rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+}
+
+.filterChip:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.filterChip[aria-pressed='true'] {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+  color: var(--text-primary);
+}
+
+/* ---------- 01 · Ma trận tộc hệ ---------- */
+
+/* Chiều cao trừ đi phần khung ngoài trang (header, tiêu đề mục, padding) để cả 14
+   hàng Tộc vừa đúng 1 màn hình, không cần cuộn dọc để xem hết bảng. */
+.matrixWrap {
+  height: calc(100vh - 15rem);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+
+.matrix {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.matrix th,
+.matrix td {
+  border: 1px solid var(--border-subtle);
+}
+
+/* hàng tiêu đề giữ chiều cao cố định; các hàng thân bảng chia đều phần còn lại của
+   .matrixWrap (đã trừ sẵn khung trang trong height của .matrixWrap ở trên).
+   --matrix-rows do component set theo số hàng Tộc thực sự hiển thị (đã ẩn hàng rỗng). */
+.matrix thead tr {
+  height: 2.75rem;
+}
+
+.matrix tbody tr {
+  height: calc((100% - 2.75rem) / var(--matrix-rows, 14));
+}
+
+.corner {
+  width: 4.5rem;
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wide);
+  text-align: center;
+}
+
+.colHead,
+.rowHead {
+  background: var(--surface-raised);
+  padding: 0.35rem 0.25rem;
+  transition: background var(--dur-fast);
+}
+
+.colHead {
+  width: 5.5rem;
+  text-align: center;
+}
+
+.rowHead {
+  width: 4.5rem;
+  text-align: center;
+}
+
+.headActive {
+  background: var(--accent-primary-soft);
+}
+
+.rowHeadInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Toàn bộ icon tộc hệ đã được chuẩn hoá thành silhouette trắng nền trong suốt
+   (Set18/normalize_trait_icons.py), nên chỉ còn MỘT kiểu nền duy nhất; màu nền
+   lấy từ trait.accent trong dữ liệu. */
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-xs);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+.iconWrap img {
+  width: 68%;
+  height: 68%;
+  object-fit: contain;
+}
+
+.colHead .iconWrap {
+  margin: 0 auto;
+}
+
+.headLabel {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: 1.15;
+}
+
+.colHead .headLabel {
+  display: block;
+  margin-top: 0.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowHead .headLabel {
+  display: block;
+  max-width: 4rem;
+  color: var(--text-primary);
+  font-weight: var(--fw-bold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell {
+  background: var(--surface-card);
+  padding: 0.2rem;
+  vertical-align: middle;
+  overflow: hidden;
+  transition: background var(--dur-fast);
+}
+
+.cellEmpty {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(27, 27, 27, 0.045) 5px,
+    rgba(27, 27, 27, 0.045) 10px
+  );
+}
+
+.cellCross {
+  background: rgba(42, 68, 200, 0.07);
+}
+
+.cellChamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+.champLogo {
+  display: block;
+  overflow: hidden;
+  border: 2px solid var(--border-line);
+  border-radius: var(--r-xs);
+  background: transparent;
+  padding: 0;
+  cursor: help;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast);
+}
+
+.champLogoImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.champLogo:hover,
+.champLogo:focus-visible {
+  transform: scale(1.18);
+  box-shadow: 0 4px 10px rgba(27, 27, 27, 0.28);
+  outline: none;
+  position: relative;
+  z-index: 2;
+}
+
+.specialBox {
+  border: 1px solid var(--border-line);
+  border-left: 4px solid var(--accent-secondary);
+  border-radius: var(--r-lg);
+  background: var(--surface-raised);
+  padding: 0.9rem 1rem;
+}
+
+.specialBox h3 {
+  margin: 0 0 0.2rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+}
+
+.specialBox p {
+  margin: 0 0 0.7rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+.specialList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.specialItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  padding: 0.4rem 0.6rem;
+}
+
+.specialItem strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+}
+
+/* tộc/hệ Đặc biệt của tướng — đây là thông tin chính người dùng cần nhìn thấy ngay,
+   nên tô nổi bật bằng chính màu accent của trait thay vì chữ xám mờ. */
+.specialTrait {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: var(--r-pill);
+  background: var(--trait-accent-soft, var(--surface-raised));
+  color: var(--trait-accent, var(--text-subtle));
+  padding: 0.15rem 0.5rem 0.15rem 0.25rem;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-2xs);
+}
+
+/* ---------- 02 · Chi tiết tướng ---------- */
+
+.costGroup {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.championGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem 0.75rem;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .championGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .championGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- thẻ lật (chuyển từ reports/set18_champion_cards.html) ---- */
+
+/* rail (chọn dạng: Lux 10 dạng, Nidalee 2 dạng, 4 tướng Thích Ứng AD/AP) đè lên góc
+ * trên-trái của thẻ, nằm ngoài .flipInner nên không xoay theo khi lật. */
+.rail {
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.35rem;
+  transform: translateX(-50%);
+}
+
+/* mỗi nút rail là 1 icon tròn — AD/AP dùng icon màu vật lý/phép, các dạng Lux dùng
+ * logo tộc hệ tương ứng (dạng Mặc định không có tộc riêng nên hiện dấu *). */
+.railBtn {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1.5px solid var(--border-line);
+  border-radius: 50%;
+  background: var(--surface-card);
+  box-shadow: 2px 2px 0 rgba(27, 27, 27, 0.14);
+  padding: 0;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms, border-color 120ms, background 120ms;
+}
+
+.railIcon {
+  display: block;
+  width: 1.2rem;
+  height: 1.2rem;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
+
+.railBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  transform: scale(1.06);
+}
+
+.railBtnOn {
+  border-color: var(--rail-color, var(--accent-primary));
+  background: color-mix(in srgb, var(--rail-color, var(--accent-primary)) 16%, white);
+  color: var(--rail-color, var(--accent-primary));
+  font-weight: var(--fw-semibold);
+  box-shadow: 2px 2px 0 rgba(27, 27, 27, 0.14), 0 0 0 2px color-mix(in srgb, var(--rail-color, var(--accent-primary)) 35%, transparent);
+}
+
+.flip {
+  position: relative;
+  min-height: 25rem;
+  perspective: 1700px;
+}
+
+.flipInner {
+  position: absolute;
+  inset: 0;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.flipOn .flipInner {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 2px solid var(--cost-color, var(--border-line));
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  box-shadow: 5px 5px 0 var(--cost-color, var(--border-line));
+}
+
+.face > * {
+  flex-shrink: 0;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+.flipButton {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  z-index: 2;
+  border: 1px solid var(--cost-color, var(--border-strong));
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--surface-card) 88%, var(--cost-color, var(--accent-primary)) 12%);
+  color: var(--text-primary);
+  min-height: 2rem;
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+}
+
+.flipButton:hover,
+.flipButton:focus-visible {
+  border-color: var(--cost-color, var(--accent-primary));
+  background: color-mix(in srgb, var(--surface-card) 76%, var(--cost-color, var(--accent-primary)) 24%);
+}
+
+.back .traitsRow {
+  padding: 0 0.8rem;
+}
+
+.uname {
+  display: block;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extra);
+  font-size: 1.05rem;
+  line-height: 1.1;
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+}
+
+.urole {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--fs-2xs);
+}
+
+.nameCol {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.nameRow {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.costPill {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--cost-color, var(--border-line)) 50%, white);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--cost-color, var(--border-line)) 12%, white);
+  padding: 0.2rem 0.5rem 0.2rem 0.35rem;
+  color: var(--cost-color, var(--text-muted));
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-2xs);
+}
+
+/* Tô màu icon vàng theo đúng --cost-color của pill (thay vì icon PNG trắng cố
+   định) bằng kỹ thuật mask — cùng cách .statIconCoin đang dùng bên dưới. */
+.costPillIcon {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  mask-image: url(/set18/assets/text_icons/icon_coin.png);
+  -webkit-mask-image: url(/set18/assets/text_icons/icon_coin.png);
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: var(--cost-color, currentColor);
+}
+
+/* toàn bộ trait (Tộc · Hệ · Đặc biệt) nằm chung 1 hàng, không tách cột theo loại —
+   dễ đọc hơn khi số trait mỗi loại không đều nhau giữa các tướng. */
+.traitsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding: 0;
+}
+
+.traitChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  padding: 0 0.45rem 0 0;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-2xs);
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.traitChip .iconWrap {
+  box-shadow: none;
+}
+
+/* mặt trước — logo mini + tên/phân loại xếp chồng, không còn ảnh lớn ở đầu thẻ */
+.frontId {
+  padding: 0.8rem 0.8rem 0.7rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.miniHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.65rem;
+}
+
+.miniLogo {
+  flex-shrink: 0;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-sm);
+  object-fit: cover;
+}
+
+.body {
+  padding: 0.8rem;
+}
+
+.abhead {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.55rem;
+}
+
+.abilityIcon {
+  flex-shrink: 0;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-xs);
+}
+
+.abname {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+}
+
+.manaTag {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary);
+  padding: 0.15rem 0.5rem 0.15rem 0.4rem;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-2xs);
+  white-space: nowrap;
+}
+
+.abdesc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.calcs {
+  margin-top: 0.7rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.55rem;
+  font-size: var(--fs-2xs);
+}
+
+.calc {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-weight: var(--fw-semibold);
+}
+
+.calcTerms {
+  margin: 0.1rem 0 0.45rem;
+  color: var(--text-muted);
+}
+
+/* ---- text màu trong mô tả kỹ năng — render sẵn từ Set18/generate_champion_cards.py
+ * bằng dangerouslySetInnerHTML nên các class dưới đây phải là global (:global), không
+ * bị CSS Modules đổi tên. Giá trị màu đồng bộ với reports/set18_champion_cards.html
+ * (đã map về token của site — xem tokens.css). ---- */
+.abdesc :global(.s18-style-bright),
+.calcs :global(.s18-style-bright) {
+  color: var(--text-primary);
+  font-weight: var(--fw-bold);
+}
+.abdesc :global(.s18-style-dim),
+.calcs :global(.s18-style-dim) {
+  color: var(--text-subtle);
+}
+.abdesc :global(.s18-style-colorPhysical),
+.calcs :global(.s18-style-colorPhysical) {
+  color: var(--accent-secondary-text);
+  font-weight: var(--fw-semibold);
+}
+.abdesc :global(.s18-style-colorMagic),
+.calcs :global(.s18-style-colorMagic) {
+  color: #0f6fa3;
+  font-weight: var(--fw-semibold);
+}
+.abdesc :global(.s18-style-colorHealth),
+.calcs :global(.s18-style-colorHealth) {
+  color: var(--success);
+  font-weight: var(--fw-semibold);
+}
+.abdesc :global(.s18-style-colorStat),
+.calcs :global(.s18-style-colorStat) {
+  color: var(--warning);
+  font-weight: var(--fw-semibold);
+}
+.abdesc :global(.s18-style-Keyword),
+.calcs :global(.s18-style-Keyword) {
+  color: var(--cost-5);
+  font-weight: var(--fw-semibold);
+}
+.abdesc :global(.s18-style-Rules),
+.calcs :global(.s18-style-Rules) {
+  color: var(--text-subtle);
+  font-style: italic;
+}
+.abdesc :global(.s18-value),
+.calcs :global(.s18-value) {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+.abdesc :global(.s18-icon),
+.calcs :global(.s18-icon) {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.1rem;
+  vertical-align: -0.125em;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
+.abdesc :global(.s18-icon-icon_ad),
+.calcs :global(.s18-icon-icon_ad) { mask-image: url(/set18/assets/text_icons/icon_ad.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_ad.png); background-color: #c97a1e; }
+.abdesc :global(.s18-icon-icon_ap),
+.calcs :global(.s18-icon-icon_ap) { mask-image: url(/set18/assets/text_icons/icon_ap.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_ap.png); background-color: #6e5ce0; }
+.abdesc :global(.s18-icon-icon_armor),
+.calcs :global(.s18-icon-icon_armor) { mask-image: url(/set18/assets/text_icons/icon_armor.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_armor.png); background-color: #b8901f; }
+.abdesc :global(.s18-icon-icon_as),
+.calcs :global(.s18-icon-icon_as) { mask-image: url(/set18/assets/text_icons/icon_as.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_as.png); background-color: #c9971a; }
+.abdesc :global(.s18-icon-icon_health),
+.calcs :global(.s18-icon-icon_health) { mask-image: url(/set18/assets/text_icons/icon_health.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_health.png); background-color: #1e9e57; }
+.abdesc :global(.s18-icon-icon_mr),
+.calcs :global(.s18-icon-icon_mr) { mask-image: url(/set18/assets/text_icons/icon_mr.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_mr.png); background-color: #1aa6c4; }
+.abdesc :global(.s18-icon-icon_damageamp),
+.calcs :global(.s18-icon-icon_damageamp) { mask-image: url(/set18/assets/text_icons/icon_damageamp.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_damageamp.png); background-color: #5b564a; }
+
+/* mặt sau — header (tên+phân loại cùng hàng) rồi đến ảnh lớn, tộc hệ, số liệu */
+.backHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 0.8rem 0.6rem;
+}
+
+.thumbWrap {
+  padding: 0 0.8rem 0.7rem;
+}
+
+.bigThumb {
+  display: block;
+  width: 100%;
+  height: 11rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+/* icon + số, không nhãn chữ — icon đã đủ nghĩa (tim=máu, giọt=mana...); title= giữ tên
+   cho tooltip khi rê chuột */
+.stats {
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 0.6rem;
+  padding: 0.9rem 0.8rem 0.8rem;
+  text-align: center;
+}
+
+.stat .val {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  font-size: 0.9rem;
+}
+
+.statIcon {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
+
+.statIconHealth { mask-image: url(/set18/stat_icons/icon_health.png); -webkit-mask-image: url(/set18/stat_icons/icon_health.png); background-color: #1e9e57; }
+.statIconMana { mask-image: url(/set18/stat_icons/icon_mana.png); -webkit-mask-image: url(/set18/stat_icons/icon_mana.png); background-color: #1274a8; }
+.statIconAd { mask-image: url(/set18/stat_icons/icon_ad.png); -webkit-mask-image: url(/set18/stat_icons/icon_ad.png); background-color: #c97a1e; }
+.statIconAp { mask-image: url(/set18/stat_icons/icon_ap.png); -webkit-mask-image: url(/set18/stat_icons/icon_ap.png); background-color: #6e5ce0; }
+.statIconArmor { mask-image: url(/set18/stat_icons/icon_armor.png); -webkit-mask-image: url(/set18/stat_icons/icon_armor.png); background-color: #b8901f; }
+.statIconMr { mask-image: url(/set18/stat_icons/icon_mr.png); -webkit-mask-image: url(/set18/stat_icons/icon_mr.png); background-color: #1aa6c4; }
+.statIconAs { mask-image: url(/set18/stat_icons/icon_as.png); -webkit-mask-image: url(/set18/stat_icons/icon_as.png); background-color: #c9971a; }
+.statIconCritChance { mask-image: url(/set18/stat_icons/icon_critchance.png); -webkit-mask-image: url(/set18/stat_icons/icon_critchance.png); background-color: #d9291b; }
+.statIconCritDmg { mask-image: url(/set18/stat_icons/icon_critdmg.png); -webkit-mask-image: url(/set18/stat_icons/icon_critdmg.png); background-color: #d9291b; }
+.statIconRange { mask-image: url(/set18/stat_icons/icon_range.png); -webkit-mask-image: url(/set18/stat_icons/icon_range.png); background-color: #96723a; }
+.statIconDura { mask-image: url(/set18/assets/text_icons/icon_dura.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_dura.png); background-color: #60e08f; }
+.statIconManaRegen { mask-image: url(/set18/assets/text_icons/icon_manaregen.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_manaregen.png); background-color: #189ce7; }
+.statIconOmnivamp { mask-image: url(/set18/assets/text_icons/icon_omnivamp.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_omnivamp.png); background-color: #d52042; }
+.statIconCoin { mask-image: url(/set18/assets/text_icons/icon_coin.png); -webkit-mask-image: url(/set18/assets/text_icons/icon_coin.png); background-color: #c0851c; }
+
+/* ---------- 03 · Chi tiết tộc hệ ---------- */
+
+.traitGroup,
+.wispGroup {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.groupHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  border-left: 4px solid var(--accent-primary);
+  color: var(--text-primary);
+  padding-left: 0.6rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.groupHeading span {
+  color: var(--text-subtle);
+  font-family: var(--font-body);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.traitGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 0.75rem;
+}
+
+.traitCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--border-line);
+  border-top: 3px solid var(--trait-accent, var(--border-line));
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.8rem;
+}
+
+.traitHead {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.traitHead strong {
+  display: block;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.traitEn {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+}
+
+.breakpointRow,
+.traitMembers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breakLabel {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.breakChipGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breakArrow {
+  color: var(--text-disabled);
+  font-weight: var(--fw-bold);
+}
+
+/* màu theo đúng mốc thật của game (bronze/silver/gold/chromatic/unique), truyền
+   qua --break-color từ trait.breakpointDetails — không còn 1 màu cam cho mọi mốc. */
+.breakChip {
+  min-width: 1.5rem;
+  border: 1px solid var(--break-color, var(--accent-secondary));
+  border-radius: var(--r-xs);
+  background: color-mix(in srgb, var(--break-color, var(--accent-secondary)) 14%, white);
+  color: var(--break-color, var(--accent-secondary-text));
+  padding: 0.05rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+
+.traitDesc {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+  white-space: pre-line;
+}
+
+/* danh sách chi tiết theo từng mốc — chỉ hiện khi trait có bullet.textVi (21/36
+   trait; phần còn lại chỉ có màu mốc + mô tả chung ở trên). */
+.traitBulletList {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.traitBulletList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.bulletMark {
+  flex-shrink: 0;
+  min-width: 1.35rem;
+  border-radius: var(--r-xs);
+  background: color-mix(in srgb, var(--break-color, var(--accent-secondary)) 16%, white);
+  color: var(--break-color, var(--accent-secondary-text));
+  padding: 0 0.3rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+
+.bulletValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+/* Nội dung dài hơn hẳn phần còn lại của nhóm (vd Kẻ Săn Tiền Thưởng với 11
+   nhiệm vụ) — chiếm trọn hàng thay vì ghép cạnh 1 thẻ ngắn trông lệch. */
+.traitCardWide {
+  grid-column: 1 / -1;
+}
+
+/* Chip tham khảo phụ, tách khỏi đoạn mô tả chính (vd 5 pha mặt trăng, các
+   loại ô đất) — không phải mốc kích hoạt nên dùng tông trung tính, không mượn
+   --break-color. */
+.traitInfoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.traitInfoChip {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-pill);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  padding: 0.15rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+/* Danh sách nhiệm vụ/phần thưởng của Kẻ Săn Tiền Thưởng — 2 cột trên thẻ rộng
+   để không cần cuộn dài, mỗi nhiệm vụ đi kèm 1 chip phần thưởng nổi bật. */
+.bountyList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bountyRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.3rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  padding: 0.5rem 0.6rem;
+}
+
+.bountyMission {
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+}
+
+.bountyReward {
+  align-self: flex-start;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--trait-accent, var(--accent-primary)) 16%, white);
+  color: var(--trait-accent, var(--accent-primary));
+  padding: 0.1rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+}
+
+/* Nhãn "Nhiệm vụ:" / "Phần thưởng:" — in đậm và tách màu khỏi phần nội dung để
+   phân loại rõ 2 loại thông tin trong mỗi dòng, thay vì đọc như 1 câu liền. */
+.bountyLabel {
+  color: var(--trait-accent, var(--accent-primary));
+  font-weight: var(--fw-bold);
+}
+
+.bountyReward .bountyLabel {
+  color: inherit;
+}
+
+.traitMembers {
+  margin-top: auto;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.55rem;
+}
+
+.memberLogos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ---------- 04 · Linh hỏa ---------- */
+
+.wispGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.4rem 0.7rem;
+}
+
+/* khung thẻ chừa chỗ ở đỉnh cho hàng badge (giá/phân loại/thời gian) đè lên viền
+   trên — theo sketch của user: 3 badge tròn nhô nửa ra ngoài cạnh trên thẻ. */
+.wispCard {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.85rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 22rem;
+}
+
+/* nằm hẳn trong thẻ (không đè lên viền trên như bản trước) — chừa khoảng cách
+   với .wispNames bên dưới qua gap của .wispCard để không đè lên tên. */
+.wispBadgeRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.wispBadgeStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 1.5rem;
+}
+
+.wispBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-line);
+  background: var(--surface-card);
+  padding: 0 0.35rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+/* mốc giá vàng — icon xu + số tô vàng cho dễ nhận diện, khác với mốc thời gian
+   (chỉ là số, nền xám trung tính). To hơn hẳn badge mặc định vì đây là thông
+   tin người dùng cần đọc nhanh nhất trên mỗi thẻ; wisp chưa cập nhật giá vẫn
+   hiện icon xu kèm "NaN" thay vì để trống, để biết đây là thiếu dữ liệu chứ
+   không phải lỗi hiển thị. */
+.wispCostBadge {
+  min-width: 2.1rem;
+  height: 2.1rem;
+  border-width: 2px;
+  padding: 0 0.5rem;
+  color: var(--cost-5);
+  font-size: var(--fs-sm);
+}
+
+.wispCostBadge .statIcon {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+/* màu trùng với nhãn "Nâng cấp Hoa Linh" (.wispSectionLabelUpgrade) để cùng báo
+   hiệu "sau khi nâng cấp"; to hơn badge thường một chút cho nổi bật kết quả. */
+.wispBadgeUpgrade {
+  min-width: 2.4rem;
+  height: 2.4rem;
+  border-color: #ec4899;
+  border-width: 2px;
+  color: #ec4899;
+  font-size: var(--fs-body);
+}
+
+.wispBadgeAppears {
+  border-color: transparent;
+  background: var(--surface-raised);
+  color: var(--text-muted);
+}
+
+.wispBadgeArrow {
+  color: var(--text-disabled);
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+/* logo phân loại không cần khung/nền — chỉ để icon nổi trên viền thẻ, to hơn để
+   dễ nhận diện; .wispNames chừa thêm khoảng trống phía trên để không bị đè. */
+.wispCategoryBadge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+}
+
+.wispNames {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  text-align: center;
+}
+
+.wispNameVi {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.wispNameEn {
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  padding: 0.15rem 0.6rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+}
+
+.wispDesc {
+  margin: 0;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.wispSection {
+  display: grid;
+  gap: 0.3rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.5rem;
+}
+
+.wispSectionLabel,
+.wispSectionLabelUpgrade {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.wispSectionLabel {
+  color: var(--text-subtle);
+}
+
+.wispSectionLabelUpgrade {
+  color: #ec4899;
+}
+
+/* in đậm + in nghiêng để phân biệt đây là nội dung bổ sung (nâng cấp Hoa Linh),
+   khác trọng số với mô tả chính ở trên. */
+.wispSectionBox {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+  font-style: italic;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-relaxed);
+}
+
+.wispConditionList {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+/* ---------- 05 · Nâng cấp ---------- */
+
+/* align-items mặc định (stretch) — mọi thẻ trong cùng 1 hàng cao bằng nhau,
+   giống .wispGrid. Thẻ ngắn hơn tự giãn khoảng trống ở cuối nhờ .augmentCard
+   là flex column không set justify-content (nội dung dồn lên đầu). */
+.augmentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16.5rem, 1fr));
+  gap: 1.1rem;
+}
+
+/* Sticker card — viền + shadow lệch màu theo rarity thật của game (Silver/Gold/
+   Prismatic, xem build_augments_data.py / palette.augment_rarity_colours), cùng
+   ngôn ngữ với .flip (ChampionCard) thay vì viền trái mảnh của bản cũ. */
+.augmentCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.9rem 0.9rem 1.1rem;
+  box-shadow: 5px 5px 0 var(--rarity-color, var(--border-line));
+  content-visibility: auto;
+  contain-intrinsic-size: 26rem;
+}
+
+.batchControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.batchControls button {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  min-height: 2.25rem;
+  padding: 0.4rem 0.7rem;
+  font-family: inherit;
+}
+
+.batchControls button:hover,
+.batchControls button:focus-visible {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+}
+
+.augmentTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Icon phân loại (combat/items/econ/traits/strategic) — tham khảo chip màu của
+   metatft.com/new-set#Augments. Chỉ hiện khi augment có category thật trong data
+   (xem AUGMENT_CATEGORY_CHIP); "Other"/"Khác" không có chip vì nguồn dữ liệu
+   không phân loại được, tránh gán bừa 1 trong 5 màu. */
+.categoryChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: var(--r-pill);
+  padding: 0.2rem 0.55rem 0.2rem 0.4rem;
+  background: color-mix(in srgb, var(--cat-color) 22%, white);
+  border: 1.5px solid var(--cat-color);
+}
+
+.categoryChip svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+  stroke: var(--cat-color);
+  stroke-width: 2.4;
+  fill: none;
+}
+
+.categoryChip span {
+  color: var(--cat-color);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+}
+
+/* "Thời điểm xuất hiện" — vòng đấu thật augment.rounds có thể xuất hiện để
+   chọn (build_augments_data.py, 258/261 augment có dữ liệu này). */
+.stagePills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  max-width: 8rem;
+}
+
+.stagePill {
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-line);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  padding: 0.12rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+}
+
+/* Icon augment chính giữa — phóng to làm điểm nhìn chính, plate nền tối nhuộm
+   theo màu rarity (giống icon augment thật trong game) thay vì nền xám trung tính. */
+.augmentIconPlate {
+  align-self: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: var(--r-md);
+  background: radial-gradient(
+    circle at 50% 34%,
+    color-mix(in srgb, var(--rarity-color) 55%, #1b1b1b) 0%,
+    color-mix(in srgb, var(--rarity-color) 25%, #14120c) 78%
+  );
+  border: 1.5px solid color-mix(in srgb, var(--rarity-color) 60%, black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.augmentIconPlate img {
+  width: 6rem;
+  height: 6rem;
+  object-fit: contain;
+}
+
+.augmentNameBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.augmentNameVi {
+  background: color-mix(in srgb, var(--rarity-color) 10%, var(--surface-raised));
+  border: 1px solid color-mix(in srgb, var(--rarity-color) 40%, var(--border-line));
+  border-radius: var(--r-md);
+  padding: 0.45rem 0.7rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+  text-align: center;
+  line-height: var(--lh-snug);
+}
+
+.augmentNameEn {
+  text-align: center;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.augmentContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border-line);
+  padding-top: 0.65rem;
+}
+
+.augmentContent p {
+  margin: 0;
+}
+
+.augmentContentMain {
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.augmentContentSecondary {
+  border-top: 1px dashed var(--border-line);
+  padding-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-relaxed);
+}
+
+/* ---------- Tooltip tướng ---------- */
+
+.tooltip {
+  position: fixed;
+  z-index: 60;
+  width: 21rem;
+  border: 2px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-card);
+  padding: 0.7rem 0.8rem;
+  box-shadow: 0 12px 28px rgba(27, 27, 27, 0.22);
+  pointer-events: none;
+}
+
+.tooltipHead {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.4rem;
+}
+
+.tooltipPortrait {
+  border: 2px solid var(--border-line);
+  border-radius: var(--r-sm);
+  object-fit: cover;
+}
+
+.tooltipHead strong {
+  display: block;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.tooltipMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+.tooltipTraits {
+  margin: 0 0 0.35rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: 1.45;
+}
+
+.tooltipAbility {
+  margin: 0 0 0.2rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.35rem;
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+}
+
+.tooltipMana {
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+.tooltipText {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-relaxed);
+}
+
+.tooltipTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.45rem;
+}
+
+.tooltipTags span {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  padding: 0.05rem 0.45rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+/* ---------- 06 · Hiệu ứng ---------- */
+
+.effectToc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.effectTocLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-pill);
+  background: var(--surface-card);
+  padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  text-decoration: none;
+  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+
+.effectTocLink:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.effectTocIndex,
+.effectCategoryIndex {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+}
+
+.effectTocIndex {
+  width: 1.1rem;
+  height: 1.1rem;
+  font-size: var(--fs-2xs);
+}
+
+.effectCategoryIndex {
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: var(--fs-xs);
+}
+
+.effectCategory {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.6rem;
+  scroll-margin-top: 5.5rem;
+}
+
+.effectCategory:first-of-type {
+  margin-top: 0.4rem;
+}
+
+.effectCategoryHead {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 0.7rem;
+}
+
+.effectCategoryTitle {
+  margin: 0.15rem 0 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+}
+
+.effectBlock {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.effectHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  border-left: 4px solid var(--trait-accent, var(--accent-primary));
+  padding-left: 0.6rem;
+}
+
+.effectHead h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extra);
+}
+
+.effectHeadTag {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+}
+
+.effectDesc {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.effectGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+  gap: 0.65rem;
+}
+
+.effectCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.75rem;
+}
+
+.effectCardHead {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.effectCardName {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.effectCardName strong {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.effectCardTag {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.02em;
+}
+
+.effectItemIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.effectItemIcon img {
+  border-radius: var(--r-xs);
+}
+
+/* icon augment — nền dạng đĩa theo màu độ hiếm, cùng công thức radial-gradient
+   với .augmentIconPlate ở phần 05 nhưng thu nhỏ cho vừa hàng nguồn hiệu ứng. */
+.effectAugmentIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid color-mix(in srgb, var(--rarity-color) 60%, black);
+  background: radial-gradient(
+    circle at 50% 34%,
+    color-mix(in srgb, var(--rarity-color) 55%, #1b1b1b) 0%,
+    color-mix(in srgb, var(--rarity-color) 25%, #14120c) 78%
+  );
+}
+
+.effectAugmentIcon img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.effectRarityPill {
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--rarity-color) 16%, white);
+  color: var(--rarity-color);
+  padding: 0.15rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+}
+
+.effectQuote {
+  margin: 0;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.effectGroupLabel {
+  margin: 0.2rem 0 0.4rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.effectGroupNote {
+  margin: -0.15rem 0 0.5rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.effectFine {
+  margin: 0.1rem 0 0;
+  color: var(--text-subtle);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-relaxed);
+}
+
+.effectSpotlightGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+  gap: 0.7rem;
+}
+
+.effectSpotlight {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.4rem;
+  border: 1px solid var(--border-line);
+  border-left: 4px solid var(--success);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: 0.85rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 22rem;
+}
+
+.effectSpotlightHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.effectSpotlightHead strong {
+  display: block;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.effectSpotlightBadge {
+  display: inline-block;
+  margin-top: 0.15rem;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--success) 16%, white);
+  color: var(--success);
+  padding: 0.05rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+.effectSpotlight p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.effectLuxTableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+}
+
+.effectLuxTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-xs);
+}
+
+.effectLuxTable th {
+  border-bottom: 1.5px solid var(--border-line);
+  padding: 0.55rem 0.7rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-caps);
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.effectLuxTable td {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.7rem;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.effectLuxTable tr:last-child td {
+  border-bottom: none;
+}
+
+.effectLuxFormCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.effectLuxFormCell img {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-xs);
+  object-fit: cover;
+}
+
+.effectLuxFormCell span {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+}
+
+.effectLuxTrait {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  white-space: nowrap;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1080px) {
+  .shell {
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tocColumn {
+    display: none;
+  }
+
+  .mobileSelect {
+    display: block;
+  }
+
+  .tooltip {
+    width: min(21rem, calc(100vw - 2rem));
+  }
+}

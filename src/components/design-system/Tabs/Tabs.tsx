@@ -1,43 +1,58 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import styles from './Tabs.module.css';
 
 export type TabItem = {
   id: string;
-  label: string;
+  label: ReactNode;
+  ariaLabel?: string;
+  className?: string;
 };
+
+export function tabElementId(idPrefix: string, tabId: string) {
+  return `${idPrefix}${tabId}-tab`;
+}
+
+export function tabPanelId(idPrefix: string, tabId: string) {
+  return `${idPrefix}${tabId}-panel`;
+}
 
 export function Tabs({
   tabs,
   value,
   onChange,
   label,
+  idPrefix = '',
 }: {
   tabs: TabItem[];
   value: string;
   onChange: (value: string) => void;
   label: string;
+  idPrefix?: string;
 }) {
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
 
   function moveFocus(index: number) {
-    const target = refs.current[(index + tabs.length) % tabs.length];
-    target?.focus();
+    const normalizedIndex = (index + tabs.length) % tabs.length;
+    const targetTab = tabs[normalizedIndex];
+    onChange(targetTab.id);
+    requestAnimationFrame(() => refs.current[normalizedIndex]?.focus());
   }
 
   return (
-    <div aria-label={label} className={styles.tabs} role="tablist">
+    <div aria-label={label} aria-orientation="horizontal" className={styles.tabs} role="tablist">
       {tabs.map((tab, index) => (
         <button
           key={tab.id}
           ref={(node) => {
             refs.current[index] = node;
           }}
-          aria-controls={`${tab.id}-panel`}
+          aria-controls={tabPanelId(idPrefix, tab.id)}
+          aria-label={tab.ariaLabel}
           aria-selected={value === tab.id}
-          className={styles.tab}
-          id={`${tab.id}-tab`}
+          className={[styles.tab, tab.className].filter(Boolean).join(' ')}
+          id={tabElementId(idPrefix, tab.id)}
           role="tab"
           tabIndex={value === tab.id ? 0 : -1}
           type="button"
