@@ -331,6 +331,64 @@ function championForms(champion: Set18Champion): Set18ChampionForm[] {
   ];
 }
 
+/** Phần nội dung mặt trước (định danh + kỹ năng) — tách riêng để thước đo ẩn
+ * dựng lại được y hệt cho MỌI dạng, phục vụ việc khoá chiều cao thẻ. */
+function CardFrontContent({
+  champion,
+  form,
+  traitRow,
+  frontIdRef,
+  bodyRef,
+}: {
+  champion: Set18Champion;
+  form: Set18ChampionForm;
+  traitRow: React.ReactNode;
+  frontIdRef?: React.Ref<HTMLDivElement>;
+  bodyRef?: React.Ref<HTMLDivElement>;
+}) {
+  return (
+    <>
+      <div className={styles.frontId} ref={frontIdRef}>
+        <div className={styles.miniHead}>
+          <Image alt={champion.name} className={styles.miniLogo} height={56} src={form.image} width={56} />
+          <div className={styles.nameCol}>
+            <strong className={styles.uname}>{champion.name}</strong>
+            <span className={styles.urole}>{champion.role}</span>
+          </div>
+          <CostPill color={champion.costColor} cost={champion.cost} />
+        </div>
+        {traitRow}
+      </div>
+      <div className={styles.body} ref={bodyRef}>
+        <div className={styles.abhead}>
+          {form.abilityIcon ? (
+            <Image alt="" className={styles.abilityIcon} height={28} src={form.abilityIcon} width={28} />
+          ) : null}
+          <strong className={styles.abname}>{form.abilityNameVi || form.abilityName}</strong>
+          <span className={styles.manaTag}>
+            <span className={`${styles.statIcon} ${styles.statIconMana}`} />
+            {form.mana}
+          </span>
+        </div>
+        <p className={styles.abdesc} dangerouslySetInnerHTML={{ __html: form.abilityHtmlVi }} />
+        {form.calcs.length ? (
+          <div className={styles.calcs}>
+            {form.calcs.map((calc) => (
+              <div key={calc.id}>
+                <div className={styles.calc}>
+                  <span className={calc.style}>{calc.label}:</span>
+                  <span>{calc.total}</span>
+                </div>
+                <div className={styles.calcTerms} dangerouslySetInnerHTML={{ __html: calc.terms }} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
 /** Thẻ lật — mặt trước logo mini + kỹ năng đầy đủ (icon, mana, mô tả màu theo game,
  * công thức sát thương), mặt sau ảnh lớn + số liệu. Tướng nhiều dạng (Lux, Nidalee,
  * 4 tướng Thích Ứng AD/AP) có thêm rail chọn dạng nằm cạnh thẻ, không xoay theo khi lật.
@@ -346,16 +404,27 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
   const frontIdRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
+  const sizerRef = useRef<HTMLDivElement>(null);
 
   const form = forms[Math.min(activeForm, forms.length - 1)];
 
+  // Chiều cao phải tính theo dạng DÀI NHẤT, không theo dạng đang chọn. Trước đây
+  // effect phụ thuộc vào `form` nên đổi dạng Lux là thẻ co lại — và vì lưới
+  // (ChampionCostGrid) cào bằng chiều cao cả hàng theo thẻ cao nhất, Lux co thì
+  // kéo tụt luôn cả hàng 5 vàng. Thước đo ẩn dựng sẵn mọi dạng để lấy max một lần.
   useLayoutEffect(() => {
     const frontH = (frontIdRef.current?.offsetHeight ?? 0) + (bodyRef.current?.scrollHeight ?? 0);
     const backH = backRef.current
       ? Array.from(backRef.current.children).reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0)
       : 0;
-    if (flipRef.current) flipRef.current.style.height = `${Math.max(400, frontH, backH)}px`;
-  }, [champion, form]);
+    const sizerH = sizerRef.current
+      ? Array.from(sizerRef.current.children).reduce(
+          (max, child) => Math.max(max, (child as HTMLElement).offsetHeight),
+          0,
+        )
+      : 0;
+    if (flipRef.current) flipRef.current.style.height = `${Math.max(400, frontH, backH, sizerH)}px`;
+  }, [champion]);
 
   const traits = resolveTraits(form.traits);
   const traitRow = (
@@ -409,45 +478,41 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
         </div>
       ) : null}
 
+      {/* Thước đo ẩn: dựng mặt trước của mọi dạng để lấy chiều cao lớn nhất một
+          lần, rồi khoá thẻ ở đó. Không đọc được bởi trình đọc màn hình và không
+          nhận chuột. Chỉ dựng khi tướng có nhiều hơn 1 dạng. */}
+      {forms.length > 1 ? (
+        <div aria-hidden className={styles.sizer} ref={sizerRef}>
+          {forms.map((f) => (
+            <div className={styles.sizerFace} key={f.label}>
+              <CardFrontContent
+                champion={champion}
+                form={f}
+                traitRow={
+                  <div className={styles.traitsRow}>
+                    {resolveTraits(f.traits).map((trait) => (
+                      <span className={styles.traitChip} key={trait.name}>
+                        <TraitIcon size={22} trait={trait} />
+                        {trait.vi}
+                      </span>
+                    ))}
+                  </div>
+                }
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       <div className={styles.flipInner}>
           <div aria-hidden={flipped} className={styles.face} id={frontFaceId} inert={flipped ? true : undefined}>
-            <div className={styles.frontId} ref={frontIdRef}>
-              <div className={styles.miniHead}>
-                <Image alt={champion.name} className={styles.miniLogo} height={56} src={form.image} width={56} />
-                <div className={styles.nameCol}>
-                  <strong className={styles.uname}>{champion.name}</strong>
-                  <span className={styles.urole}>{champion.role}</span>
-                </div>
-                <CostPill color={champion.costColor} cost={champion.cost} />
-              </div>
-              {traitRow}
-            </div>
-            <div className={styles.body} ref={bodyRef}>
-              <div className={styles.abhead}>
-                {form.abilityIcon ? (
-                  <Image alt="" className={styles.abilityIcon} height={28} src={form.abilityIcon} width={28} />
-                ) : null}
-                <strong className={styles.abname}>{form.abilityNameVi || form.abilityName}</strong>
-                <span className={styles.manaTag}>
-                  <span className={`${styles.statIcon} ${styles.statIconMana}`} />
-                  {form.mana}
-                </span>
-              </div>
-              <p className={styles.abdesc} dangerouslySetInnerHTML={{ __html: form.abilityHtmlVi }} />
-              {form.calcs.length ? (
-                <div className={styles.calcs}>
-                  {form.calcs.map((calc) => (
-                    <div key={calc.id}>
-                      <div className={styles.calc}>
-                        <span className={calc.style}>{calc.label}:</span>
-                        <span>{calc.total}</span>
-                      </div>
-                      <div className={styles.calcTerms} dangerouslySetInnerHTML={{ __html: calc.terms }} />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            <CardFrontContent
+              bodyRef={bodyRef}
+              champion={champion}
+              form={form}
+              frontIdRef={frontIdRef}
+              traitRow={traitRow}
+            />
             <button
               aria-controls={`${frontFaceId} ${backFaceId}`}
               aria-label={`Xem số liệu của ${champion.name}, dạng ${form.label}`}
@@ -841,17 +906,23 @@ function TraitDetails({
                     </div>
                   </header>
 
-                  <div className={styles.breakpointRow}>
-                    <span className={styles.breakLabel}>Mốc</span>
-                    {trait.breakpointDetails.map((bp, index) => (
-                      <span className={styles.breakChipGroup} key={bp.threshold}>
-                        {index > 0 ? <span className={styles.breakArrow}>›</span> : null}
-                        <span className={styles.breakChip} style={{ '--break-color': bp.color } as CSSProperties} title={bp.style}>
-                          {bp.threshold}
+                  {/* Trait ẩn (Thiên Thực) không có mốc chọn được — chip "0" và
+                      "0 tướng" chỉ gây hiểu nhầm, thay bằng điều kiện kích hoạt. */}
+                  {trait.activation ? (
+                    <p className={styles.traitActivation}>{trait.activation}</p>
+                  ) : (
+                    <div className={styles.breakpointRow}>
+                      <span className={styles.breakLabel}>Mốc</span>
+                      {trait.breakpointDetails.map((bp, index) => (
+                        <span className={styles.breakChipGroup} key={bp.threshold}>
+                          {index > 0 ? <span className={styles.breakArrow}>›</span> : null}
+                          <span className={styles.breakChip} style={{ '--break-color': bp.color } as CSSProperties} title={bp.style}>
+                            {bp.threshold}
+                          </span>
                         </span>
-                      </span>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
 
                   {trait.descriptionVi || trait.description ? (
                     <p className={styles.traitDesc}>{trait.descriptionVi || trait.description}</p>
@@ -874,6 +945,22 @@ function TraitDetails({
                     </ul>
                   ) : null}
 
+                  {trait.subEffects?.items.length ? (
+                    <div className={styles.traitSubEffects}>
+                      {trait.subEffects.title ? (
+                        <span className={styles.traitSubTitle}>{trait.subEffects.title}</span>
+                      ) : null}
+                      <ul className={styles.traitSubList}>
+                        {trait.subEffects.items.map((item) => (
+                          <li key={item.label}>
+                            <span className={styles.traitSubLabel}>{item.label}</span>
+                            <span>{item.text}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
                   {trait.infoChips?.length ? (
                     <div className={styles.traitInfoChips}>
                       {trait.infoChips.map((chip) => (
@@ -884,8 +971,11 @@ function TraitDetails({
                     </div>
                   ) : null}
 
+                  {trait.note ? <p className={styles.traitNote}>{trait.note}</p> : null}
+
                   {trait.bounties?.length ? <BountyBoard bounties={trait.bounties} /> : null}
 
+                  {trait.champions.length ? (
                   <div className={styles.traitMembers}>
                     <span className={styles.breakLabel}>{trait.champions.length} tướng</span>
                     <div className={styles.memberLogos}>
@@ -896,6 +986,7 @@ function TraitDetails({
                       })}
                     </div>
                   </div>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -956,7 +1047,7 @@ function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all
   useEffect(() => setVisibleCount(batchSize), [categoryFilter]);
 
   return (
-    <section className={styles.section} id="linh-hoa">
+    <section className={styles.section} id="tinh-linh">
       <header className={styles.sectionHead}>
         <span className={styles.eyebrow}>04 · Tinh Linh</span>
         <h2>Tinh Linh (Wisp)</h2>
@@ -1545,7 +1636,7 @@ export function Set18Codex() {
 
     async function loadSectionData() {
       try {
-        if (activeSection === 'linh-hoa') {
+        if (activeSection === 'tinh-linh') {
           const wisps = await import('@/content/set18/set18-wisps');
           set18Wisps = wisps.set18Wisps;
         } else if (activeSection === 'nang-cap') {
@@ -1588,7 +1679,7 @@ export function Set18Codex() {
 
   const wispGroups = useMemo<WispCategoryGroup[]>(
     () =>
-      loadedSection === 'linh-hoa'
+      loadedSection === 'tinh-linh'
         ? WISP_CATEGORY_ORDER.map((category) => {
             const items = set18Wisps.filter((wisp) => wisp.category === category);
             return { category, categoryVi: items[0]?.categoryVi ?? category, items };
@@ -1685,7 +1776,7 @@ export function Set18Codex() {
           </div>
         ) : null}
 
-        {isSectionReady && activeSection === 'linh-hoa' ? (
+        {isSectionReady && activeSection === 'tinh-linh' ? (
           <div className={styles.filterBar}>
             <ScrollableRow>
               <WispCategoryFilter categoryFilter={wispCategoryFilter} groups={wispGroups} onChange={setWispCategoryFilter} />
@@ -1712,7 +1803,7 @@ export function Set18Codex() {
         {isSectionReady && activeSection === 'chi-tiet-toc-he' ? (
           <TraitDetails onHide={hideTooltip} onShow={showTooltip} typeFilter={traitTypeFilter} />
         ) : null}
-        {isSectionReady && activeSection === 'linh-hoa' ? <WispSection categoryFilter={wispCategoryFilter} groups={wispGroups} /> : null}
+        {isSectionReady && activeSection === 'tinh-linh' ? <WispSection categoryFilter={wispCategoryFilter} groups={wispGroups} /> : null}
         {isSectionReady && activeSection === 'nang-cap' ? (
           <AugmentDetails categoryFilter={augmentCategoryFilter} rarityFilter={augmentRarityFilter} />
         ) : null}

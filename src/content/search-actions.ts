@@ -33,11 +33,11 @@ export const searchActions: SearchAction[] = [
     keywords: ['mùa 18', 'set 18', 'tộc hệ', 'trait', 'mốc kích hoạt'],
   },
   {
-    id: 'mua18-linh-hoa',
+    id: 'mua18-tinh-linh',
     group: 'Mùa 18',
     label: 'Xem Tinh Linh Mùa 18',
     description: '176 Tinh Linh (wisp), nhóm theo loại hiệu ứng.',
-    href: '/mua-18?section=linh-hoa',
+    href: '/mua-18?section=tinh-linh',
     keywords: ['mùa 18', 'set 18', 'tinh linh', 'wisp'],
   },
   {

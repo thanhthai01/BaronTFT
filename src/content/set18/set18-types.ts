@@ -61,6 +61,20 @@ export type Set18Trait = {
    * metatft.com/tables/draven-bounties bởi scripts/add_draven_bounty_difficulty.py.
    * Hai pool rút riêng và không có trọng số, nên xác suất trong mỗi pool là đều. */
   bounties?: { mission: string; reward: string; difficulty: 'standard' | 'hard' }[];
+  /** Danh sách hiệu ứng phụ có nhãn, KHÔNG phải mốc kích hoạt — dùng cho 2 trait
+   * mà dữ liệu game dồn tất cả vào một đoạn văn dính liền:
+   *  · Nguyên Sinh: 4 Phước Lành để chọn (Gấu/Phượng Hoàng/Hổ/Rùa)
+   *  · Mặt Trời: thưởng thêm theo số tướng 3 sao khác nhau (3/5/8)
+   * Tách ra để hai thẻ này đọc giống các thẻ có `breakpointDetails[].bullet`. */
+  subEffects?: { title?: string; items: { label: string; text: string }[] };
+  /** Dòng chú giải in nghiêng đặt cuối thẻ — tương đương style `<Rules>` của game
+   * (vd Đao Phủ giải thích "Chính Xác" nghĩa là gì). Tách khỏi bullet của mốc vì
+   * nó giải nghĩa thuật ngữ chứ không phải hiệu ứng riêng của mốc đó. */
+  note?: string;
+  /** Điều kiện kích hoạt của trait ẩn — trait không nằm trong danh sách chọn và
+   * không có tướng nào mang nó, nên `breakpoints` là ["0"] và vô nghĩa khi hiện
+   * dưới dạng chip mốc. Chỉ Thiên Thực có. */
+  activation?: string;
   /** true = thẻ trait này chiếm trọn 1 hàng riêng trong lưới (nội dung dài hơn
    * hẳn các trait Đặc biệt khác, ví dụ Săn Thưởng). */
   wide?: boolean;
