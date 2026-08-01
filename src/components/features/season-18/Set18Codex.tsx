@@ -331,6 +331,9 @@ function championForms(champion: Set18Champion): Set18ChampionForm[] {
   ];
 }
 
+/** Sàn chiều cao thẻ tướng — dưới mức này thẻ trông hụt so với ảnh và hàng chỉ số. */
+const MIN_CARD_HEIGHT = 400;
+
 /** Cả mặt thẻ là vùng bấm để lật (thay cho nút "Xem số liệu" ở góc). Vì dùng
  * div role="button" nên phải tự nối phím: trình duyệt chỉ tự xử lý Enter/Space
  * cho <button> thật. preventDefault ở Space để trang không cuộn xuống. */
@@ -421,8 +424,13 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
 
   // Chiều cao phải tính theo dạng DÀI NHẤT, không theo dạng đang chọn. Trước đây
   // effect phụ thuộc vào `form` nên đổi dạng Lux là thẻ co lại — và vì lưới
-  // (ChampionCostGrid) cào bằng chiều cao cả hàng theo thẻ cao nhất, Lux co thì
-  // kéo tụt luôn cả hàng 5 vàng. Thước đo ẩn dựng sẵn mọi dạng để lấy max một lần.
+  // (ChampionCostGrid) cào bằng chiều cao mọi thẻ theo thẻ cao nhất, Lux co thì
+  // kéo tụt luôn cả lưới. Thước đo ẩn dựng sẵn mọi dạng để lấy max một lần.
+  //
+  // Chỉ CÔNG BỐ chiều cao nội dung qua data-natural-height, không tự gán style:
+  // việc chọn chiều cao chung là của lưới. Đo từ scrollHeight của phần nội dung
+  // nên không phụ thuộc chiều cao lưới đang áp — nhờ vậy con số này luôn là nhu
+  // cầu thật, giảm được chứ không chỉ tăng.
   useLayoutEffect(() => {
     const frontH = (frontIdRef.current?.offsetHeight ?? 0) + (bodyRef.current?.scrollHeight ?? 0);
     const backH = backRef.current
@@ -434,8 +442,10 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
           0,
         )
       : 0;
-    if (flipRef.current) flipRef.current.style.height = `${Math.max(400, frontH, backH, sizerH)}px`;
-  }, [champion]);
+    if (flipRef.current) {
+      flipRef.current.dataset.naturalHeight = String(Math.max(MIN_CARD_HEIGHT, frontH, backH, sizerH));
+    }
+  });
 
   const traits = resolveTraits(form.traits);
   const traitRow = (
@@ -742,6 +752,13 @@ function TraitTypeFilter({
  * .wispCard tự nhiên bằng chiều cao nhờ CSS grid stretch, nhưng thẻ tướng cần làm
  * tay vì chiều cao vốn đã bị JS ghi đè (style.height), CSS align-items không còn
  * tác dụng nữa. */
+/** Mọi thẻ dùng chung một chiều cao: chiều cao của thẻ có nội dung dài nhất.
+ *
+ * Đọc `data-natural-height` (nhu cầu nội dung thật, do từng thẻ tự công bố) chứ
+ * KHÔNG đọc getBoundingClientRect: rect trả về đúng chiều cao mà chính effect
+ * này vừa gán ở lần chạy trước, nên chuẩn chung sẽ chỉ tăng chứ không bao giờ
+ * giảm — một lần đo hụt lúc font chưa tải xong là khoá luôn con số phồng đó,
+ * và nội dung có rút ngắn về sau cũng không thu lại được. */
 function ChampionCostGrid({ champions }: { champions: Set18Champion[] }) {
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -750,7 +767,10 @@ function ChampionCostGrid({ champions }: { champions: Set18Champion[] }) {
     if (!grid) return;
     const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-flip-card]'));
     if (!cards.length) return;
-    const maxHeight = Math.max(...cards.map((card) => card.getBoundingClientRect().height));
+    const maxHeight = cards.reduce(
+      (max, card) => Math.max(max, Number(card.dataset.naturalHeight) || 0),
+      MIN_CARD_HEIGHT,
+    );
     cards.forEach((card) => {
       card.style.height = `${maxHeight}px`;
     });
