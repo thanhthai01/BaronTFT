@@ -759,7 +759,7 @@ const BOUNTY_POOLS = [
   { key: 'hard' as const, label: 'Khó' },
 ];
 
-/** Bảng nhiệm vụ của Kẻ Săn Tiền Thưởng, tách theo 2 pool rút của game thay vì đổ
+/** Bảng nhiệm vụ của Săn Thưởng, tách theo 2 pool rút của game thay vì đổ
  * chung 11 ô như trước: người chơi chọn bounty theo việc mình gánh Draven được đến
  * đâu, nên độ khó là thứ cần đọc trước cả nội dung nhiệm vụ. Hai pool không có
  * trọng số nên xác suất trong mỗi pool bằng nhau — hiển thị luôn 1/N ở đầu nhóm.

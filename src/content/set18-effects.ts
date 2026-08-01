@@ -507,9 +507,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
               {
                 kind: 'champion',
                 name: 'Lux',
-                form: 'Kỳ Quái',
-                tag: 'Thưởng Kỳ Quái',
-                quote: 'Cầu Vồng Tối Thượng Choáng 1 giây mọi mục tiêu bị laser trúng đòn — riêng phiên bản Kỳ Quái mới có thưởng này.',
+                form: 'Gai Đen',
+                tag: 'Thưởng Gai Đen',
+                quote: 'Cầu Vồng Tối Thượng Choáng 1 giây mọi mục tiêu bị laser trúng đòn — riêng phiên bản Gai Đen mới có thưởng này.',
               },
             ],
           },
@@ -842,9 +842,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Blackthorn',
-            tag: 'Tộc/Hệ · Kỳ Quái · đổi tướng lấy Máu',
+            tag: 'Tộc/Hệ · Gai Đen · đổi tướng lấy Máu',
             quote:
-              'Đồng minh đứng trên ô Kỳ Quái bị hiến tế khi vào giao tranh, đổi lại cả đội nhận mốc (2) 175 · (4) 300 · (6) 350 Máu. Từ mốc (6), vật hiến tế không chết.',
+              'Đồng minh đứng trên ô Gai Đen bị hiến tế khi vào giao tranh, đổi lại cả đội nhận mốc (2) 175 · (4) 300 · (6) 350 Máu. Từ mốc (6), vật tế không bị tiêu diệt.',
           },
           {
             kind: 'trait',
@@ -1094,11 +1094,11 @@ export const set18EffectCategories: Set18EffectCategory[] = [
             badge: 'Quái Rừng · mốc (10)',
             body:
               'Đủ 10 tướng Quái Rừng trên bàn mở khóa mốc cao nhất của tộc Quái Rừng (Riftbeast): toàn đội được cộng thẳng +2 ô tướng tối đa — cơ chế duy nhất trong nhóm tộc/hệ tăng sức chứa đội hình thay vì chỉ tăng chỉ số.',
-            fine: 'Nguồn: tộc/hệ "Quái Rừng" (Riftbeast), mốc kích hoạt ở 10 tướng hệ. Các mốc thấp hơn cho Dấu Alpha (3), cửa hàng tràn Quái Rừng (5) và buff lớn dần mỗi 5 giây (7).',
+            fine: 'Nguồn: tộc/hệ "Quái Rừng" (Riftbeast), mốc kích hoạt ở 10 tướng hệ. Các mốc thấp hơn cho Dấu Ấn Đầu Đàn (3), cửa hàng tràn Quái Rừng (5) và bùa lợi lớn dần mỗi 5 giây (7).',
           },
         ],
         luxForms: [
-          { form: 'Kỳ Quái', trait: 'Blackthorn', bonus: 'Làm Choáng mục tiêu trúng đòn trong 1 giây.' },
+          { form: 'Gai Đen', trait: 'Blackthorn', bonus: 'Làm Choáng mục tiêu trúng đòn trong 1 giây.' },
           { form: 'Hoa Linh', trait: 'Blossom', bonus: 'Mục tiêu đầu tiên trúng đòn nhận thêm 15% sát thương.' },
           { form: 'Tiên Hắc Ám', trait: 'Coven', bonus: 'Giảm Giáp và Kháng Phép của mục tiêu trúng chiêu đi 12 đến hết giao tranh.' },
           { form: 'Thần Rừng', trait: 'Elderwood', bonus: 'Toàn đội nhận thêm 5% Máu tối đa đến hết giao tranh.' },
@@ -1154,8 +1154,8 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Blackthorn',
-            tag: 'Tộc/Hệ · Kỳ Quái · ô hiến tế',
-            quote: 'Ô Kỳ Quái là ô đặc biệt trên bàn: đồng minh đứng lên đó sẽ bị hiến tế khi vào giao tranh để đổi lấy Máu cho cả đội.',
+            tag: 'Tộc/Hệ · Gai Đen · ô hiến tế',
+            quote: 'Ô Gai Đen là ô đặc biệt trên bàn: đồng minh đứng lên đó sẽ bị hiến tế khi vào giao tranh để đổi lấy Máu cho cả đội.',
           },
           {
             kind: 'wisp',
