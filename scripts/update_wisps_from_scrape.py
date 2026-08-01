@@ -47,7 +47,21 @@ import re
 from pathlib import Path
 
 WEBSITE = Path(__file__).resolve().parent.parent
-SET18 = WEBSITE.parent / "Set18"
+
+
+def find_set18() -> Path:
+    """Set18/ nằm cạnh Website/ ở cây chính, nhưng khi script chạy trong git worktree
+    (.claude/worktrees/<tên>/) thì WEBSITE.parent là thư mục worktrees chứ không phải
+    thư mục gốc nữa. Đi ngược lên cho tới khi thấy một thư mục cạnh mình tên Set18 có
+    chứa data/ — đúng ở cả hai trường hợp."""
+    for base in [WEBSITE, *WEBSITE.parents]:
+        candidate = base.parent / "Set18"
+        if (candidate / "data").is_dir():
+            return candidate
+    raise SystemExit("Khong tim thay Set18/data khi di nguoc len tu " + str(WEBSITE))
+
+
+SET18 = find_set18()
 WISPS_JSON = SET18 / "assets" / "wisps" / "wisps.json"
 CODEX_VI_JSON = SET18 / "data" / "metatft_set18_vi.json"
 TS_OUT = WEBSITE / "src" / "content" / "set18" / "set18-wisps.ts"

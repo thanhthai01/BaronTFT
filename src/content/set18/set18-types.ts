@@ -57,7 +57,10 @@ export type Set18Trait = {
   infoChips?: string[];
   /** Chỉ Kẻ Săn Tiền Thưởng (Draven) có: 11 cặp nhiệm vụ/phần thưởng, tách khỏi
    * đoạn mô tả chính thành danh sách để đọc được thay vì 1 khối văn bản dính liền. */
-  bounties?: { mission: string; reward: string }[];
+  /** `difficulty` không có trong dữ liệu game — bổ sung từ bảng
+   * metatft.com/tables/draven-bounties bởi scripts/add_draven_bounty_difficulty.py.
+   * Hai pool rút riêng và không có trọng số, nên xác suất trong mỗi pool là đều. */
+  bounties?: { mission: string; reward: string; difficulty: 'standard' | 'hard' }[];
   /** true = thẻ trait này chiếm trọn 1 hàng riêng trong lưới (nội dung dài hơn
    * hẳn các trait Đặc biệt khác, ví dụ Kẻ Săn Tiền Thưởng). */
   wide?: boolean;

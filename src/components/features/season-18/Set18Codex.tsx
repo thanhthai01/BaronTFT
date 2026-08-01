@@ -752,6 +752,51 @@ function BulletText({ bullet }: { bullet: Set18TraitBreakpointBullet }) {
   );
 }
 
+type Set18Bounty = NonNullable<Set18Trait['bounties']>[number];
+
+const BOUNTY_POOLS = [
+  { key: 'standard' as const, label: 'Tiêu chuẩn' },
+  { key: 'hard' as const, label: 'Khó' },
+];
+
+/** Bảng nhiệm vụ của Kẻ Săn Tiền Thưởng, tách theo 2 pool rút của game thay vì đổ
+ * chung 11 ô như trước: người chơi chọn bounty theo việc mình gánh Draven được đến
+ * đâu, nên độ khó là thứ cần đọc trước cả nội dung nhiệm vụ. Hai pool không có
+ * trọng số nên xác suất trong mỗi pool bằng nhau — hiển thị luôn 1/N ở đầu nhóm.
+ *
+ * Bỏ tiền tố "Draven " khỏi câu nhiệm vụ khi hiển thị: cả 11 câu đều bắt đầu bằng
+ * đúng chữ đó và thẻ đã mang tên trait rồi, cắt đi thì mỗi ô còn lại phần khác biệt
+ * thật. Dữ liệu vẫn giữ nguyên văn bản gốc của game. */
+function BountyBoard({ bounties }: { bounties: Set18Bounty[] }) {
+  return (
+    <div className={styles.bountyBoard}>
+      {BOUNTY_POOLS.map((pool) => {
+        const items = bounties.filter((bounty) => bounty.difficulty === pool.key);
+        if (!items.length) return null;
+
+        return (
+          <div className={styles.bountyPool} data-difficulty={pool.key} key={pool.key}>
+            <div className={styles.bountyPoolHead}>
+              <span className={styles.bountyPoolName}>{pool.label}</span>
+              <span className={styles.bountyPoolMeta}>
+                {items.length} nhiệm vụ · mỗi nhiệm vụ 1/{items.length}
+              </span>
+            </div>
+            <ul className={styles.bountyList}>
+              {items.map((bounty) => (
+                <li className={styles.bountyRow} key={bounty.mission}>
+                  <span className={styles.bountyMission}>{bounty.mission.replace(/^Draven /, '')}</span>
+                  <span className={styles.bountyReward}>{bounty.reward}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function TraitDetails({
   onShow,
   onHide,
@@ -839,20 +884,7 @@ function TraitDetails({
                     </div>
                   ) : null}
 
-                  {trait.bounties?.length ? (
-                    <ul className={styles.bountyList}>
-                      {trait.bounties.map((bounty, index) => (
-                        <li className={styles.bountyRow} key={index}>
-                          <span className={styles.bountyMission}>
-                            <strong className={styles.bountyLabel}>Nhiệm vụ:</strong> {bounty.mission}
-                          </span>
-                          <span className={styles.bountyReward}>
-                            <strong className={styles.bountyLabel}>Phần thưởng:</strong> {bounty.reward}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
+                  {trait.bounties?.length ? <BountyBoard bounties={trait.bounties} /> : null}
 
                   <div className={styles.traitMembers}>
                     <span className={styles.breakLabel}>{trait.champions.length} tướng</span>
