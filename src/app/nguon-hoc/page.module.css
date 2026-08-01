@@ -40,10 +40,6 @@
 }
 
 .groupHead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 0.75rem;
   border-bottom: 1px solid var(--border-line);
   padding-bottom: 0.45rem;
 }
@@ -55,13 +51,6 @@
   font-size: var(--fs-body);
   font-weight: var(--fw-extra);
   letter-spacing: var(--ls-tight);
-}
-
-.groupHead p {
-  margin: 0;
-  color: var(--text-subtle);
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
 }
 
 /* auto-fit chứ không auto-fill: nhóm chỉ có 1 nguồn thì thẻ giãn kín cột thay vì nằm

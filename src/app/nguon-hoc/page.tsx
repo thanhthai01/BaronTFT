@@ -27,7 +27,6 @@ export default function ResourcesPage() {
             <div className={styles.group} id={group.id} key={group.id}>
               <div className={styles.groupHead}>
                 <h2>{group.question}</h2>
-                <p>{group.hint}</p>
               </div>
 
               <ul className={styles.sourceList}>

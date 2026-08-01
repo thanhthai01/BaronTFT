@@ -14,9 +14,9 @@
  *
  * `deepLinks` cố ý tránh URL có nhúng số set (vd tftflow /composition/set17/...,
  * tftacademy /tierlist/comps/set-17-...): chúng sẽ chết khi sang set mới. Chỉ dùng
- * đường dẫn không gắn set để trang tự trỏ về set hiện hành. Riêng tftflow: bản
- * /conditions/set18 CHƯA tồn tại (404 — trang vẫn đang ở Set 17 / patch 17.8), nên
- * dùng /conditions không gắn set; đổi sang set18 khi nào họ mở.
+ * đường dẫn không gắn set để trang tự trỏ về set hiện hành. NGOẠI LỆ tftflow
+ * /conditions/set18: link do người dùng chỉ định, giữ nguyên dù hiện trả 404 — trang
+ * đó vẫn đang ở Set 17 / patch 17.8 và sẽ mở set18 sau. Kiểm lại khi họ cập nhật.
  *
  * Lọc sẵn theo yêu cầu, chỉ ở nơi trang cho phép đặt qua URL (kiểm 2026-08-01):
  *   · tactics.tools — hậu tố /top = Cao Thủ trở lên (mặc định của trang là Kim Cương+)
@@ -52,7 +52,6 @@ export type LearningSource = {
 export type LearningGroup = {
   id: string;
   question: string;
-  hint: string;
   sources: LearningSource[];
 };
 
@@ -60,7 +59,6 @@ export const learningGroups: LearningGroup[] = [
   {
     id: 'patch',
     question: 'Bản patch vừa đổi gì?',
-    hint: 'Đọc trước khi tin bất kỳ tier list nào.',
     sources: [
       {
         name: 'Riot · Cập Nhật Trò Chơi',
@@ -84,7 +82,6 @@ export const learningGroups: LearningGroup[] = [
   {
     id: 'trien-khai',
     question: 'Đội hình này triển khai thế nào?',
-    hint: 'Phần các trang ngoài làm sâu nhất.',
     sources: [
       {
         name: 'TFT Flow',
@@ -94,7 +91,8 @@ export const learningGroups: LearningGroup[] = [
         note: 'Chọn hướng theo thứ bạn nhặt được; comp kèm tỉ lệ thắng từng vòng và VOD.',
         caveat: 'Link comp cũ chết khi sang set mới.',
         deepLinks: [
-          { label: 'Flowchart', href: 'https://tftflow.com/conditions' },
+          { label: 'Trang chủ', href: 'https://tftflow.com/' },
+          { label: 'Flowchart', href: 'https://tftflow.com/conditions/set18' },
           { label: 'Tier list', href: 'https://tftflow.com/tier-list' },
         ],
       },
@@ -112,7 +110,6 @@ export const learningGroups: LearningGroup[] = [
   {
     id: 'so-lieu',
     question: 'Số liệu đang nói gì?',
-    hint: 'Để kiểm chứng, không phải để chọn hộ đội hình.',
     sources: [
       {
         name: 'MetaTFT',
@@ -145,7 +142,6 @@ export const learningGroups: LearningGroup[] = [
   {
     id: 'meo-luyen-tap',
     question: 'Có mẹo nào mình chưa biết?',
-    hint: 'Thứ không nằm trong bất kỳ tier list nào.',
     sources: [
       {
         name: 'DataTFT',
@@ -166,7 +162,6 @@ export const learningGroups: LearningGroup[] = [
   {
     id: 'tu-review',
     question: 'Mình vừa chơi sai ở đâu?',
-    hint: 'Phần duy nhất thật sự làm bạn lên rank.',
     sources: [
       {
         name: 'LoLCHESS',
