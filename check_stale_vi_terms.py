@@ -37,11 +37,11 @@ STALE = {
 CHAMPS = ROOT / "src/content/set18/set18-champions.ts"
 
 # "Linh hỏa" was the site's own name for the Wisp mechanic; Riot's article calls
-# it Tinh Linh. Checked separately from STALE because two mentions survive on
-# purpose in search-actions.ts (legacy search keyword + the comment explaining
-# it), and the ASCII slug `linh-hoa` is left alone so shared links keep working.
+# it Tinh Linh. The old name must not appear anywhere. The only survivor is the
+# ASCII slug `linh-hoa` (`?section=linh-hoa`), kept so shared links keep working
+# -- it has no diacritics, so this pattern can't match it.
 WISP_RE = re.compile(r"[Ll]inh hỏa")
-WISP_ALLOWED = {"src/content/search-actions.ts": 2}
+WISP_ALLOWED: dict[str, int] = {}
 
 
 def stray_wisp_names() -> list[tuple[str, int, int]]:

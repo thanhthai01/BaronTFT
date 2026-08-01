@@ -38,9 +38,7 @@ export const searchActions: SearchAction[] = [
     label: 'Xem Tinh Linh Mùa 18',
     description: '176 Tinh Linh (wisp), nhóm theo loại hiệu ứng.',
     href: '/mua-18?section=linh-hoa',
-    // 'linh hỏa' giữ lại làm từ khoá cũ: cơ chế từng mang tên đó trên trang,
-    // người quen tên cũ vẫn tìm ra.
-    keywords: ['mùa 18', 'set 18', 'tinh linh', 'wisp', 'linh hỏa'],
+    keywords: ['mùa 18', 'set 18', 'tinh linh', 'wisp'],
   },
   {
     id: 'mua18-nang-cap',

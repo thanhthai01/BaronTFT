@@ -221,10 +221,11 @@ BULLETS: list[Repl] = [
 # Riot writes it capitalised as a game term, so the 7 lowercase mid-sentence
 # uses become "Tinh Linh" too — matching the 27 that were already correct.
 #
-# The URL slug `linh-hoa` (`?section=linh-hoa`, `id="linh-hoa"`) is deliberately
-# NOT renamed: it is an ASCII identifier, not display text, and changing it would
-# break any shared or bookmarked link. It is diacritic-free so none of the
-# patterns below can touch it.
+# The URL slug `linh-hoa` (`?section=linh-hoa`, `id="linh-hoa"`) is the ONE
+# survivor, and deliberately so: it is an ASCII identifier, not display text, and
+# renaming it would break any shared or bookmarked link. It is diacritic-free so
+# none of the patterns below can touch it. Nothing else keeps the old name --
+# not even a search keyword.
 # (path, occurrences to rename, occurrences that legitimately survive)
 WISP_RENAME: list[tuple[str, int, int]] = [
     ("src/content/set18-effects.ts", 47, 0),
@@ -233,9 +234,7 @@ WISP_RENAME: list[tuple[str, int, int]] = [
     ("src/content/patch-notes.ts", 5, 0),
     ("src/components/features/patch/PatchBoard.module.css", 4, 0),
     ("src/components/features/season-18/Set18Codex.module.css", 3, 0),
-    # 2 survive on purpose: 'linh hỏa' is kept as a legacy search keyword (plus
-    # the comment explaining why), so people who knew the old name still find it.
-    ("src/content/search-actions.ts", 3, 2),
+    ("src/content/search-actions.ts", 3, 0),
     ("src/content/set18/set18-meta.ts", 2, 0),
     ("src/app/page.tsx", 1, 0),
     ("src/content/set18/set18-types.ts", 1, 0),

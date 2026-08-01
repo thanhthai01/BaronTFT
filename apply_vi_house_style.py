@@ -104,16 +104,22 @@ def main() -> int:
 
     cache: dict[str, str] = {}
     problems: list[str] = []
+    skipped = 0
 
     def edit(rel: str, old: str, new: str, expected: int, label: str) -> None:
+        # Re-runnable: this script exists to be replayed after the generated
+        # set18 content files are rebuilt, which may only clobber some of them.
+        nonlocal skipped
         if rel not in cache:
             cache[rel] = (ROOT / rel).read_text(encoding="utf-8")
         found = cache[rel].count(old)
-        if found != expected:
+        if found == expected:
+            cache[rel] = cache[rel].replace(old, new)
+            print(f"  {found}x  {label}  ({rel})")
+        elif found == 0 and cache[rel].count(new) >= expected:
+            skipped += 1
+        else:
             problems.append(f"{rel}: {label}: expected {expected}x, found {found}")
-            return
-        cache[rel] = cache[rel].replace(old, new)
-        print(f"  {found}x  {label}  ({rel})")
 
     print("1. Hỏa Ngục -> Hoả Ngục")
     for rel, n in INFERNO:
@@ -132,6 +138,9 @@ def main() -> int:
         1,
         "abilityHtmlVi",
     )
+
+    if skipped:
+        print(f"\n({skipped} replacements already in place, skipped)")
 
     if problems:
         print("\nPROBLEMS:", file=sys.stderr)
