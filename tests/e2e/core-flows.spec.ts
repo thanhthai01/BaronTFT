@@ -62,10 +62,13 @@ test('visible navigation marks the current route', async ({ page }) => {
   const nav = page.getByRole('navigation', { name: isDesktop ? 'Điều hướng chính' : 'Điều hướng nhanh trên điện thoại' });
   await expect(nav.getByRole('link', { name: isDesktop ? 'Checklist' : /^Checklist$/ })).toHaveAttribute('aria-current', 'page');
 
-  if (isDesktop) {
-    await expect(nav.getByRole('link', { name: 'Review' })).not.toHaveAttribute('aria-current', 'page');
-  } else {
-    await expect(nav.getByRole('link', { name: 'Review' })).not.toHaveAttribute('aria-current', 'page');
+  // Trước đây chỗ này bám vào link "Review" — link đó đã bị bỏ khỏi cả hai thanh
+  // điều hướng nên test hỏng ở cả 3 project. Thay bằng chính bất biến cần kiểm:
+  // đúng MỘT mục được đánh dấu là trang hiện tại. Không bám nhãn nào nên đổi,
+  // thêm hay bớt mục điều hướng sau này cũng không làm hỏng test.
+  await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
+
+  if (!isDesktop) {
     await expect(nav.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
   }
 
