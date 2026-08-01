@@ -4,20 +4,15 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = { title: 'Patch' };
 
+/** Không dùng band tiêu đề lớn như các trang khác: mục tiêu của trang này là
+ * thấy được thay đổi của bản vá ngay trong khung hình đầu tiên, nên H1 nằm gọn
+ * trong cột lọc bên trái (PatchBoard) và lưới thay đổi bắt đầu ngay từ trên. */
 export default function PatchPage() {
   return (
-    <>
-      <header className={styles.header}>
-        <div className="wide-container">
-          <h1>Patch</h1>
-          <p>Xem đầy đủ thay đổi của bản cập nhật trước, sau đó đọc phần phân tích chi tiết ở bên dưới.</p>
-        </div>
-      </header>
-      <section className="section">
-        <div className="wide-container">
-          <PatchBoard />
-        </div>
-      </section>
-    </>
+    <section className={styles.page}>
+      <div className="wide-container">
+        <PatchBoard />
+      </div>
+    </section>
   );
 }

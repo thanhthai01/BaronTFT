@@ -111,23 +111,88 @@ test('Set18 section query stays synchronized and supports history', async ({ pag
   await expect(page.getByText('Đang hiển thị 96 / 261 nâng cấp')).toBeVisible();
 });
 
-test('Patch history tabs expose compact facts and detailed analysis', async ({ page }, testInfo) => {
+test('Patch selector switches reports and labels personal analysis', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Patch flow');
 
   await page.goto('/patch');
   await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Phân tích thay đổi' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bản vá này ảnh hưởng gì tới game' })).toBeVisible();
 
-  const history = page.getByRole('tablist', { name: 'Lịch sử bản vá' });
-  const current = history.getByRole('tab', { name: /Patch 18\.3/ });
-  await expect(current).toHaveAttribute('tabindex', '0');
-  await current.focus();
-  await current.press('ArrowRight');
+  // Danh sách bản vá là select (sẽ có hàng chục bản), kèm dòng meta nói ngày
+  // cập nhật và nguồn.
+  const selector = page.getByLabel('Chọn bản vá');
+  await expect(selector).toHaveValue('patch-17-8');
+  await expect(page.getByText('Cập nhật 28/07/2026')).toBeVisible();
+  await expect(page.getByText(/Nguồn: Riot Games/)).toBeVisible();
 
-  const previous = history.getByRole('tab', { name: /Patch 18\.2/ });
-  await expect(previous).toHaveAttribute('aria-selected', 'true');
+  // Mọi khối diễn giải phải có nhãn nguồn để không nhầm với số liệu chính thức.
+  await expect(page.getByText('Theo patch note gốc').first()).toBeVisible();
+  await expect(page.locator('article').filter({ hasText: 'Nhịp chỉnh sửa' }).getByText('Phân tích cá nhân')).toBeVisible();
+
+  // Lưới thay đổi ở trên KHÔNG được chứa diễn giải — mọi nhận định nằm ở phần
+  // tác động cấp đội hình bên dưới.
+  const impact = page.locator('article').filter({ hasText: 'Đội hình Siêu Thú' });
+  await expect(impact).toContainText('Yếu đi');
+  // Chip dẫn chứng trỏ ngược về đúng thẻ thay đổi ở lưới trên.
+  await expect(impact.locator('a[href="#entry-p178-tuyet-diet"]')).toBeVisible();
+
+  await selector.selectOption('patch-18-2-vi-du');
   await expect(page.getByText(/Dữ liệu mẫu cho bản vá trước/)).toBeVisible();
-  await expect(page.getByRole('tabpanel', { name: /Patch 18\.2/ })).toBeVisible();
+  await expect(page.getByText('Cập nhật 24/07/2026')).toBeVisible();
+});
+
+test('Patch filters stack and rank badges follow each category scale', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Patch flow');
+
+  await page.goto('/patch');
+  const kindGroup = page.getByRole('group', { name: 'Lọc theo loại thay đổi' });
+  const categoryList = page.getByRole('tablist', { name: 'Lọc bản vá theo nhóm' });
+
+  // Hai bộ lọc chồng nhau: bật "giảm" thì số của bộ lọc nhóm phải tính lại theo
+  // đó, nếu không sẽ bấm vào ô có số mà lưới hiện ra rỗng.
+  await kindGroup.getByRole('button', { name: /^giảm/ }).click();
+  await expect(kindGroup.getByRole('button', { name: /^giảm/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(categoryList.getByRole('tab', { name: /^Tướng/ })).toHaveAccessibleName('Tướng, 3 thay đổi');
+  await expect(categoryList.getByRole('tab', { name: /^Nâng cấp/ })).toHaveAccessibleName('Nâng cấp, 0 thay đổi');
+
+  // Mốc kích hoạt của tộc hệ phải là huy hiệu riêng, không lẫn trong tên.
+  const trait = page.locator('article').filter({ has: page.getByRole('heading', { name: 'Dẫn Truyền', level: 3 }) });
+  await expect(trait.getByText('Mốc 5')).toBeVisible();
+
+  // Mỗi nhóm có thang bậc riêng: tướng theo vàng, nâng cấp theo Bạc/Vàng/Kim
+  // Cương, linh hỏa theo cấp.
+  await page.getByLabel('Chọn bản vá').selectOption('patch-18-3-vi-du');
+  await kindGroup.getByRole('button', { name: /^Tất cả/ }).click();
+
+  const ranks = await page
+    .locator('[class*="PatchBoard_card__"]')
+    .evaluateAll((cards) =>
+      cards.map((card) => card.querySelector('[class*="rankBadge"], [class*="breakpointBadge"]')?.textContent ?? ''),
+    );
+  expect(ranks.slice(0, 6)).toEqual(['1 vàng', '3 vàng', '3 vàng', 'Mốc 3', 'Mốc 7', 'Bạc']);
+  expect(ranks).toContain('Cấp 2');
+});
+
+test('desktop patch changes are visible without scrolling', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only viewport fit check');
+
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/patch');
+
+  // Yêu cầu chính của trang: thấy thay đổi ngay khung hình đầu tiên. Nhóm đầu
+  // tiên luôn là Tướng (thứ tự đọc patch note), và ít nhất 5 thẻ thay đổi —
+  // trọn hàng đầu — phải nằm trên nếp gấp.
+  const firstGroup = page.getByRole('heading', { level: 2 }).first();
+  await expect(firstGroup).toHaveText(/^Tướng/);
+  const groupBox = await firstGroup.boundingBox();
+  expect(groupBox!.y + groupBox!.height).toBeLessThan(720);
+
+  const cards = page.locator('article').filter({ has: page.getByRole('heading', { level: 3 }) });
+  expect(await cards.count()).toBeGreaterThanOrEqual(5);
+  for (let index = 0; index < 5; index += 1) {
+    const box = await cards.nth(index).boundingBox();
+    expect(box!.y + box!.height, `thẻ thứ ${index + 1} phải nằm trong khung hình đầu tiên`).toBeLessThan(720);
+  }
 });
 
 test('desktop checklist stage fits the initial viewport', async ({ page }, testInfo) => {

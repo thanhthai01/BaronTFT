@@ -24,14 +24,22 @@ export function Tabs({
   onChange,
   label,
   idPrefix = '',
+  orientation = 'horizontal',
+  className,
 }: {
   tabs: TabItem[];
   value: string;
   onChange: (value: string) => void;
   label: string;
   idPrefix?: string;
+  /** Dọc dùng cho danh sách lọc ở cột trái; mũi tên Lên/Xuống thay Trái/Phải. */
+  orientation?: 'horizontal' | 'vertical';
+  className?: string;
 }) {
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
+  const isVertical = orientation === 'vertical';
+  const nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+  const prevKey = isVertical ? 'ArrowUp' : 'ArrowLeft';
 
   function moveFocus(index: number) {
     const normalizedIndex = (index + tabs.length) % tabs.length;
@@ -41,7 +49,12 @@ export function Tabs({
   }
 
   return (
-    <div aria-label={label} aria-orientation="horizontal" className={styles.tabs} role="tablist">
+    <div
+      aria-label={label}
+      aria-orientation={orientation}
+      className={[styles.tabs, isVertical ? styles.vertical : null, className].filter(Boolean).join(' ')}
+      role="tablist"
+    >
       {tabs.map((tab, index) => (
         <button
           key={tab.id}
@@ -58,11 +71,11 @@ export function Tabs({
           type="button"
           onClick={() => onChange(tab.id)}
           onKeyDown={(event) => {
-            if (event.key === 'ArrowRight') {
+            if (event.key === nextKey) {
               event.preventDefault();
               moveFocus(index + 1);
             }
-            if (event.key === 'ArrowLeft') {
+            if (event.key === prevKey) {
               event.preventDefault();
               moveFocus(index - 1);
             }
