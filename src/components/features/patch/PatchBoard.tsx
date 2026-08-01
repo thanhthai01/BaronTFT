@@ -66,8 +66,8 @@ function resolveEntity(entry: PatchEntry, entitySet: number) {
   return kind ? findSet18Entity(kind, entry.name) : undefined;
 }
 
-/** Icon linh hỏa của Set 18 mã hoá sẵn loại + cấp trong tên file, vd
- * `t_shopcardsicon18_misc_tier2.png`. Đọc từ đó thay vì kéo cả bảng linh hỏa
+/** Icon Tinh Linh của Set 18 mã hoá sẵn loại + cấp trong tên file, vd
+ * `t_shopcardsicon18_misc_tier2.png`. Đọc từ đó thay vì kéo cả bảng Tinh Linh
  * vào bundle chỉ để lấy hai con số dùng cho việc xếp thứ tự. */
 function wispFacetsFromIcon(icon: string | undefined) {
   const match = icon?.match(/shopcardsicon\d*_([a-z]+)_tier(\d+)/i);
@@ -139,7 +139,7 @@ function EntryIcon({
 }
 
 /** Huy hiệu bậc của từng loại — thang bậc người chơi quen dùng khi đọc patch:
- * tướng mấy vàng, nâng cấp bậc gì, linh hỏa cấp mấy, tộc hệ đổi ở mốc nào.
+ * tướng mấy vàng, nâng cấp bậc gì, Tinh Linh cấp mấy, tộc hệ đổi ở mốc nào.
  * Đây cũng chính là khoá xếp thứ tự trong nhóm, nên hiện nó ra để người đọc
  * thấy được vì sao các thẻ đứng theo trật tự đó. */
 function RankBadge({ entry, entitySet }: { entry: PatchEntry; entitySet: number }) {
@@ -234,7 +234,7 @@ export function PatchBoard() {
 
   /** Nhóm theo đúng thứ tự người ta đọc patch note, và trong mỗi nhóm thì xếp
    * theo đúng thang bậc người chơi quen dùng cho loại đó: tướng theo giá vàng,
-   * nâng cấp theo Bạc → Vàng → Kim Cương, linh hỏa theo cấp rồi tới loại, tộc
+   * nâng cấp theo Bạc → Vàng → Kim Cương, Tinh Linh theo cấp rồi tới loại, tộc
    * hệ theo mốc kích hoạt. Cùng bậc thì xếp tăng/giảm cạnh nhau để dễ so. */
   const groups = useMemo(() => {
     const kindRank = (kind: PatchChangeKind) => patchKindOrder.indexOf(kind);
@@ -259,7 +259,7 @@ export function PatchBoard() {
       }
     };
 
-    // Linh hỏa cùng cấp thì gom theo loại (Chiến đấu, Vật phẩm...) cho liền mạch.
+    // Tinh Linh cùng cấp thì gom theo loại (Chiến đấu, Vật phẩm...) cho liền mạch.
     const subRankOf = (entry: PatchEntry) => {
       if (entry.category !== 'wisp') return '';
       const entity = resolveEntity(entry, entitySet);

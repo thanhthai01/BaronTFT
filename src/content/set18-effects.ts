@@ -1,10 +1,10 @@
 // Nội dung phần "06 · Hiệu ứng" trên /mua-18 — soạn từ 3 nguồn dữ liệu trong game, quét toàn bộ
-// Set18/data + src/content/set18/*.ts (36 tộc/hệ, 65 tướng + 20 dạng phụ, 176 linh hỏa):
+// Set18/data + src/content/set18/*.ts (36 tộc/hệ, 65 tướng + 20 dạng phụ, 176 Tinh Linh):
 //   · trait      → set18-traits.ts (descriptionVi + bullet từng mốc kích hoạt)
 //   · champion   → set18-champions.ts (abilityVi, forms[].abilityHtmlVi cho tướng nhiều dạng)
 //   · wisp       → set18-wisps.ts (descriptionVi)
 // Cố ý KHÔNG lấy nguồn từ nâng cấp (augment) và trang bị (item): hai nguồn đó đã có mục riêng, và
-// phần này chỉ mô tả hiệu ứng đến từ khung đội hình cố định — tộc/hệ, kỹ năng tướng, linh hỏa.
+// phần này chỉ mô tả hiệu ứng đến từ khung đội hình cố định — tộc/hệ, kỹ năng tướng, Tinh Linh.
 //
 // Tham chiếu:
 //   · trait/champion qua `name` (tiếng Anh) — khớp set18TraitByName / set18ChampionByName để dùng
@@ -78,9 +78,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Inferno',
-            tag: 'Tộc/Hệ · Hỏa Ngục',
+            tag: 'Tộc/Hệ · Hoả Ngục',
             quote:
-              'Sát thương từ tướng Hỏa Ngục luôn kèm Vết Thương Sâu 33% trong 4 giây — cố định, không tăng theo mốc kích hoạt (khác với % Thiêu Đốt).',
+              'Sát thương từ tướng Hoả Ngục luôn kèm Vết Thương Sâu 33% trong 4 giây — cố định, không tăng theo mốc kích hoạt (khác với % Thiêu Đốt).',
           },
           {
             kind: 'champion',
@@ -91,11 +91,11 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Dương Hỏa Thuật',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Gây Thiêu Đốt và Vết Thương Sâu lên kẻ địch trong 10 giây (15 giây sau nâng cấp Hoa Linh).',
           },
         ],
-        note: 'Chỉ 3 nguồn này áp Vết Thương Sâu — nếu địch có nhiều hồi máu/hút máu mà bạn không chơi Hỏa Ngục, linh hỏa là cách duy nhất để bù.',
+        note: 'Chỉ 3 nguồn này áp Vết Thương Sâu — nếu địch có nhiều hồi máu/hút máu mà bạn không chơi Hoả Ngục, Tinh Linh là cách duy nhất để bù.',
       },
       {
         id: 'giam-giap-khang-phep-pt',
@@ -119,17 +119,17 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Phá Giáp Trụ',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Gây Cào Xé và Phân Tách 30% lên kẻ địch trong 10 giây (15 giây sau nâng cấp Hoa Linh).',
           },
           {
             kind: 'wisp',
             name: 'Trừng Trị',
-            tag: 'Linh hỏa · Giao Tranh T3',
+            tag: 'Tinh Linh · Giao Tranh T3',
             quote: 'Gộp 4 hiệu ứng cùng lúc: Làm Chậm, Thiêu Đốt, Cào Xé và Phân Tách lên kẻ địch trong 8 giây (14 giây sau nâng cấp).',
           },
         ],
-        note: 'Đây là hiệu ứng khan hiếm nhất trong Set 18 — chỉ 1 tộc/hệ Đặc biệt và 1 tướng có sẵn, còn lại phải mua bằng linh hỏa.',
+        note: 'Đây là hiệu ứng khan hiếm nhất trong Set 18 — chỉ 1 tộc/hệ Đặc biệt và 1 tướng có sẵn, còn lại phải mua bằng Tinh Linh.',
       },
       {
         id: 'giam-giap-khang-phep-flat',
@@ -169,7 +169,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Lá chắn thù hận',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Làm Chậm kẻ địch 10% và giảm 20% lá chắn của chúng trong 10 giây (30% sau nâng cấp Hoa Linh).',
           },
         ],
@@ -191,7 +191,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Phản Phép',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Tăng Năng Lượng Tối Đa của tất cả kẻ địch thêm 15 cho đến lần tung chiêu tiếp theo của chúng.',
           },
         ],
@@ -215,9 +215,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Inferno',
-            tag: 'Tộc/Hệ · Hỏa Ngục',
+            tag: 'Tộc/Hệ · Hoả Ngục',
             quote:
-              'Sát thương từ tướng Hỏa Ngục luôn kèm Thiêu Đốt. Mốc (2) 1% · (5) 2% · (7) 3% Máu tối đa mỗi giây, trong 4 giây. 6 tướng hệ: Akali, Varus, Shen, Amumu, Kennen, Lux.',
+              'Sát thương từ tướng Hoả Ngục luôn kèm Thiêu Đốt. Mốc (2) 1% · (5) 2% · (7) 3% Máu tối đa mỗi giây, trong 4 giây. 6 tướng hệ: Akali, Varus, Shen, Amumu, Kennen, Lux.',
           },
           {
             kind: 'champion',
@@ -234,17 +234,17 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Dương Hỏa Thuật',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Gây Thiêu Đốt và Vết Thương Sâu lên kẻ địch trong 10 giây.',
           },
           {
             kind: 'wisp',
             name: 'Trừng Trị',
-            tag: 'Linh hỏa · Giao Tranh T3',
+            tag: 'Tinh Linh · Giao Tranh T3',
             quote: 'Gây Làm Chậm, Thiêu Đốt, Cào Xé và Phân Tách lên kẻ địch trong 8 giây.',
           },
         ],
-        note: 'Amumu không tự gây Thiêu Đốt nhưng ăn theo: thời gian Choáng của Giận Dữ kéo dài hơn nếu mục tiêu đang Bỏng — nên Amumu luôn muốn đứng chung đội hình Hỏa Ngục.',
+        note: 'Amumu không tự gây Thiêu Đốt nhưng ăn theo: thời gian Choáng của Giận Dữ kéo dài hơn nếu mục tiêu đang Bỏng — nên Amumu luôn muốn đứng chung đội hình Hoả Ngục.',
       },
       {
         id: 'chay-mau',
@@ -293,7 +293,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Khối Chắn Cùn',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Cùng tác dụng với Suy Yếu bản Mặt Trời nhưng có điều kiện: kẻ địch tấn công tướng nhiều Máu nhất của bạn bị giảm 10% sát thương gây ra.',
           },
         ],
@@ -326,19 +326,19 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Siêu Thăng Hoa',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Sau 25 giây, đồng minh nhận 300% Khuếch Đại Sát Thương — chỉ có tác dụng ở những ván kéo dài quá thời gian giao tranh thường lệ.',
           },
           {
             kind: 'wisp',
             name: 'Sức Mạnh Báo Thù',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Mỗi khi một đồng minh hy sinh, các tướng còn lại nhận 4% Khuếch Đại Sát Thương cộng dồn.',
           },
           {
             kind: 'wisp',
             name: 'Ngoại Binh',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Nhận 3% Khuếch Đại Sát Thương với mỗi 10 vàng đang giữ — thưởng cho lối chơi tích vàng.',
           },
         ],
@@ -371,11 +371,11 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Siêu Chí Mạng',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Các tướng đang mang Chuẩn Xác nhận thêm 25% Sát Thương Chí Mạng (40% sau nâng cấp Hoa Linh).',
           },
         ],
-        note: 'Linh hỏa Siêu Chí Mạng vô dụng nếu đội hình chưa có nguồn Chuẩn Xác — luôn kiểm tra Đao Phủ (2) hoặc Bùa Xám trước khi nhặt.',
+        note: 'Tinh Linh Siêu Chí Mạng vô dụng nếu đội hình chưa có nguồn Chuẩn Xác — luôn kiểm tra Đao Phủ (2) hoặc Bùa Xám trước khi nhặt.',
       },
       {
         id: 'xu-tu',
@@ -398,13 +398,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Cuồng Nộ Sát Nhân',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Tướng Đấu Sĩ kết liễu mục tiêu còn dưới 10% Máu (12% sau nâng cấp) và nhận 15% Tốc Độ Đánh khi hạ gục.',
           },
           {
             kind: 'wisp',
             name: 'Đến Giờ Ăn Nhẹ Rồi!',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Lông Xù Khổng Lồ nuốt sống kẻ địch còn dưới 12% Máu tối đa mà nó gây sát thương lên — chỉ dùng được với đội hình Tinh Nghịch.',
           },
         ],
@@ -432,13 +432,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Bao Phủ Bởi Gai',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Các Tướng Chống Chịu phản lại 12% sát thương nhận vào lên kẻ địch liền kề, mỗi 4 giây (18% sau nâng cấp Hoa Linh).',
           },
           {
             kind: 'wisp',
             name: 'Nổ Cảm Tử',
-            tag: 'Linh hỏa · Giao Tranh T3',
+            tag: 'Tinh Linh · Giao Tranh T3',
             quote: 'Mọi tướng của bạn phát nổ khi bị hạ gục, gây sát thương phép bằng 15% Máu tối đa của chính chúng.',
           },
         ],
@@ -507,38 +507,38 @@ export const set18EffectCategories: Set18EffectCategory[] = [
               {
                 kind: 'champion',
                 name: 'Lux',
-                form: 'Kỳ Quái',
-                tag: 'Thưởng Kỳ Quái',
-                quote: 'Cầu Vồng Tối Thượng Choáng 1 giây mọi mục tiêu bị laser trúng đòn — riêng phiên bản Kỳ Quái mới có thưởng này.',
+                form: 'Gai Đen',
+                tag: 'Thưởng Gai Đen',
+                quote: 'Cầu Vồng Tối Thượng Choáng 1 giây mọi mục tiêu bị laser trúng đòn — riêng phiên bản Gai Đen mới có thưởng này.',
               },
             ],
           },
           {
-            label: 'Linh hỏa · Choáng theo nhịp hoặc theo điều kiện',
+            label: 'Tinh Linh · Choáng theo nhịp hoặc theo điều kiện',
             note: 'Nguồn Choáng không phụ thuộc đội hình — hữu ích khi bạn thiếu tướng đỡ đòn có khống chế.',
             sources: [
               {
                 kind: 'wisp',
                 name: 'Dư Chấn',
-                tag: 'Linh hỏa · Giao Tranh T2',
+                tag: 'Tinh Linh · Giao Tranh T2',
                 quote: 'Sau 8 giây, Choáng tất cả kẻ địch 1.5 giây; sau nâng cấp Hoa Linh thì lặp lại ở giây thứ 18.',
               },
               {
                 kind: 'wisp',
                 name: 'Động Đất',
-                tag: 'Linh hỏa · Giao Tranh T3',
+                tag: 'Tinh Linh · Giao Tranh T3',
                 quote: 'Mỗi 8 giây, Làm Choáng kẻ địch trong 1 giây.',
               },
               {
                 kind: 'wisp',
                 name: 'Đất Hiện Thế',
-                tag: 'Linh hỏa · Giao Tranh T2',
+                tag: 'Tinh Linh · Giao Tranh T2',
                 quote: 'Mỗi 4 giây, rễ cây trói chân làm Choáng 1 kẻ địch trong 1 giây (2 kẻ địch sau nâng cấp Hoa Linh).',
               },
               {
                 kind: 'wisp',
                 name: 'Ác Giả Ác Báo',
-                tag: 'Linh hỏa · Giao Tranh T3',
+                tag: 'Tinh Linh · Giao Tranh T3',
                 quote: '3 tướng đầu tiên của bạn bị hạ gục sẽ Choáng kẻ đã hạ gục họ trong 1 giây (4 tướng · 1.25 giây sau nâng cấp).',
               },
             ],
@@ -577,7 +577,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
               'Khiêu khích, buộc kẻ địch tấn công Rammus trong 4 giây, đồng thời nhận 325/400/500 Lá Chắn cùng 60 Giáp và Kháng Phép. Khi Lá Chắn vỡ, gây sát thương vật lý phạm vi 2 ô.',
           },
         ],
-        note: 'Rammus là nguồn Khiêu Khích duy nhất của Set 18 — không có tộc/hệ hay linh hỏa nào thay thế được.',
+        note: 'Rammus là nguồn Khiêu Khích duy nhất của Set 18 — không có tộc/hệ hay Tinh Linh nào thay thế được.',
       },
       {
         id: 'ngu',
@@ -617,13 +617,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Trừng Trị',
-            tag: 'Linh hỏa · Giao Tranh T3',
+            tag: 'Tinh Linh · Giao Tranh T3',
             quote: 'Làm Chậm nằm trong gói 4 hiệu ứng cùng lúc, kéo dài 8 giây (14 giây sau nâng cấp).',
           },
           {
             kind: 'wisp',
             name: 'Lá chắn thù hận',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Làm Chậm kẻ địch 10% kèm giảm 20% Lá Chắn của chúng trong 10 giây.',
           },
         ],
@@ -668,7 +668,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
               {
                 kind: 'wisp',
                 name: 'Cận Vệ Bạc',
-                tag: 'Linh hỏa · Giao Tranh T1',
+                tag: 'Tinh Linh · Giao Tranh T1',
                 quote: 'Toàn đội miễn nhiễm Khống Chế và nhận 15% Tốc Độ Đánh trong 10 giây (15 giây sau nâng cấp Hoa Linh).',
               },
             ],
@@ -685,13 +685,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
               {
                 kind: 'wisp',
                 name: 'Ẩn Náu',
-                tag: 'Linh hỏa · Giao Tranh T1',
+                tag: 'Tinh Linh · Giao Tranh T1',
                 quote: '2 Đấu Sĩ hoặc Sát Thủ mạnh nhất của bạn không thể bị chọn làm mục tiêu trong 6 giây.',
               },
               {
                 kind: 'wisp',
                 name: 'Linh Hồn Yordle',
-                tag: 'Linh hỏa · Giao Tranh T2',
+                tag: 'Tinh Linh · Giao Tranh T2',
                 quote: 'Tướng của bạn có 99% cơ hội né đòn trong 4 giây — chỉ né đòn đánh, không chặn được sát thương kỹ năng.',
               },
             ],
@@ -772,13 +772,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Nhanh Lẹ',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Mỗi lần thi triển kỹ năng, tướng của bạn nhận 25% Tốc Độ Đánh trong 3 giây.',
           },
           {
             kind: 'wisp',
             name: 'Tức Giận Tăng Tiến',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Đòn đánh của tướng Xạ Thủ cho 3% Tốc Độ Đánh cộng dồn (5% sau nâng cấp Hoa Linh).',
           },
         ],
@@ -822,7 +822,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Sức Mạnh Dồi Dào',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Tướng của bạn nhận 8% Sức Mạnh Công Kích và Sức Mạnh Phép Thuật (15% sau nâng cấp Hoa Linh).',
           },
         ],
@@ -842,9 +842,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Blackthorn',
-            tag: 'Tộc/Hệ · Kỳ Quái · đổi tướng lấy Máu',
+            tag: 'Tộc/Hệ · Gai Đen · đổi tướng lấy Máu',
             quote:
-              'Đồng minh đứng trên ô Kỳ Quái bị hiến tế khi vào giao tranh, đổi lại cả đội nhận mốc (2) 175 · (4) 300 · (6) 350 Máu. Từ mốc (6), vật hiến tế không chết.',
+              'Đồng minh đứng trên ô Gai Đen bị hiến tế khi vào giao tranh, đổi lại cả đội nhận mốc (2) 175 · (4) 300 · (6) 350 Máu. Từ mốc (6), vật tế không bị tiêu diệt.',
           },
           {
             kind: 'trait',
@@ -901,7 +901,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Máu Phục hồi',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Đội của bạn hồi 1% Máu tối đa mỗi giây trong suốt giao tranh.',
           },
         ],
@@ -967,13 +967,13 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Lá Chắn Gia Cường',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Khuếch đại mọi Lá Chắn của bạn thêm 15% (20% sau nâng cấp) và cấp thêm 150 lá chắn trong 10 giây.',
           },
           {
             kind: 'wisp',
             name: 'Chiến Lũy',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Tướng Đỡ Đòn nhận lá chắn bằng 20% Máu tối đa khi còn dưới 50% Máu (30% sau nâng cấp Hoa Linh).',
           },
         ],
@@ -1011,7 +1011,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'wisp',
             name: 'Chống Chịu',
-            tag: 'Linh hỏa · Giao Tranh T1',
+            tag: 'Tinh Linh · Giao Tranh T1',
             quote: 'Trừ thẳng chứ không theo %: Tướng Đỡ Đòn được giảm 15 sát thương mỗi lần nhận sát thương — hiệu quả nhất trước các đòn đánh nhỏ và dồn dập.',
           },
         ],
@@ -1043,14 +1043,14 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'champion',
             name: 'Lux',
-            form: 'Hỏa Ngục',
-            tag: 'Thưởng Hỏa Ngục',
+            form: 'Hoả Ngục',
+            tag: 'Thưởng Hoả Ngục',
             quote: 'Lux hồi lại 8 năng lượng mỗi lần tham gia hạ gục.',
           },
           {
             kind: 'wisp',
             name: 'Mưa Như Trút',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Đội của bạn nhận 2 Hồi Năng Lượng (bản T1 rẻ hơn tên "Mưa" cho 1 Hồi Năng Lượng).',
           },
         ],
@@ -1094,16 +1094,16 @@ export const set18EffectCategories: Set18EffectCategory[] = [
             badge: 'Quái Rừng · mốc (10)',
             body:
               'Đủ 10 tướng Quái Rừng trên bàn mở khóa mốc cao nhất của tộc Quái Rừng (Riftbeast): toàn đội được cộng thẳng +2 ô tướng tối đa — cơ chế duy nhất trong nhóm tộc/hệ tăng sức chứa đội hình thay vì chỉ tăng chỉ số.',
-            fine: 'Nguồn: tộc/hệ "Quái Rừng" (Riftbeast), mốc kích hoạt ở 10 tướng hệ. Các mốc thấp hơn cho Dấu Alpha (3), cửa hàng tràn Quái Rừng (5) và buff lớn dần mỗi 5 giây (7).',
+            fine: 'Nguồn: tộc/hệ "Quái Rừng" (Riftbeast), mốc kích hoạt ở 10 tướng hệ. Các mốc thấp hơn cho Dấu Ấn Đầu Đàn (3), cửa hàng tràn Quái Rừng (5) và bùa lợi lớn dần mỗi 5 giây (7).',
           },
         ],
         luxForms: [
-          { form: 'Kỳ Quái', trait: 'Blackthorn', bonus: 'Làm Choáng mục tiêu trúng đòn trong 1 giây.' },
+          { form: 'Gai Đen', trait: 'Blackthorn', bonus: 'Làm Choáng mục tiêu trúng đòn trong 1 giây.' },
           { form: 'Hoa Linh', trait: 'Blossom', bonus: 'Mục tiêu đầu tiên trúng đòn nhận thêm 15% sát thương.' },
           { form: 'Tiên Hắc Ám', trait: 'Coven', bonus: 'Giảm Giáp và Kháng Phép của mục tiêu trúng chiêu đi 12 đến hết giao tranh.' },
           { form: 'Thần Rừng', trait: 'Elderwood', bonus: 'Toàn đội nhận thêm 5% Máu tối đa đến hết giao tranh.' },
           { form: 'Tiên Linh', trait: 'Fae', bonus: 'Hồi máu đồng minh máu thấp nhất bằng 18% sát thương kỹ năng đã gây.' },
-          { form: 'Hỏa Ngục', trait: 'Inferno', bonus: 'Hồi lại 8 năng lượng mỗi lần tham gia hạ gục.' },
+          { form: 'Hoả Ngục', trait: 'Inferno', bonus: 'Hồi lại 8 năng lượng mỗi lần tham gia hạ gục.' },
           { form: 'Mặt Trăng', trait: 'Lunar', bonus: 'Gây Suy Yếu 12% lên kẻ địch trúng chiêu trong 6 giây (tăng sát thương gánh chịu).' },
           { form: 'Nguyên Sinh', trait: 'Primal', bonus: 'Bản thân nhận 60% Tốc Độ Đánh trong 6 giây sau khi thi triển.' },
           { form: 'Mặt Trời', trait: 'Solar', bonus: 'Làm Suy Yếu kẻ địch trúng đòn đi 12% trong 6 giây (giảm sát thương gây ra).' },
@@ -1116,24 +1116,24 @@ export const set18EffectCategories: Set18EffectCategory[] = [
         name: 'Mượn Mốc Tộc/Hệ Tạm Thời',
         tag: 'Trait borrowing',
         description:
-          'Kích hoạt hoặc nâng mốc tộc/hệ trong đúng một giao tranh mà không cần đổi đội hình — cách duy nhất ngoài tộc/hệ Đặc biệt để chạm mốc bạn còn thiếu, và toàn bộ đều đến từ linh hỏa.',
+          'Kích hoạt hoặc nâng mốc tộc/hệ trong đúng một giao tranh mà không cần đổi đội hình — cách duy nhất ngoài tộc/hệ Đặc biệt để chạm mốc bạn còn thiếu, và toàn bộ đều đến từ Tinh Linh.',
         sources: [
           {
             kind: 'wisp',
             name: 'Anh Hùng Bất Ngờ',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Khi bắt đầu giao tranh, tối đa 2 tộc/hệ chưa kích hoạt sẽ được kích hoạt ở mốc thấp nhất.',
           },
           {
             kind: 'wisp',
             name: 'Ấn Ma Mị',
-            tag: 'Linh hỏa · Giao Tranh T3',
+            tag: 'Tinh Linh · Giao Tranh T3',
             quote: 'Nhận 1 ấn tạm thời cho tộc/hệ đang kích hoạt cao nhất của bạn — đẩy thẳng lên mốc kế tiếp.',
           },
           {
             kind: 'wisp',
             name: 'Đa Dạng Hóa',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Thưởng cho đội hình dàn trải: nhận 30 Máu cho mỗi tộc/hệ không độc nhất đang kích hoạt.',
           },
         ],
@@ -1154,23 +1154,23 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Blackthorn',
-            tag: 'Tộc/Hệ · Kỳ Quái · ô hiến tế',
-            quote: 'Ô Kỳ Quái là ô đặc biệt trên bàn: đồng minh đứng lên đó sẽ bị hiến tế khi vào giao tranh để đổi lấy Máu cho cả đội.',
+            tag: 'Tộc/Hệ · Gai Đen · ô hiến tế',
+            quote: 'Ô Gai Đen là ô đặc biệt trên bàn: đồng minh đứng lên đó sẽ bị hiến tế khi vào giao tranh để đổi lấy Máu cho cả đội.',
           },
           {
             kind: 'wisp',
             name: 'Tăng Tầm Với',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Các Đấu Sĩ của bạn nhận thêm 1 tầm đánh — biến tướng cận chiến thành tướng đánh xa 1 ô.',
           },
           {
             kind: 'wisp',
             name: 'Đứng Một Mình',
-            tag: 'Linh hỏa · Giao Tranh T2',
+            tag: 'Tinh Linh · Giao Tranh T2',
             quote: 'Tướng đứng một mình trên hàng của họ nhận 15% Máu và 15% Khuếch Đại Sát Thương (22% sau nâng cấp Hoa Linh).',
           },
         ],
-        note: 'Cặp linh hỏa "Đứng Một Mình" (một mình một hàng) và "Áo Choàng Cô Độc" (không có đồng minh liền kề) có điều kiện khác nhau dù mô tả gần giống — đọc kỹ trước khi xếp lại đội hình.',
+        note: 'Cặp Tinh Linh "Đứng Một Mình" (một mình một hàng) và "Áo Choàng Cô Độc" (không có đồng minh liền kề) có điều kiện khác nhau dù mô tả gần giống — đọc kỹ trước khi xếp lại đội hình.',
       },
     ],
   },

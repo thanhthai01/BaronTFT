@@ -28,7 +28,7 @@ let set18TraitByName = new Map<string, Set18Trait>();
 let set18ChampionByName = new Map<string, Set18Champion>();
 /** Khóa bằng `nameVi` chứ không phải `name`: cột tên tiếng Anh trong set18-wisps.ts đang lệch
  * hàng so với phần tiếng Việt (lỗi ghép cặp từ lúc scrape), nên chỉ `nameVi` là tham chiếu tin
- * cậy. 3 linh hỏa trùng `nameVi` — giữ bản xuất hiện trước, đủ dùng vì set18-effects.ts không
+ * cậy. 3 Tinh Linh trùng `nameVi` — giữ bản xuất hiện trước, đủ dùng vì set18-effects.ts không
  * trỏ tới cái nào trong số đó. */
 let set18WispByNameVi = new Map<string, Set18Wisp>();
 
@@ -759,7 +759,7 @@ const BOUNTY_POOLS = [
   { key: 'hard' as const, label: 'Khó' },
 ];
 
-/** Bảng nhiệm vụ của Kẻ Săn Tiền Thưởng, tách theo 2 pool rút của game thay vì đổ
+/** Bảng nhiệm vụ của Săn Thưởng, tách theo 2 pool rút của game thay vì đổ
  * chung 11 ô như trước: người chơi chọn bounty theo việc mình gánh Draven được đến
  * đâu, nên độ khó là thứ cần đọc trước cả nội dung nhiệm vụ. Hai pool không có
  * trọng số nên xác suất trong mỗi pool bằng nhau — hiển thị luôn 1/N ở đầu nhóm.
@@ -910,7 +910,7 @@ const WISP_CATEGORY_ORDER = ['Combat', 'Misc', 'Shop', 'Risky', 'Champion', 'Gol
 
 type WispCategoryGroup = { category: string; categoryVi: string; items: Set18Wisp[] };
 
-/** Bộ lọc phân loại linh hỏa — dùng chung cho khối trong mục lục trái và khối dự
+/** Bộ lọc phân loại Tinh Linh — dùng chung cho khối trong mục lục trái và khối dự
  * phòng trong nội dung chính (mobile). */
 function WispCategoryFilter({
   categoryFilter,
@@ -958,16 +958,16 @@ function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all
   return (
     <section className={styles.section} id="linh-hoa">
       <header className={styles.sectionHead}>
-        <span className={styles.eyebrow}>04 · Linh hỏa</span>
-        <h2>Linh hỏa (Wisp)</h2>
-        <p>{set18Wisps.length} linh hỏa Set 18, nhóm theo loại hiệu ứng và xếp từ rẻ đến đắt trong mỗi nhóm.</p>
+        <span className={styles.eyebrow}>04 · Tinh Linh</span>
+        <h2>Tinh Linh (Wisp)</h2>
+        <p>{set18Wisps.length} Tinh Linh Set 18, nhóm theo loại hiệu ứng và xếp từ rẻ đến đắt trong mỗi nhóm.</p>
       </header>
 
       {batchedGroups.map((group) => (
         <div className={styles.wispGroup} key={group.category}>
           <h3 className={styles.groupHeading}>
             {group.categoryVi}
-            <span>{visible.find((item) => item.category === group.category)?.items.length ?? group.items.length} linh hỏa</span>
+            <span>{visible.find((item) => item.category === group.category)?.items.length ?? group.items.length} Tinh Linh</span>
           </h3>
           <div className={styles.wispGrid}>
             {group.items.map((wisp) => {
@@ -1045,7 +1045,7 @@ function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all
       ))}
 
       <div className={styles.batchControls}>
-        <span aria-live="polite">Đang hiển thị {Math.min(visibleCount, total)} / {total} linh hỏa</span>
+        <span aria-live="polite">Đang hiển thị {Math.min(visibleCount, total)} / {total} Tinh Linh</span>
         {visibleCount < total ? (
           <>
             <button onClick={() => setVisibleCount((count) => Math.min(total, count + batchSize))} type="button">
@@ -1303,7 +1303,7 @@ function AugmentDetails({
 }
 
 /** Icon cho 1 nguồn hiệu ứng — tướng dùng lại ChampionLogo (tooltip có sẵn), tộc/hệ
- * dùng lại TraitIcon. Linh hỏa không có icon riêng từng cái trong dữ liệu, chỉ có icon
+ * dùng lại TraitIcon. Tinh Linh không có icon riêng từng cái trong dữ liệu, chỉ có icon
  * theo phân loại + bậc (`categoryIcon`), nên vẽ ảnh trần không khung nền — giống cách
  * phần 04 hiển thị .wispCategoryBadge. */
 function EffectSourceIcon({
@@ -1335,8 +1335,8 @@ function EffectSourceIcon({
   );
 }
 
-/** Vàng của linh hỏa không chia bậc màu như giá tướng — dùng chung một tông vàng xu với
- * .statIconCoin ở phần 04 để hai chỗ hiển thị giá linh hỏa trông cùng một hệ. */
+/** Vàng của Tinh Linh không chia bậc màu như giá tướng — dùng chung một tông vàng xu với
+ * .statIconCoin ở phần 04 để hai chỗ hiển thị giá Tinh Linh trông cùng một hệ. */
 const WISP_COST_COLOR = '#c0851c';
 
 function effectSourceCostColor(source: Set18EffectSource): string | undefined {
@@ -1345,7 +1345,7 @@ function effectSourceCostColor(source: Set18EffectSource): string | undefined {
   return undefined;
 }
 
-/** null = linh hỏa không hiện giá mua riêng (phần thưởng miễn phí) → không vẽ pill.
+/** null = Tinh Linh không hiện giá mua riêng (phần thưởng miễn phí) → không vẽ pill.
  * Giá 0 vẫn vẽ, vì "0 vàng" là thông tin thật chứ không phải thiếu dữ liệu. */
 function effectSourceCost(source: Set18EffectSource): number | undefined {
   if (source.kind === 'champion') return set18ChampionByName.get(source.name)?.cost;

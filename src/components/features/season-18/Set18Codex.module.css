@@ -1293,7 +1293,7 @@
   gap: 4px;
 }
 
-/* ---------- 04 · Linh hỏa ---------- */
+/* ---------- 04 · Tinh Linh ---------- */
 
 .wispGrid {
   display: grid;
@@ -1931,8 +1931,8 @@
   letter-spacing: 0.02em;
 }
 
-/* icon linh hỏa — dữ liệu chỉ có icon theo phân loại + bậc, không có icon riêng từng
-   linh hỏa; icon này đã tự có khung nên để ảnh trần như .wispCategoryBadge ở phần 04,
+/* icon Tinh Linh — dữ liệu chỉ có icon theo phân loại + bậc, không có icon riêng từng
+   Tinh Linh; icon này đã tự có khung nên để ảnh trần như .wispCategoryBadge ở phần 04,
    thêm nền chỉ làm rối. Cùng ô 40px với icon tướng/tộc hệ để các thẻ nguồn thẳng hàng. */
 .effectWispIcon {
   display: inline-flex;

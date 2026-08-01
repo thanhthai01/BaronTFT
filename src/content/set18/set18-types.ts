@@ -55,14 +55,14 @@ export type Set18Trait = {
    * Thần) — thông tin có thật nhưng không phải mốc kích hoạt, tách khỏi đoạn mô
    * tả chính để khỏi dồn thành một câu dài khó đọc. */
   infoChips?: string[];
-  /** Chỉ Kẻ Săn Tiền Thưởng (Draven) có: 11 cặp nhiệm vụ/phần thưởng, tách khỏi
+  /** Chỉ Săn Thưởng (Draven) có: 11 cặp nhiệm vụ/phần thưởng, tách khỏi
    * đoạn mô tả chính thành danh sách để đọc được thay vì 1 khối văn bản dính liền. */
   /** `difficulty` không có trong dữ liệu game — bổ sung từ bảng
    * metatft.com/tables/draven-bounties bởi scripts/add_draven_bounty_difficulty.py.
    * Hai pool rút riêng và không có trọng số, nên xác suất trong mỗi pool là đều. */
   bounties?: { mission: string; reward: string; difficulty: 'standard' | 'hard' }[];
   /** true = thẻ trait này chiếm trọn 1 hàng riêng trong lưới (nội dung dài hơn
-   * hẳn các trait Đặc biệt khác, ví dụ Kẻ Săn Tiền Thưởng). */
+   * hẳn các trait Đặc biệt khác, ví dụ Săn Thưởng). */
   wide?: boolean;
 };
 
@@ -137,7 +137,7 @@ export type Set18Wisp = {
   categoryVi: string;
   categoryIcon: string;
   tier: number;
-  /** null = linh hỏa không hiện giá mua riêng (thường là phần thưởng miễn phí). */
+  /** null = Tinh Linh không hiện giá mua riêng (thường là phần thưởng miễn phí). */
   cost: number | null;
   description: string;
   descriptionVi: string;

@@ -7,7 +7,7 @@ export const set18TraitTypes: (Set18TraitTypeMeta & { type: Set18TraitType })[] 
 
 export const set18Costs: Set18CostMeta[] = [{"cost":1,"label":"1 vàng","color":"#6b7280"},{"cost":2,"label":"2 vàng","color":"#1e9e57"},{"cost":3,"label":"3 vàng","color":"#2563eb"},{"cost":4,"label":"4 vàng","color":"#8b3fd6"},{"cost":5,"label":"5 vàng","color":"#c0851c"}];
 
-export const set18Sections = [{"id":"ma-tran-toc-he","label":"Ma trận tộc hệ","hint":"14 tộc × 12 hệ"},{"id":"chi-tiet-tuong","label":"Chi tiết tướng","hint":"65 tướng theo giá"},{"id":"chi-tiet-toc-he","label":"Chi tiết tộc hệ","hint":"36 trait · mốc kích hoạt"},{"id":"linh-hoa","label":"Linh hỏa","hint":"176 linh hỏa"},{"id":"nang-cap","label":"Nâng cấp","hint":"261 nâng cấp"},{"id":"hieu-ung","label":"Hiệu ứng","hint":"5 nhóm ưu tiên"}] as const;
+export const set18Sections = [{"id":"ma-tran-toc-he","label":"Ma trận tộc hệ","hint":"14 tộc × 12 hệ"},{"id":"chi-tiet-tuong","label":"Chi tiết tướng","hint":"65 tướng theo giá"},{"id":"chi-tiet-toc-he","label":"Chi tiết tộc hệ","hint":"36 trait · mốc kích hoạt"},{"id":"linh-hoa","label":"Tinh Linh","hint":"176 Tinh Linh"},{"id":"nang-cap","label":"Nâng cấp","hint":"261 nâng cấp"},{"id":"hieu-ung","label":"Hiệu ứng","hint":"5 nhóm ưu tiên"}] as const;
 export type Set18SectionId = (typeof set18Sections)[number]['id'];
 export const defaultSet18Section: Set18SectionId = 'ma-tran-toc-he';
 export function isSet18SectionId(value: string | null): value is Set18SectionId {
