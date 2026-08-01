@@ -9,6 +9,19 @@
   background: var(--surface-card);
 }
 
+/* Biến thể dọc: dùng cho cột lọc bên trái — mỗi tab là một hàng đầy chiều ngang,
+   nội dung căn trái và được phép xuống dòng (tab dọc mang nhiều dòng thông tin). */
+.vertical {
+  flex-direction: column;
+  overflow-x: visible;
+}
+
+.vertical .tab {
+  width: 100%;
+  text-align: left;
+  white-space: normal;
+}
+
 .tab {
   flex: 0 0 auto;
   border: 0;
