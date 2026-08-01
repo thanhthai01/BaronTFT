@@ -1,5 +1,10 @@
 """One-off, session 2026-07-31 (second follow-up to sync_trait_text_and_colors.py):
 
+!! ĐÃ ÁP DỤNG XONG — ĐỪNG CHẠY LẠI. Script không idempotent (kiểm chứng 2026-08-01 trên
+bản sao tạm: chạy lần hai vẫn ghi khác đi). Nó giả định đầu vào là bản sinh máy chưa
+biên tập; chạy trên dữ liệu đã patch sẽ áp chồng lần nữa, ví dụ lại chuyển Bounty Seeker
+xuống cuối mảng. Chỉ dùng khi vừa chạy lại sync_trait_text_and_colors.py.
+
 The 15 traits with no breakpointDetails[].bullet fall back to their full
 description text as one paragraph. For several of them that paragraph is
 either genuinely hard to read (dense stat lines, long enumerated lists jammed
@@ -55,8 +60,10 @@ pass — left for a dedicated future session (see the project memory note).
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-CODEX_PATH = ROOT / "src" / "content" / "set18-codex.ts"
+# Đường dẫn tính từ vị trí file này (scripts/), không giả định thư mục đang đứng.
+# set18-codex.ts đã được tách thành src/content/set18/*.ts nên target đổi theo.
+WEBSITE = Path(__file__).resolve().parent.parent
+CODEX_PATH = WEBSITE / "src" / "content" / "set18" / "set18-traits.ts"
 
 FAE_INTRO = (
     "Sát thương, hồi máu và tạo lá chắn của đội bạn sẽ thu hút các Pix.\n\n"

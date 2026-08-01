@@ -19,10 +19,15 @@
   background: transparent;
 }
 
+/* Trạng thái nghỉ là scaleX(0) để không loé một vệt full-width trước khi
+   ReadingProgressBar gắn animation (và khi JS không chạy). WAAPI ghi đè
+   transform này ở runtime. */
 .progressFill {
+  width: 100%;
   height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
   background: var(--accent-primary);
-  transition: width 0.1s linear;
 }
 
 .inner {

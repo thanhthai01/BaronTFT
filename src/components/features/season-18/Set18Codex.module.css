@@ -1896,7 +1896,10 @@
   letter-spacing: 0.02em;
 }
 
-.effectItemIcon {
+/* icon linh hỏa — dữ liệu chỉ có icon theo phân loại + bậc, không có icon riêng từng
+   linh hỏa; icon này đã tự có khung nên để ảnh trần như .wispCategoryBadge ở phần 04,
+   thêm nền chỉ làm rối. Cùng ô 40px với icon tướng/tộc hệ để các thẻ nguồn thẳng hàng. */
+.effectWispIcon {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -1905,43 +1908,10 @@
   height: 40px;
 }
 
-.effectItemIcon img {
-  border-radius: var(--r-xs);
-}
-
-/* icon augment — nền dạng đĩa theo màu độ hiếm, cùng công thức radial-gradient
-   với .augmentIconPlate ở phần 05 nhưng thu nhỏ cho vừa hàng nguồn hiệu ứng. */
-.effectAugmentIcon {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
+.effectWispIcon img {
   width: 40px;
   height: 40px;
-  border-radius: var(--r-sm);
-  border: 1.5px solid color-mix(in srgb, var(--rarity-color) 60%, black);
-  background: radial-gradient(
-    circle at 50% 34%,
-    color-mix(in srgb, var(--rarity-color) 55%, #1b1b1b) 0%,
-    color-mix(in srgb, var(--rarity-color) 25%, #14120c) 78%
-  );
-}
-
-.effectAugmentIcon img {
-  width: 30px;
-  height: 30px;
   object-fit: contain;
-}
-
-.effectRarityPill {
-  flex-shrink: 0;
-  border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--rarity-color) 16%, white);
-  color: var(--rarity-color);
-  padding: 0.15rem 0.55rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-bold);
 }
 
 .effectQuote {

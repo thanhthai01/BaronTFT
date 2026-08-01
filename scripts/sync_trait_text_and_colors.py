@@ -1,5 +1,11 @@
 """One-off, session 2026-07-31 (follow-up to apply_web_enrichment.py in Set18/):
 
+!! ĐÃ ÁP DỤNG XONG — ĐỪNG CHẠY LẠI. Kiểm chứng 2026-08-01 trên bản sao tạm: chạy lại sẽ
+resync 4 trait (Fae, Greenfather, Attuned, Bounty Seeker) từ Set18/data và GHI ĐÈ phần
+nội dung biên tập tay mà patch_trait_readability.py đã áp SAU script này — mất sạch
+bullets của Fae/Rival, infoChips của Attuned/Greenfather và danh sách bounties của Draven.
+Chỉ chạy lại nếu bạn cố ý muốn quay về bản sinh máy, rồi chạy lại patch_trait_readability.py.
+
 Set18/data/metatft_set18_vi.json's trait `desc`/`desc_full` were fixed on
 2026-07-30 (apply_web_enrichment.py resolved template placeholders and filled
 2 traits, Rival and Solar, that were completely empty). Website/src/content/
@@ -39,9 +45,11 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-CODEX_PATH = ROOT / "src" / "content" / "set18-codex.ts"
-SOURCE_PATH = ROOT.parent / "Set18" / "data" / "metatft_set18_vi.json"
+# Đường dẫn tính từ vị trí file này (scripts/), không giả định thư mục đang đứng.
+# set18-codex.ts đã được tách thành src/content/set18/*.ts nên target đổi theo.
+WEBSITE = Path(__file__).resolve().parent.parent
+CODEX_PATH = WEBSITE / "src" / "content" / "set18" / "set18-traits.ts"
+SOURCE_PATH = WEBSITE.parent / "Set18" / "data" / "metatft_set18_vi.json"
 
 CHROMATIC_COLOR = "#6838ff"
 
