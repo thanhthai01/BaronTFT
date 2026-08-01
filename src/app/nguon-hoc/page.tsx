@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { learningGroups } from '@/content/learning-sources';
 import styles from './page.module.css';
@@ -10,10 +11,10 @@ export default function ResourcesPage() {
       <header className="page-header">
         <div className="wide-container">
           <span className="kicker">Nguồn học</span>
-          <h1>Dùng dữ liệu để đặt câu hỏi tốt hơn</h1>
+          <h1>Trang nào cho việc gì</h1>
           <p>
-            Các trang TFT lớn trùng chức năng gần hết, nên trang này không dựng lại thứ họ đã làm tốt hơn — chỉ chỉ đúng
-            chỗ. Xếp theo câu hỏi bạn đang cần trả lời, và mỗi nguồn ghi rõ nó giỏi nhất ở việc gì.
+            Các trang TFT lớn trùng chức năng gần hết, nên đây không phải danh sách bookmark — mỗi nguồn chỉ ghi đúng
+            việc nó làm tốt hơn phần còn lại, xếp theo câu hỏi bạn đang cần trả lời.
           </p>
         </div>
       </header>
@@ -30,21 +31,29 @@ export default function ResourcesPage() {
               <ul className={styles.sourceList}>
                 {group.sources.map((source) => (
                   <li className={styles.source} key={source.href}>
-                    <div className={styles.sourceHead}>
-                      {/* noreferrer đi kèm noopener: nguồn ngoài không cần biết người dùng đến từ trang nào. */}
-                      <a className={styles.sourceName} href={source.href} rel="noreferrer noopener" target="_blank">
-                        {source.name}
-                        <span aria-hidden="true" className={styles.external}>
-                          ↗
+                    {/* Cả thẻ là một link: vùng bấm to, khỏi phải nhắm vào chữ. Các chip
+                        trang con nằm ngoài thẻ link này vì link lồng link là HTML sai. */}
+                    <a className={styles.sourceMain} href={source.href} rel="noreferrer noopener" target="_blank">
+                      <Image
+                        alt=""
+                        className={styles.logo}
+                        data-on-dark={source.logoOnDark ? '' : undefined}
+                        height={28}
+                        src={`/sources/${source.logo}.png`}
+                        width={28}
+                      />
+                      <span className={styles.sourceText}>
+                        <span className={styles.sourceName}>
+                          {source.name}
+                          <span aria-hidden="true" className={styles.external}>
+                            ↗
+                          </span>
                         </span>
-                      </a>
-                      {source.tag ? <span className={styles.sourceTag}>{source.tag}</span> : null}
-                    </div>
+                        <span className={styles.best}>{source.best}</span>
+                      </span>
+                    </a>
 
-                    {/* Lý do nguồn này có mặt — đọc trước cả câu mô tả, vì các trang trùng
-                        chức năng gần hết nên "giỏi nhất ở đâu" mới là thứ để chọn. */}
-                    <p className={styles.best}>{source.best}</p>
-                    <p className={styles.use}>{source.use}</p>
+                    <p className={styles.note}>{source.note}</p>
                     {source.caveat ? <p className={styles.caveat}>{source.caveat}</p> : null}
 
                     {source.deepLinks?.length ? (
