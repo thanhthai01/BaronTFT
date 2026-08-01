@@ -544,6 +544,10 @@
 
 /* rail (chọn dạng: Lux 10 dạng, Nidalee 2 dạng, 4 tướng Thích Ứng AD/AP) đè lên góc
  * trên-trái của thẻ, nằm ngoài .flipInner nên không xoay theo khi lật. */
+/* gap: 0 — khe 0.35rem giữa các nút trước đây là một dải chết đè lên đáy thẻ và
+   thò xuống dưới; bấm vào đó không chọn được dạng nào mà vẫn chặn phần bên dưới.
+   pointer-events tách riêng: chỉ nút nhận chuột, phần khung còn lại (kể cả phần
+   thò ra khỏi thẻ) trong suốt với chuột. */
 .rail {
   position: absolute;
   bottom: -1rem;
@@ -553,8 +557,9 @@
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0;
   transform: translateX(-50%);
+  pointer-events: none;
 }
 
 /* mỗi nút rail là 1 icon tròn — AD/AP dùng icon màu vật lý/phép, các dạng Lux dùng
@@ -576,6 +581,7 @@
   font-weight: var(--fw-bold);
   font-size: 0.9rem;
   cursor: pointer;
+  pointer-events: auto;
   transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms, border-color 120ms, background 120ms;
 }
 
@@ -644,26 +650,16 @@
   transform: rotateY(180deg);
 }
 
-.flipButton {
-  position: absolute;
-  right: 0.65rem;
-  bottom: 0.65rem;
-  z-index: 2;
-  border: 1px solid var(--cost-color, var(--border-strong));
-  border-radius: var(--r-sm);
-  background: color-mix(in srgb, var(--surface-card) 88%, var(--cost-color, var(--accent-primary)) 12%);
-  color: var(--text-primary);
-  min-height: 2rem;
-  padding: 0.35rem 0.6rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-semibold);
+/* Cả mặt thẻ là vùng bấm để lật — không còn nút hay nhãn gợi ý nào ở góc.
+   Con trỏ tay khi rê chuột là dấu hiệu duy nhất; tên hành động vẫn có trong
+   aria-label của mặt thẻ cho trình đọc màn hình. */
+.faceClickable {
+  cursor: pointer;
 }
 
-.flipButton:hover,
-.flipButton:focus-visible {
-  border-color: var(--cost-color, var(--accent-primary));
-  background: color-mix(in srgb, var(--surface-card) 76%, var(--cost-color, var(--accent-primary)) 24%);
+.faceClickable:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .back .traitsRow {
@@ -788,8 +784,24 @@
   object-fit: cover;
 }
 
+/* Không còn nút ở góc dưới nên không phải chừa chỗ nữa — trả lại padding đều. */
 .body {
   padding: 0.8rem;
+}
+
+/* Thước đo ẩn — dựng mặt trước của mọi dạng để lấy chiều cao lớn nhất. Phải cùng
+   bề ngang với thẻ thật thì phép đo mới đúng, nên dùng inset thay vì width. */
+.sizer {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sizerFace {
+  display: flex;
+  flex-direction: column;
 }
 
 .abhead {
@@ -899,6 +911,17 @@
   color: var(--text-subtle);
   font-style: italic;
 }
+
+/* 3 loại nấm của Teemo — dữ liệu game chỉ đánh dấu <bright> cho cả ba, nên trên
+   thẻ chúng hiện cùng một màu đen đậm dù tên nấm nói rõ là đỏ/xanh/vàng. Tô đúng
+   màu để đọc lướt ra ngay nấm nào cho gì. */
+.abdesc :global(.s18-shroom) {
+  font-weight: var(--fw-bold);
+}
+
+.abdesc :global(.shroomRed) { color: var(--rust, #b04a3f); }
+.abdesc :global(.shroomGreen) { color: var(--success, #1e9e57); }
+.abdesc :global(.shroomYellow) { color: #b8901f; }
 .abdesc :global(.s18-value),
 .calcs :global(.s18-value) {
   font-family: var(--font-mono);
@@ -1179,6 +1202,74 @@
 /* Chip tham khảo phụ, tách khỏi đoạn mô tả chính (vd 5 pha mặt trăng, các
    loại ô đất) — không phải mốc kích hoạt nên dùng tông trung tính, không mượn
    --break-color. */
+/* Hiệu ứng phụ có nhãn (4 Phước Lành của Nguyên Sinh, bảng thưởng 3/5/8 của Mặt
+   Trời). Mượn đúng khung của .traitBulletList để hai thẻ này đọc giống các thẻ
+   có bullet theo mốc, chỉ khác nhãn là chữ/số tự do thay vì mốc kích hoạt — nên
+   .traitSubLabel dùng viền xám trung tính, không mượn màu mốc. */
+.traitSubEffects {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.traitSubTitle {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.traitSubList {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.traitSubList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+}
+
+.traitSubLabel {
+  flex-shrink: 0;
+  min-width: 1.35rem;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-xs);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  padding: 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  text-align: center;
+}
+
+/* Câu giải nghĩa thuật ngữ — tương đương style <Rules> của game. */
+.traitNote {
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: var(--fs-2xs);
+  font-style: italic;
+  line-height: var(--lh-relaxed);
+}
+
+/* Điều kiện kích hoạt của trait ẩn, đứng thay hàng chip mốc. */
+.traitActivation {
+  margin: 0;
+  border-left: 3px solid var(--trait-accent, var(--accent-primary));
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  padding: 0.35rem 0.55rem;
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-relaxed);
+}
+
 .traitInfoChips {
   display: flex;
   flex-wrap: wrap;

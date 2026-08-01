@@ -6,9 +6,12 @@ import { isNavigationRouteActive } from '@/lib/navigation';
 import { useCommandPalette } from '../features/command-palette/CommandPaletteProvider';
 import styles from './MobileNavigation.module.css';
 
+// Cùng bộ mục với thanh điều hướng desktop, chỉ rút gọn nhãn cho vừa 5 ô ngang.
 const links = [
   { href: '/kien-thuc-nen-tang', label: 'Học' },
+  { href: '/mua-18', label: 'Mùa 18' },
   { href: '/checklist', label: 'Checklist' },
+  { href: '/patch', label: 'Patch' },
 ];
 
 export function MobileNavigation() {
