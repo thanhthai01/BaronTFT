@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Epilogue, JetBrains_Mono, Libre_Franklin } from 'next/font/google';
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <SiteFooter />
           <MobileNavigation />
         </CommandPaletteProvider>
+        <Analytics />
         <SpeedInsights />
       </body>
     </html>
