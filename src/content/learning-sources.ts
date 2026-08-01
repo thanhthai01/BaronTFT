@@ -119,6 +119,27 @@ export const learningGroups: LearningGroup[] = [
     ],
   },
   {
+    id: 'meo-luyen-tap',
+    question: 'Có mẹo nào mình chưa biết, và luyện tay ở đâu?',
+    hint: 'Mẹo lẻ và công cụ luyện tập — thứ không nằm trong bất kỳ tier list nào.',
+    sources: [
+      {
+        name: 'DataTFT',
+        href: 'https://www.datatft.com/',
+        tag: 'Có tiếng Việt',
+        best: 'Kho mẹo tra được & mô phỏng roll',
+        use: 'Mục Mẹo cho lọc theo trang bị / tộc hệ / tướng / nâng cấp / vị trí đứng, và có cả nhánh bác tin đồn. Mô phỏng roll cho luyện rolldown mà không tốn ván thật. Trang All-in-one kèm hướng dẫn Core / Khai cuộc / Giữa / Cuối viết bằng tiếng Việt.',
+        caveat: 'Mặc định mở ra tiếng Anh — đổi sang Tiếng Việt trong menu ngôn ngữ ở góc phải trên.',
+        deepLinks: [
+          { label: 'Mẹo', href: 'https://www.datatft.com/tip' },
+          { label: 'All-in-one', href: 'https://www.datatft.com/comp/allinone' },
+          { label: 'Mô phỏng roll', href: 'https://www.datatft.com/rolldown' },
+          { label: 'Máy tính roll', href: 'https://www.datatft.com/calculator' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'tu-review',
     question: 'Mình vừa chơi sai ở đâu?',
     hint: 'Phần duy nhất trong danh sách này thật sự làm bạn lên rank.',
