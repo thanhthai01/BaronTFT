@@ -536,10 +536,6 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
               frontIdRef={frontIdRef}
               traitRow={traitRow}
             />
-            {/* Gợi ý thị giác, không phải nút — cả mặt thẻ mới là vùng bấm. */}
-            <span aria-hidden className={styles.flipHint}>
-              Xem số liệu
-            </span>
           </div>
 
           <div
@@ -577,9 +573,6 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
                 </div>
               ))}
             </div>
-            <span aria-hidden className={styles.flipHint}>
-              Xem kỹ năng
-            </span>
           </div>
         </div>
       </article>

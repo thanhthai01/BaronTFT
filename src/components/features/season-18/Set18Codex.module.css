@@ -650,8 +650,9 @@
   transform: rotateY(180deg);
 }
 
-/* Cả mặt thẻ là vùng bấm để lật. .flipHint chỉ là gợi ý thị giác — aria-hidden
-   và không nhận chuột, nên không tạo ra một vùng bấm thứ hai chồng lên. */
+/* Cả mặt thẻ là vùng bấm để lật — không còn nút hay nhãn gợi ý nào ở góc.
+   Con trỏ tay khi rê chuột là dấu hiệu duy nhất; tên hành động vẫn có trong
+   aria-label của mặt thẻ cho trình đọc màn hình. */
 .faceClickable {
   cursor: pointer;
 }
@@ -659,27 +660,6 @@
 .faceClickable:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
-}
-
-.flipHint {
-  position: absolute;
-  right: 0.65rem;
-  bottom: 0.65rem;
-  z-index: 2;
-  pointer-events: none;
-  border: 1px solid var(--cost-color, var(--border-strong));
-  border-radius: var(--r-sm);
-  background: color-mix(in srgb, var(--surface-card) 88%, var(--cost-color, var(--accent-primary)) 12%);
-  color: var(--text-primary);
-  padding: 0.35rem 0.6rem;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-semibold);
-  transition: background 140ms;
-}
-
-.faceClickable:hover .flipHint {
-  background: color-mix(in srgb, var(--surface-card) 76%, var(--cost-color, var(--accent-primary)) 24%);
 }
 
 .back .traitsRow {
@@ -804,12 +784,9 @@
   object-fit: cover;
 }
 
-/* Chừa chỗ cho .flipButton — nút định vị tuyệt đối nên không chiếm chỗ trong
-   luồng, mà chiều cao thẻ lại tính từ scrollHeight của .body. Không chừa thì kỹ
-   năng dài chạy thẳng xuống dưới nút. Padding này nằm trong scrollHeight nên thẻ
-   tự cao thêm đúng phần đã chừa. */
+/* Không còn nút ở góc dưới nên không phải chừa chỗ nữa — trả lại padding đều. */
 .body {
-  padding: 0.8rem 0.8rem 3.1rem;
+  padding: 0.8rem;
 }
 
 /* Thước đo ẩn — dựng mặt trước của mọi dạng để lấy chiều cao lớn nhất. Phải cùng
@@ -1004,13 +981,12 @@
 
 /* icon + số, không nhãn chữ — icon đã đủ nghĩa (tim=máu, giọt=mana...); title= giữ tên
    cho tooltip khi rê chuột */
-/* Chừa chỗ cho .flipButton ở mặt sau, cùng lý do như .body. */
 .stats {
   display: grid;
   flex-shrink: 0;
   grid-template-columns: 1fr 1fr;
   gap: 0.85rem 0.6rem;
-  padding: 0.9rem 0.8rem 3.1rem;
+  padding: 0.9rem 0.8rem 0.8rem;
   text-align: center;
 }
 
