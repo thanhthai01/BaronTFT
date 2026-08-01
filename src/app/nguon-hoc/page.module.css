@@ -2,6 +2,24 @@
    một dòng mô tả; ô hẹp hơn (16rem) để lên 4 cột trên desktop, thấy hết cả trang trong
    một màn hình thay vì phải cuộn qua từng nhóm. */
 
+/* Header rút gọn riêng cho trang này (các trang khác giữ nguyên .page-header chung):
+   đây là trang tra cứu, phần đáng nhìn nằm ở lưới bên dưới nên tiêu đề không được
+   ăn hết màn hình đầu. Bỏ padding lớn, hạ cỡ h1 từ --fs-h1 (tới 52px) xuống --fs-h3. */
+.header {
+  padding-block: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.header h1 {
+  margin: 0.35rem 0 0;
+  font-size: var(--fs-h3);
+}
+
+/* .section chung có padding-block tới 96px — cắt phần trên, nếu không thì vừa thu gọn
+   header xong lại chèn ngay một khoảng trống đúng bằng chỗ vừa tiết kiệm. */
+.section {
+  padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
 /* Các NHÓM cũng xếp thành cột, không chỉ các thẻ bên trong: mỗi nhóm chỉ có 1–2 nguồn
    nên nếu để mỗi nhóm chiếm trọn một hàng thì bỏ trống hơn nửa bề ngang và trang dài
    gấp đôi cần thiết. 5 nhóm xếp 2 cột là thấy gần hết trang trong một màn hình. */

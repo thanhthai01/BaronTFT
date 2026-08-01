@@ -3,23 +3,25 @@ import type { Metadata } from 'next';
 import { learningGroups } from '@/content/learning-sources';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'Nguồn học' };
+/* Đoạn mô tả định vị trước đây nằm dưới h1 đã bỏ khỏi trang cho đỡ chiếm màn hình —
+   giữ lại ở description để vẫn còn ngữ cảnh cho kết quả tìm kiếm. */
+export const metadata: Metadata = {
+  title: 'Nguồn học',
+  description:
+    'Các trang TFT lớn trùng chức năng gần hết, nên đây không phải danh sách bookmark — mỗi nguồn chỉ ghi đúng việc nó làm tốt hơn phần còn lại, xếp theo câu hỏi bạn đang cần trả lời.',
+};
 
 export default function ResourcesPage() {
   return (
     <>
-      <header className="page-header">
+      <header className={['page-header', styles.header].join(' ')}>
         <div className="wide-container">
           <span className="kicker">Nguồn học</span>
           <h1>Trang nào cho việc gì</h1>
-          <p>
-            Các trang TFT lớn trùng chức năng gần hết, nên đây không phải danh sách bookmark — mỗi nguồn chỉ ghi đúng
-            việc nó làm tốt hơn phần còn lại, xếp theo câu hỏi bạn đang cần trả lời.
-          </p>
         </div>
       </header>
 
-      <section className="section">
+      <section className={['section', styles.section].join(' ')}>
         <div className={['wide-container', styles.groups].join(' ')}>
           {learningGroups.map((group) => (
             <div className={styles.group} id={group.id} key={group.id}>
