@@ -26,7 +26,11 @@ let set18Augments: Set18Augment[] = [];
 let set18EffectCategories: Set18EffectCategory[] = [];
 let set18TraitByName = new Map<string, Set18Trait>();
 let set18ChampionByName = new Map<string, Set18Champion>();
-let set18AugmentByName = new Map<string, Set18Augment>();
+/** Khóa bằng `nameVi` chứ không phải `name`: cột tên tiếng Anh trong set18-wisps.ts đang lệch
+ * hàng so với phần tiếng Việt (lỗi ghép cặp từ lúc scrape), nên chỉ `nameVi` là tham chiếu tin
+ * cậy. 3 linh hỏa trùng `nameVi` — giữ bản xuất hiện trước, đủ dùng vì set18-effects.ts không
+ * trỏ tới cái nào trong số đó. */
+let set18WispByNameVi = new Map<string, Set18Wisp>();
 
 const SECTIONS = set18Sections;
 type SectionId = Set18SectionId;
@@ -1267,9 +1271,9 @@ function AugmentDetails({
 }
 
 /** Icon cho 1 nguồn hiệu ứng — tướng dùng lại ChampionLogo (tooltip có sẵn), tộc/hệ
- * dùng lại TraitIcon, trang bị chưa có trong set18-codex.ts nên vẽ ảnh trần không
- * khung nền (icon trang bị đã có khung riêng, thêm nền chỉ làm rối — theo góp ý khi
- * duyệt bản báo cáo gốc). */
+ * dùng lại TraitIcon. Linh hỏa không có icon riêng từng cái trong dữ liệu, chỉ có icon
+ * theo phân loại + bậc (`categoryIcon`), nên vẽ ảnh trần không khung nền — giống cách
+ * phần 04 hiển thị .wispCategoryBadge. */
 function EffectSourceIcon({
   source,
   onShow,
@@ -1290,30 +1294,31 @@ function EffectSourceIcon({
     if (!trait) return null;
     return <TraitIcon size={34} trait={trait} />;
   }
-  if (source.kind === 'augment') {
-    const augment = set18AugmentByName.get(source.name);
-    if (!augment) return null;
-    return (
-      <span className={styles.effectAugmentIcon} style={{ '--rarity-color': augment.rarityColor } as CSSProperties}>
-        <Image alt={augment.nameVi} height={30} src={augment.icon} width={30} />
-      </span>
-    );
-  }
+  const wisp = set18WispByNameVi.get(source.name);
+  if (!wisp) return null;
   return (
-    <span className={styles.effectItemIcon}>
-      <Image alt={source.name} height={30} src={source.icon} width={30} />
+    <span className={styles.effectWispIcon}>
+      <Image alt={wisp.categoryVi} height={40} src={wisp.categoryIcon} width={40} />
     </span>
   );
 }
 
+/** Vàng của linh hỏa không chia bậc màu như giá tướng — dùng chung một tông vàng xu với
+ * .statIconCoin ở phần 04 để hai chỗ hiển thị giá linh hỏa trông cùng một hệ. */
+const WISP_COST_COLOR = '#c0851c';
+
 function effectSourceCostColor(source: Set18EffectSource): string | undefined {
-  if (source.kind !== 'champion') return undefined;
-  return set18ChampionByName.get(source.name)?.costColor;
+  if (source.kind === 'champion') return set18ChampionByName.get(source.name)?.costColor;
+  if (source.kind === 'wisp') return WISP_COST_COLOR;
+  return undefined;
 }
 
+/** null = linh hỏa không hiện giá mua riêng (phần thưởng miễn phí) → không vẽ pill.
+ * Giá 0 vẫn vẽ, vì "0 vàng" là thông tin thật chứ không phải thiếu dữ liệu. */
 function effectSourceCost(source: Set18EffectSource): number | undefined {
-  if (source.kind !== 'champion') return undefined;
-  return set18ChampionByName.get(source.name)?.cost;
+  if (source.kind === 'champion') return set18ChampionByName.get(source.name)?.cost;
+  if (source.kind === 'wisp') return set18WispByNameVi.get(source.name)?.cost ?? undefined;
+  return undefined;
 }
 
 function EffectSourceCard({
@@ -1325,11 +1330,7 @@ function EffectSourceCard({
   onShow: (champion: Set18Champion, x: number, y: number) => void;
   onHide: () => void;
 }) {
-  const augment = source.kind === 'augment' ? set18AugmentByName.get(source.name) : undefined;
-  const displayName =
-    source.kind === 'champion' && source.form
-      ? `${source.name} (${source.form})`
-      : (augment?.nameVi ?? source.name);
+  const displayName = source.kind === 'champion' && source.form ? `${source.name} (${source.form})` : source.name;
   const cost = effectSourceCost(source);
   const costColor = effectSourceCostColor(source);
 
@@ -1342,11 +1343,6 @@ function EffectSourceCard({
           <span className={styles.effectCardTag}>{source.tag}</span>
         </div>
         {cost !== undefined && costColor ? <CostPill color={costColor} cost={cost} /> : null}
-        {augment ? (
-          <span className={styles.effectRarityPill} style={{ '--rarity-color': augment.rarityColor } as CSSProperties}>
-            {augment.rarity}
-          </span>
-        ) : null}
       </div>
       <p className={styles.effectQuote}>{source.quote}</p>
     </article>
@@ -1523,7 +1519,6 @@ export function Set18Codex() {
         } else if (activeSection === 'nang-cap') {
           const augments = await import('@/content/set18/set18-augments');
           set18Augments = augments.set18Augments;
-          set18AugmentByName = augments.set18AugmentByName;
         } else {
           const [traits, champions] = await Promise.all([
             import('@/content/set18/set18-traits'),
@@ -1535,12 +1530,15 @@ export function Set18Codex() {
           set18ChampionByName = champions.set18ChampionByName;
 
           if (activeSection === 'hieu-ung') {
-            const [augments, effects] = await Promise.all([
-              import('@/content/set18/set18-augments'),
+            const [wisps, effects] = await Promise.all([
+              import('@/content/set18/set18-wisps'),
               import('@/content/set18-effects'),
             ]);
-            set18Augments = augments.set18Augments;
-            set18AugmentByName = augments.set18AugmentByName;
+            set18Wisps = wisps.set18Wisps;
+            set18WispByNameVi = new Map();
+            for (const wisp of wisps.set18Wisps) {
+              if (!set18WispByNameVi.has(wisp.nameVi)) set18WispByNameVi.set(wisp.nameVi, wisp);
+            }
             set18EffectCategories = effects.set18EffectCategories;
           }
         }
