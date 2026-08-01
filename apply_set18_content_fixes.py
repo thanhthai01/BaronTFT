@@ -103,7 +103,7 @@ TERM_FIXES: list[tuple[str, str]] = [
     ("vật phẩm", "trang bị"),
     ("Kháng chịu", "Kháng Chịu"),
     # "deal damage" bị dịch thành "xử lý" (LeBlanc, Ashe)
-    ("xử lý ", "gây "),
+    ("xử lý ", "gây ra "),
     # Nhãn bùa của Quái Rừng: 5 con dùng "Bùa", 3 con dùng "Buff"
     ("Buff Tím:", "Bùa Tím:"),
     ("Buff Xanh Lá:", "Bùa Xanh Lá:"),
@@ -115,13 +115,11 @@ TERM_FIXES: list[tuple[str, str]] = [
     # Dịch máy sai nghĩa hẳn — đối chiếu từng câu với bản tiếng Anh:
     # Ashe   "physical damage"        -> "thiệt hại vật chất"
     ("thiệt hại vật chất", "sát thương vật lý"),
-    # Krug   "split into two Kruglettes" -> "tách thành hai chai Kruglette"
-    #        (Kruglette là Quái Đá Nhỏ theo chính danh sách tướng của trang)
-    ("chai Kruglette", "Quái Đá Nhỏ"),
+    # Krug   "split into two Kruglettes" -> "tách thành hai CHAI Kruglette".
+    #        Giữ nguyên "Kruglette" — trang để tên tướng bằng tiếng Anh.
+    ("chai Kruglette", "Kruglette"),
     # Teemo  "mushrooms that deal X damage" -> "nấm dùng để ĐIỀU TRỊ X sát thương"
     ("dùng để điều trị ", "gây "),
-    # Scuttlecrab "Burrow underground" -> "Chui xuống dị thần"
-    ("Chui xuống dị thần", "Chui xuống lòng đất"),
     # LeBlanc dư dấu ba chấm giữa câu: "sẽ có...10% Cơ hội"
     ("sẽ có...", "sẽ có "),
     # Omnivamp: thuật ngữ chính thức trong bài viết của Riot
@@ -145,58 +143,20 @@ REWRITES: list[tuple[str, str, str]] = [
     # physical damage, reduced by Y per enemy hit (minimum Z). The arrow leaves a
     # trail for N seconds that deals A + B% max Health physical damage per second
     # to enemies within and C% Slows them."
-    # Bản cũ mở đầu bằng một vế thừa ("...có khả năng gây sát thương.") rồi lặp
-    # lại "gây sát thương" ở giữa câu, và "xé toạc một khe nứt" là dịch sai của
-    # "leaves a trail".
-    (
-        "Ashe",
-        'Bắn một mũi tên vào kẻ địch ở xa nhất có khả năng gây sát thương. ' + VP + IAD
-        + '260/400/1000</span> sát thương vật lý, giảm thiểu bởi ' + V + '40%</span>'
-        + ' mỗi kẻ địch trúng đòn (tối thiểu) ' + V + '20%</span> Mũi tên xé toạc một khe nứt cho '
-        + V + '4</span> giây gây ' + VP + IAD + IAP + '30/46/220</span> +'
-        + '<span class="s18-value s18-style-colorPhysical">2%</span>'
-        + ' Mục tiêu là lượng máu tối đa gây sát thương vật lý mỗi giây và ' + V + '20</span> %',
-        'Bắn một mũi tên xuyên qua hàng kẻ địch dài nhất, gây ' + VP + IAD
-        + '260/400/1000</span> sát thương vật lý, giảm ' + V + '40%</span>'
-        + ' mỗi kẻ địch trúng đòn (tối thiểu ' + V + '20%</span>). Mũi tên để lại một vệt trong '
-        + V + '4</span> giây, gây ' + VP + IAD + IAP + '30/46/220</span> + '
-        + '<span class="s18-value s18-style-colorPhysical">2%</span>'
-        + ' Máu tối đa mỗi giây lên kẻ địch đứng trong vệt và ' + V + '20</span>%',
-    ),
+    # Bản cũ mở đầu bằng vế thừa ("...có khả năng gây sát thương.") rồi lặp lại
+    # "gây sát thương" ở giữa; "leaves a trail" bị dịch thành "xé toạc một khe nứt".
+    ("Ashe", 'Bắn một mũi tên vào kẻ địch ở xa nhất có khả năng gây sát thương. <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span>260/400/1000</span> sát thương vật lý, giảm thiểu bởi <span class="s18-value">40%</span> mỗi kẻ địch trúng đòn (tối thiểu) <span class="s18-value">20%</span> Mũi tên xé toạc một khe nứt cho <span class="s18-value">4</span> giây gây ra <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span><span class="s18-icon s18-icon-icon_ap"></span>30/46/220</span> +<span class="s18-value s18-style-colorPhysical">2%</span> Mục tiêu là lượng máu tối đa gây sát thương vật lý mỗi giây và <span class="s18-value">20</span> %', 'Bắn một mũi tên xuyên qua hàng kẻ địch dài nhất, gây ra <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span>260/400/1000</span> sát thương vật lý, giảm <span class="s18-value">40%</span> mỗi kẻ địch trúng đòn (tối thiểu <span class="s18-value">20%</span>). Mũi tên để lại một vệt trong <span class="s18-value">4</span> giây, gây ra <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span><span class="s18-icon s18-icon-icon_ap"></span>30/46/220</span> + <span class="s18-value s18-style-colorPhysical">2%</span> Máu tối đa mỗi giây lên kẻ địch đứng trong vệt và <span class="s18-value">20</span>%'),
     # Morgana — EN: "Curse N nearby enemies ... Then, spawn a H Hex withering zone
     # for the same duration that deals D magic damage per second. Cursed enemies
-    # take E more damage."
-    # "sinh ra 2 - Gây hiệu ứng làm suy yếu vùng ảnh hưởng" là câu vỡ: số 2 là bán
-    # kính ô của vùng, không phải số lượng.
-    (
-        "Morgana",
-        'Lời nguyền ' + V + '3</span> kẻ thù gần đó và sinh ra ' + V + '2</span>'
-        + ' - Gây hiệu ứng làm suy yếu vùng ảnh hưởng trong 4 giây, gây sát thương. '
-        + VM + IAP + '40/60/500</span> mỗi giây. Kẻ thù bị nguyền rủa mất '
-        + VM + IAP + '18/27/240</span> Sát thương mỗi lời nguyền càng cao.',
-        'Nguyền rủa ' + V + '3</span> kẻ địch gần đó, rồi tạo vùng héo úa bán kính '
-        + V + '2</span> ô trong 4 giây, gây ' + VM + IAP + '40/60/500</span>'
-        + ' sát thương phép mỗi giây. Kẻ địch bị nguyền rủa chịu thêm '
-        + VM + IAP + '18/27/240</span> sát thương.',
-    ),
-    # Krug — EN: "Slate Buff: On death, Krug and Kruglettes Shield allies for X
-    # max Health." Bản cũ kết câu bằng "trong một khoảng thời gian nhất định."
-    # rồi bỏ lửng "10% Máu tối đa" thành câu riêng, và còn sót "Kruglettes".
-    (
-        "Krug",
-        ' Hồi máu tối đa, sau đó lao vào mục tiêu, gây sát thương. '
-        + '<span class="s18-value s18-style-colorPhysical">'
-        + '<span class="s18-icon s18-icon-icon_ad"></span>'
-        + '<span class="s18-icon s18-icon-icon_health"></span>245/310/445</span> sát thương.'
-        + ' Hiệu ứng Beige Buff: Khi chết, Krug và Kruglettes tạo khiên bảo vệ cho đồng minh'
-        + ' trong một khoảng thời gian nhất định.' + V + '10%</span> Sức khỏe tối đa.',
-        ' Máu tối đa, sau đó lao vào mục tiêu, gây '
-        + '<span class="s18-value s18-style-colorPhysical">'
-        + '<span class="s18-icon s18-icon-icon_ad"></span>'
-        + '<span class="s18-icon s18-icon-icon_health"></span>245/310/445</span> sát thương.'
-        + '<br><br><span class="s18-style-bright">Bùa Xám Đá:</span> Khi chết, Krug và Quái Đá Nhỏ'
-        + ' tạo lá chắn cho đồng minh bằng ' + V + '10%</span> Máu tối đa.',
-    ),
+    # take E more damage." Số 2 là BÁN KÍNH ô của vùng, không phải số lượng —
+    # bản cũ "sinh ra 2 - Gây hiệu ứng làm suy yếu vùng ảnh hưởng" là câu vỡ.
+    ("Morgana", 'Lời nguyền <span class="s18-value">3</span> kẻ thù gần đó và sinh ra <span class="s18-value">2</span> - Gây hiệu ứng làm suy yếu vùng ảnh hưởng trong 4 giây, gây sát thương. <span class="s18-value s18-style-colorMagic"><span class="s18-icon s18-icon-icon_ap"></span>40/60/500</span> mỗi giây. Kẻ thù bị nguyền rủa mất <span class="s18-value s18-style-colorMagic"><span class="s18-icon s18-icon-icon_ap"></span>18/27/240</span> Sát thương mỗi lời nguyền càng cao.', 'Nguyền rủa <span class="s18-value">3</span> kẻ địch gần đó, rồi tạo vùng héo úa bán kính <span class="s18-value">2</span> ô trong 4 giây, gây ra <span class="s18-value s18-style-colorMagic"><span class="s18-icon s18-icon-icon_ap"></span>40/60/500</span> sát thương phép mỗi giây. Kẻ địch bị nguyền rủa chịu thêm <span class="s18-value s18-style-colorMagic"><span class="s18-icon s18-icon-icon_ap"></span>18/27/240</span> sát thương.'),
+    # Krug — EN: "Active: Gain X max Health, then roll into the target, dealing Y
+    # damage. Slate Buff: On death, Krug and Kruglettes Shield allies for Z max
+    # Health." Bản cũ lặp "gây sát thương", và nhánh bùa kết câu bằng "trong một
+    # khoảng thời gian nhất định." rồi bỏ lửng "10% Máu tối đa" thành câu riêng.
+    # "Kruglette" giữ nguyên tiếng Anh cho khớp cách trang đặt tên tướng.
+    ("Krug", ' Hồi máu tối đa, sau đó lao vào mục tiêu, gây sát thương. <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span><span class="s18-icon s18-icon-icon_health"></span>245/310/445</span> sát thương. Bùa Xám Đá: Khi chết, Krug và Kruglettes tạo khiên bảo vệ cho đồng minh trong một khoảng thời gian nhất định.<span class="s18-value">10%</span> Máu tối đa.', ' Máu tối đa, sau đó lao vào mục tiêu, gây ra <span class="s18-value s18-style-colorPhysical"><span class="s18-icon s18-icon-icon_ad"></span><span class="s18-icon s18-icon-icon_health"></span>245/310/445</span> sát thương.<br><br><span class="s18-style-bright">Bùa Xám Đá:</span> Khi chết, Krug và Kruglette tạo lá chắn cho đồng minh bằng <span class="s18-value">10%</span> Máu tối đa.'),
 ]
 
 
@@ -320,22 +280,6 @@ def fix_champions(problems: list[str], report: list[str]) -> str | None:
             report.append(f"  Teemo        {shrooms} nhãn nấm + {words} cụm từ dịch máy")
             changed += shrooms + words
 
-    # Viết lại câu vỡ cấu trúc (chạy TRƯỚC phần thay từ để khớp nguyên văn).
-    for name, old, new in REWRITES:
-        champ = by_name.get(name)
-        if not champ:
-            problems.append(f"champion không tồn tại: {name}")
-            continue
-        hit = 0
-        for form in champ.get("forms") or []:
-            html = form.get("abilityHtmlVi") or ""
-            if old in html:
-                form["abilityHtmlVi"] = html.replace(old, new)
-                hit += 1
-        if hit:
-            report.append(f"  viết lại    {name}")
-            changed += hit
-
     # Chuẩn hoá thuật ngữ + chèn dấu cách thiếu, áp cho toàn bộ 65 tướng.
     terms = collections.Counter()
     spaces = collections.Counter()
@@ -355,6 +299,24 @@ def fix_champions(problems: list[str], report: list[str]) -> str | None:
             if old in plain:
                 plain = plain.replace(old, new)
         champ["abilityVi"] = plain
+
+    # Viết lại câu vỡ cấu trúc. Chạy SAU phần chuẩn hoá thuật ngữ + chèn dấu
+    # cách: các chuỗi `old` bên dưới được soạn theo đúng trạng thái đã chuẩn
+    # hoá, nên đảo thứ tự là không khớp nữa.
+    for name, old, new in REWRITES:
+        champ = by_name.get(name)
+        if not champ:
+            problems.append(f"champion không tồn tại: {name}")
+            continue
+        hit = 0
+        for form in champ.get("forms") or []:
+            html = form.get("abilityHtmlVi") or ""
+            if old in html:
+                form["abilityHtmlVi"] = html.replace(old, new)
+                hit += 1
+        if hit:
+            report.append(f"  viết lại    {name}")
+            changed += hit
 
     for label, n in terms.most_common():
         report.append(f"  thuật ngữ   {n:3}x  {label}")
