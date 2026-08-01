@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const e2ePort = 3100;
+/* `reuseExistingServer` bên dưới sẽ bám vào bất kỳ server nào đang giữ cổng này — kể cả
+   server của một git worktree khác, khiến e2e âm thầm test nhầm cây code. Cho phép đổi
+   cổng qua env để mỗi worktree chạy trên cổng riêng: E2E_PORT=3200 pnpm test:e2e */
+const e2ePort = Number(process.env.E2E_PORT ?? 3100);
 
 export default defineConfig({
   testDir: './tests/e2e',
