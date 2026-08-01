@@ -1195,8 +1195,53 @@
   font-size: var(--fs-2xs);
 }
 
-/* Danh sách nhiệm vụ/phần thưởng của Kẻ Săn Tiền Thưởng — 2 cột trên thẻ rộng
-   để không cần cuộn dài, mỗi nhiệm vụ đi kèm 1 chip phần thưởng nổi bật. */
+/* Bảng nhiệm vụ của Kẻ Săn Tiền Thưởng — tách 2 pool rút (Tiêu chuẩn / Khó) thay vì
+   đổ chung 11 ô, vì độ khó mới là thứ quyết định người chơi chọn bounty nào.
+   --pool-color đặt ở .bountyPool để cả tiêu đề, gạch dọc lẫn chip phần thưởng bên
+   trong cùng ăn một màu; nhóm Khó dùng --warning chứ không phải --danger vì "khó"
+   là mức độ, không phải lỗi. */
+.bountyBoard {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bountyPool {
+  display: grid;
+  gap: 0.4rem;
+  border-left: 3px solid var(--pool-color);
+  padding-left: 0.65rem;
+}
+
+.bountyPool[data-difficulty='standard'] {
+  --pool-color: var(--success);
+}
+
+.bountyPool[data-difficulty='hard'] {
+  --pool-color: var(--warning);
+}
+
+.bountyPoolHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.bountyPoolName {
+  color: var(--pool-color);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.bountyPoolMeta {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
 .bountyList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
@@ -1210,7 +1255,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 0.3rem;
+  gap: 0.35rem;
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-sm);
   background: var(--surface-raised);
@@ -1221,29 +1266,19 @@
   color: var(--text-secondary);
   font-size: var(--fs-xs);
   font-weight: var(--fw-regular);
-  line-height: var(--lh-relaxed);
+  line-height: var(--lh-body);
 }
 
+/* Phần thưởng là thứ người chơi so sánh giữa các ô nên tách hẳn khỏi câu nhiệm vụ
+   bằng đường kẻ, thay vì chỉ là một chip trôi nổi trong cùng khối chữ. */
 .bountyReward {
-  align-self: flex-start;
-  border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--trait-accent, var(--accent-primary)) 16%, white);
-  color: var(--trait-accent, var(--accent-primary));
-  padding: 0.1rem 0.55rem;
+  margin-top: auto;
+  border-top: 1px dashed var(--border-subtle);
+  padding-top: 0.35rem;
+  color: var(--pool-color);
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
-  font-weight: var(--fw-regular);
-}
-
-/* Nhãn "Nhiệm vụ:" / "Phần thưởng:" — in đậm và tách màu khỏi phần nội dung để
-   phân loại rõ 2 loại thông tin trong mỗi dòng, thay vì đọc như 1 câu liền. */
-.bountyLabel {
-  color: var(--trait-accent, var(--accent-primary));
   font-weight: var(--fw-bold);
-}
-
-.bountyReward .bountyLabel {
-  color: inherit;
 }
 
 .traitMembers {
