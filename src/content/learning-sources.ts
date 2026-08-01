@@ -14,7 +14,17 @@
  *
  * `deepLinks` cố ý tránh URL có nhúng số set (vd tftflow /composition/set17/...,
  * tftacademy /tierlist/comps/set-17-...): chúng sẽ chết khi sang set mới. Chỉ dùng
- * đường dẫn không gắn set để trang tự trỏ về set hiện hành.
+ * đường dẫn không gắn set để trang tự trỏ về set hiện hành. Riêng tftflow: bản
+ * /conditions/set18 CHƯA tồn tại (404 — trang vẫn đang ở Set 17 / patch 17.8), nên
+ * dùng /conditions không gắn set; đổi sang set18 khi nào họ mở.
+ *
+ * Lọc sẵn theo yêu cầu, chỉ ở nơi trang cho phép đặt qua URL (kiểm 2026-08-01):
+ *   · tactics.tools — hậu tố /top = Cao Thủ trở lên (mặc định của trang là Kim Cương+)
+ *   · lolchess      — ?region=vn cho bảng xếp hạng khu vực Việt Nam
+ * Không đặt được qua URL, đành ghi vào `caveat`:
+ *   · metatft  — rank giữ trong localStorage, mọi ?rank=/?tier= đều bị bỏ qua
+ *   · datatft  — ?lang=vi không đổi ngôn ngữ; phải bấm menu, sau đó trang tự nhớ
+ *   · tactics.tools / tftacademy — không có bản tiếng Việt
  *
  * Toàn bộ URL đã kiểm tra trả 200 ngày 2026-08-01. Khi thêm nguồn mới nhớ kiểm lại —
  * link chết trên trang nguồn học còn tệ hơn không có link.
@@ -110,6 +120,7 @@ export const learningGroups: LearningGroup[] = [
         logo: 'metatft',
         best: 'Nhiều chỉ số nhất',
         note: 'Chỉ số sâu nhất, kèm bảng tra riêng cho từng cơ chế của set.',
+        caveat: 'Bộ lọc rank không nằm trên URL — phải tự chỉnh từ Bạch Kim+ lên Cao Thủ+.',
         deepLinks: [
           { label: 'Đội hình', href: 'https://www.metatft.com/comps' },
           { label: 'Tướng', href: 'https://www.metatft.com/units' },
@@ -121,12 +132,12 @@ export const learningGroups: LearningGroup[] = [
         logo: 'tacticstools',
         best: 'Lọc theo bậc rank',
         note: 'Thứ hạng trung bình, tỉ lệ top 4, cỡ mẫu — tách theo từng bậc rank.',
-        caveat: 'Đặt bộ lọc rank trước khi đọc số.',
+        caveat: 'Các link dưới đã đặt sẵn Cao Thủ trở lên; mặc định của trang là Kim Cương+.',
         deepLinks: [
-          { label: 'Đội hình', href: 'https://tactics.tools/team-compositions' },
-          { label: 'Tướng', href: 'https://tactics.tools/units' },
-          { label: 'Trang bị', href: 'https://tactics.tools/items' },
-          { label: 'Nâng cấp', href: 'https://tactics.tools/augments' },
+          { label: 'Đội hình', href: 'https://tactics.tools/team-compositions/top' },
+          { label: 'Tướng', href: 'https://tactics.tools/units/top' },
+          { label: 'Trang bị', href: 'https://tactics.tools/items/top' },
+          { label: 'Nâng cấp', href: 'https://tactics.tools/augments/top' },
         ],
       },
     ],
@@ -142,7 +153,7 @@ export const learningGroups: LearningGroup[] = [
         logo: 'datatft',
         best: 'Kho mẹo & mô phỏng roll',
         note: 'Lọc mẹo theo trang bị, tộc hệ, vị trí. Luyện rolldown không tốn ván.',
-        caveat: 'Đổi sang Tiếng Việt ở menu góc phải trên.',
+        caveat: 'Đổi sang Tiếng Việt ở menu góc phải trên — không đặt được qua link, nhưng đổi 1 lần là trang nhớ.',
         deepLinks: [
           { label: 'Mẹo', href: 'https://www.datatft.com/tip' },
           { label: 'All-in-one', href: 'https://www.datatft.com/comp/allinone' },
@@ -166,7 +177,7 @@ export const learningGroups: LearningGroup[] = [
         caveat: 'Soi quyết định giữa ván, không chỉ đội hình cuối.',
         deepLinks: [
           { label: 'Meta', href: 'https://lolchess.gg/meta' },
-          { label: 'Bảng xếp hạng', href: 'https://lolchess.gg/leaderboards' },
+          { label: 'BXH Việt Nam', href: 'https://lolchess.gg/leaderboards?region=vn' },
         ],
       },
     ],
