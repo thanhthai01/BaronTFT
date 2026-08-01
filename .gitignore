@@ -16,6 +16,9 @@ test-results
 # agent git worktrees — bản sao của chính repo này, không bao giờ commit vào đây
 .claude/worktrees
 
+# scripts/ chạy bằng python
+__pycache__/
+
 # misc
 .DS_Store
 *.pem

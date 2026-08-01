@@ -1,6 +1,11 @@
 """One-off: propagate augment rounds/round_variants (added to
+
+!! ĐÃ ÁP DỤNG XONG. 258/261 nâng cấp trong set18-augments.ts đã mang sẵn rounds/roundVariants
+(3 cái còn lại không có ở nguồn). Chạy lại sẽ dừng ở chốt "Set18Augment type block not found"
+vì khối type đã chuyển sang src/content/set18/set18-types.ts khi codex bị tách file — chốt đó
+đúng, cứ để nguyên: script không còn việc gì để làm.
 Set18/data/metatft_set18_vi.json by Set18/enrich_augment_rounds.py) into
-Website/src/content/set18-codex.ts.
+Website/src/content/set18/set18-augments.ts.
 
 set18Augments entries have no apiName, and name_en collides for a handful of
 augments (tier I/II/III variants sharing a display name, e.g. "Beast
@@ -13,9 +18,11 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-CODEX_PATH = ROOT / "src" / "content" / "set18-codex.ts"
-SOURCE_PATH = ROOT.parent / "Set18" / "data" / "metatft_set18_vi.json"
+# Đường dẫn tính từ vị trí file này (scripts/), không giả định thư mục đang đứng.
+# set18-codex.ts đã được tách thành src/content/set18/*.ts nên target đổi theo.
+WEBSITE = Path(__file__).resolve().parent.parent
+CODEX_PATH = WEBSITE / "src" / "content" / "set18" / "set18-augments.ts"
+SOURCE_PATH = WEBSITE.parent / "Set18" / "data" / "metatft_set18_vi.json"
 
 
 def icon_filename(url_or_path):
