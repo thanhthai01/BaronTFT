@@ -5,14 +5,17 @@
   left: 0;
   z-index: 60;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.25rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.2rem;
   border-top: 1px solid var(--border-line);
   background: var(--surface-nav);
-  padding: 0.5rem 0.65rem calc(0.5rem + env(safe-area-inset-bottom));
+  padding: 0.5rem 0.4rem calc(0.5rem + env(safe-area-inset-bottom));
   backdrop-filter: blur(16px);
 }
 
+/* 5 ô trên màn hình ~360px thì mỗi ô chỉ còn ~64px: bỏ giãn chữ và hạ một bậc
+   cỡ chữ, nếu không "CHECKLIST" sẽ tràn. Cho phép co thêm bằng clamp thay vì
+   cắt chữ. */
 .item {
   display: grid;
   min-height: 3.25rem;
@@ -21,10 +24,12 @@
   border-radius: var(--r-md);
   background: var(--surface-card);
   color: var(--text-primary);
+  padding: 0 0.15rem;
   font-family: var(--font-display);
-  font-size: var(--fs-xs);
+  font-size: clamp(0.58rem, 2.6vw, var(--fs-2xs));
   font-weight: var(--fw-extra);
-  letter-spacing: var(--ls-wide);
+  letter-spacing: 0;
+  text-align: center;
   text-decoration: none;
   text-transform: uppercase;
 }

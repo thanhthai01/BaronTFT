@@ -127,6 +127,22 @@ TERM_FIXES: list[tuple[str, str]] = [
     ("Cơ hội", "cơ hội"),
 ]
 
+# --- Chú giải thuật ngữ dính vào câu trước ------------------------------------
+# Cuối một số mô tả có phần <Rules> giải nghĩa từ khoá ("Thiêu Đốt: ...",
+# "Chậm: ..."). Riot không xuống hàng nên nó dính luôn vào câu cuối.
+# CHỈ tách khi đúng dạng "Từ khoá: định nghĩa" đứng sau dấu chấm — các <Rules>
+# khác là ghi chú trong ngoặc (Ornn "(Sức Mạnh Lò Rèn: ...)", Veigar "(Thưởng
+# Hiện Tại: ...)") hoặc tiền tố dạng (Akali ": Gây sát thương...") thì phải
+# giữ nguyên inline.
+RULES_GLOSS = re.compile(
+    r'(?<=\.)(<span class="s18-style-Rules">)(\s*[A-ZÀ-Ỹ][^:<]{0,25}:\s)'
+)
+
+
+def fix_rules_gloss(html: str) -> tuple[str, int]:
+    return RULES_GLOSS.subn(BR + '\\g<1>\\g<2>', html)
+
+
 # --- Viết lại câu bị dịch máy hỏng nghĩa -------------------------------------
 # Ba tướng dưới đây không sửa được bằng thay từ: câu tiếng Việt đã vỡ cấu trúc
 # (vế thừa, dấu gạch ngang lạc, mệnh đề đảo lộn). Bản dưới là mình viết lại, đối
@@ -283,6 +299,7 @@ def fix_champions(problems: list[str], report: list[str]) -> str | None:
     # Chuẩn hoá thuật ngữ + chèn dấu cách thiếu, áp cho toàn bộ 65 tướng.
     terms = collections.Counter()
     spaces = collections.Counter()
+    glosses = collections.Counter()
     for champ in champs:
         for form in champ.get("forms") or []:
             html = form.get("abilityHtmlVi") or ""
@@ -291,8 +308,11 @@ def fix_champions(problems: list[str], report: list[str]) -> str | None:
                     terms[f"{old} -> {new}"] += html.count(old)
                     html = html.replace(old, new)
             html, n = fix_spacing(html)
+            html, ng = fix_rules_gloss(html)
             if n:
                 spaces[champ["name"]] += n
+            if ng:
+                glosses[champ["name"]] += ng
             form["abilityHtmlVi"] = html
         plain = champ.get("abilityVi") or ""
         for old, new in TERM_FIXES:
@@ -321,6 +341,11 @@ def fix_champions(problems: list[str], report: list[str]) -> str | None:
     for label, n in terms.most_common():
         report.append(f"  thuật ngữ   {n:3}x  {label}")
         changed += n
+    if glosses:
+        report.append(
+            f"  chú giải    {sum(glosses.values())} chỗ: {', '.join(glosses)}"
+        )
+        changed += sum(glosses.values())
     if spaces:
         report.append(
             f"  dấu cách    {sum(spaces.values())} chỗ / {len(spaces)} tướng "

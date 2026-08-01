@@ -331,6 +331,17 @@ function championForms(champion: Set18Champion): Set18ChampionForm[] {
   ];
 }
 
+/** Cả mặt thẻ là vùng bấm để lật (thay cho nút "Xem số liệu" ở góc). Vì dùng
+ * div role="button" nên phải tự nối phím: trình duyệt chỉ tự xử lý Enter/Space
+ * cho <button> thật. preventDefault ở Space để trang không cuộn xuống. */
+function flipKeyDown(action: () => void) {
+  return (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    action();
+  };
+}
+
 /** Phần nội dung mặt trước (định danh + kỹ năng) — tách riêng để thước đo ẩn
  * dựng lại được y hệt cho MỌI dạng, phục vụ việc khoá chiều cao thẻ. */
 function CardFrontContent({
@@ -505,7 +516,19 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
       ) : null}
 
       <div className={styles.flipInner}>
-          <div aria-hidden={flipped} className={styles.face} id={frontFaceId} inert={flipped ? true : undefined}>
+          <div
+            aria-controls={backFaceId}
+            aria-hidden={flipped}
+            aria-label={`Xem số liệu của ${champion.name}, dạng ${form.label}`}
+            aria-pressed={flipped}
+            className={`${styles.face} ${styles.faceClickable}`}
+            id={frontFaceId}
+            inert={flipped ? true : undefined}
+            onClick={() => setFlipped(true)}
+            onKeyDown={flipKeyDown(() => setFlipped(true))}
+            role="button"
+            tabIndex={flipped ? -1 : 0}
+          >
             <CardFrontContent
               bodyRef={bodyRef}
               champion={champion}
@@ -513,24 +536,25 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
               frontIdRef={frontIdRef}
               traitRow={traitRow}
             />
-            <button
-              aria-controls={`${frontFaceId} ${backFaceId}`}
-              aria-label={`Xem số liệu của ${champion.name}, dạng ${form.label}`}
-              aria-pressed={flipped}
-              className={styles.flipButton}
-              onClick={() => setFlipped(true)}
-              type="button"
-            >
+            {/* Gợi ý thị giác, không phải nút — cả mặt thẻ mới là vùng bấm. */}
+            <span aria-hidden className={styles.flipHint}>
               Xem số liệu
-            </button>
+            </span>
           </div>
 
           <div
+            aria-controls={frontFaceId}
             aria-hidden={!flipped}
-            className={`${styles.face} ${styles.back}`}
+            aria-label={`Xem kỹ năng của ${champion.name}, dạng ${form.label}`}
+            aria-pressed={flipped}
+            className={`${styles.face} ${styles.back} ${styles.faceClickable}`}
             id={backFaceId}
             inert={!flipped ? true : undefined}
+            onClick={() => setFlipped(false)}
+            onKeyDown={flipKeyDown(() => setFlipped(false))}
             ref={backRef}
+            role="button"
+            tabIndex={flipped ? 0 : -1}
           >
             <div className={styles.backHead}>
               <div className={styles.nameRow}>
@@ -553,16 +577,9 @@ function ChampionCard({ champion }: { champion: Set18Champion }) {
                 </div>
               ))}
             </div>
-            <button
-              aria-controls={`${frontFaceId} ${backFaceId}`}
-              aria-label={`Xem kỹ năng của ${champion.name}, dạng ${form.label}`}
-              aria-pressed={flipped}
-              className={styles.flipButton}
-              onClick={() => setFlipped(false)}
-              type="button"
-            >
+            <span aria-hidden className={styles.flipHint}>
               Xem kỹ năng
-            </button>
+            </span>
           </div>
         </div>
       </article>

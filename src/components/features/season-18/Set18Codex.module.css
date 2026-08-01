@@ -650,25 +650,35 @@
   transform: rotateY(180deg);
 }
 
-.flipButton {
+/* Cả mặt thẻ là vùng bấm để lật. .flipHint chỉ là gợi ý thị giác — aria-hidden
+   và không nhận chuột, nên không tạo ra một vùng bấm thứ hai chồng lên. */
+.faceClickable {
+  cursor: pointer;
+}
+
+.faceClickable:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.flipHint {
   position: absolute;
   right: 0.65rem;
   bottom: 0.65rem;
   z-index: 2;
+  pointer-events: none;
   border: 1px solid var(--cost-color, var(--border-strong));
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--surface-card) 88%, var(--cost-color, var(--accent-primary)) 12%);
   color: var(--text-primary);
-  min-height: 2rem;
   padding: 0.35rem 0.6rem;
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   font-weight: var(--fw-semibold);
+  transition: background 140ms;
 }
 
-.flipButton:hover,
-.flipButton:focus-visible {
-  border-color: var(--cost-color, var(--accent-primary));
+.faceClickable:hover .flipHint {
   background: color-mix(in srgb, var(--surface-card) 76%, var(--cost-color, var(--accent-primary)) 24%);
 }
 
