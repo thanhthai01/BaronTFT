@@ -12,6 +12,10 @@ const config = [
     ignores: [
       '.next/**',
       'node_modules/**',
+      // git worktree do agent tạo để làm việc song song — là bản sao của chính repo này,
+      // lint từ thư mục gốc sẽ soi lại toàn bộ (kể cả .next/ bên trong) và báo trùng.
+      // Mỗi worktree tự lint bằng config riêng của nó.
+      '.claude/**',
       'next-env.d.ts',
       'Baron TFT Design System/**',
       'exports/**',
