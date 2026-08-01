@@ -91,6 +91,20 @@
   letter-spacing: var(--ls-wide);
 }
 
+/* "Giỏi nhất ở" — chip mono nổi bật ngay dưới tên, vì đây là thông tin quyết định
+   người đọc mở trang nào giữa một loạt trang trùng chức năng. */
+.best {
+  justify-self: start;
+  margin: 0;
+  border-radius: var(--r-pill);
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary);
+  padding: 0.15rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+}
+
 .use {
   margin: 0;
   color: var(--text-secondary);

@@ -1,11 +1,17 @@
 /** Nguồn học ngoài cho trang /nguon-hoc.
  *
- * Nhóm theo CÂU HỎI mà nguồn đó trả lời, không theo tên nguồn — người đã leo rank mở
- * trang này khi đang có sẵn một câu hỏi cụ thể ("patch vừa đổi gì", "đội hình này lên
- * cấp lúc nào"), nên đường đi ngắn nhất là hỏi trước rồi mới tới tên trang.
+ * Định hướng: các trang TFT lớn trùng chức năng gần hết — trang nào cũng có tier list
+ * đội hình, bảng tướng/trang bị/nâng cấp, hồ sơ người chơi. Liệt kê song song 7 cái
+ * giống nhau thì vô dụng, nên mỗi nguồn phải nói rõ nó GIỎI NHẤT ở việc gì (`best`) —
+ * đó mới là thứ quyết định mở trang nào. Nguồn không hơn nguồn khác ở điểm nào thì bỏ
+ * hẳn khỏi danh sách, đừng thêm cho dài.
  *
- * Mỗi nguồn chỉ xuất hiện ở đúng một nhóm để danh sách không đọc như bị lặp; muốn tới
- * thẳng trang con thì dùng `deepLinks`.
+ * Nhóm theo CÂU HỎI mà nguồn đó trả lời, không theo tên nguồn — người đã leo rank mở
+ * trang này khi đang có sẵn câu hỏi cụ thể. Mỗi nguồn chỉ xuất hiện ở đúng một nhóm.
+ *
+ * `deepLinks` cố ý tránh URL có nhúng số set (vd tftflow /composition/set17/...,
+ * tftacademy /tierlist/comps/set-17-...): chúng sẽ chết khi sang set mới. Chỉ dùng
+ * đường dẫn không gắn set để trang tự trỏ về set hiện hành.
  *
  * Toàn bộ URL đã kiểm tra trả 200 ngày 2026-08-01. Khi thêm nguồn mới nhớ kiểm lại —
  * link chết trên trang nguồn học còn tệ hơn không có link.
@@ -16,6 +22,8 @@ export type LearningSource = {
   href: string;
   /** Nhãn ngắn cạnh tên, vd ngôn ngữ hoặc điểm khác biệt chính. */
   tag?: string;
+  /** Việc mà nguồn này làm tốt hơn hẳn phần còn lại — lý do nó có mặt trong danh sách. */
+  best: string;
   /** Mở nguồn này ra để làm gì — một dòng. */
   use: string;
   /** Cách dùng sai thường gặp. Bỏ trống nếu nguồn không có bẫy đáng nói. */
@@ -41,6 +49,7 @@ export const learningGroups: LearningGroup[] = [
         name: 'Riot · Cập Nhật Trò Chơi',
         href: 'https://teamfighttactics.leagueoflegends.com/vi-vn/news/game-updates/',
         tag: 'Tiếng Việt · chính chủ',
+        best: 'Nguồn gốc, tiếng Việt',
         use: 'Ghi chú phiên bản đầy đủ do Riot Việt Nam phát hành — gốc của mọi con số bạn đọc lại ở nơi khác.',
         caveat: 'Thường lên sau bản tiếng Anh, nên patch mới nhất có thể chưa có ở đây.',
       },
@@ -48,7 +57,34 @@ export const learningGroups: LearningGroup[] = [
         name: 'Riot · Game Updates',
         href: 'https://teamfighttactics.leagueoflegends.com/en-us/news/game-updates/',
         tag: 'Tiếng Anh · lên sớm hơn',
-        use: 'Cùng nội dung nhưng đăng trước, và không rơi mất số liệu trong lúc dịch.',
+        best: 'Lên trước vài ngày',
+        use: 'Cùng nội dung nhưng đăng sớm hơn, và không rơi mất số liệu trong lúc dịch.',
+      },
+    ],
+  },
+  {
+    id: 'trien-khai',
+    question: 'Đội hình này triển khai thế nào?',
+    hint: 'Phần các trang ngoài làm sâu nhất — mốc lên cấp, thứ tự trang bị, vị trí đứng, khắc chế.',
+    sources: [
+      {
+        name: 'TFT Flow',
+        href: 'https://tftflow.com/',
+        best: 'Flowchart theo điều kiện',
+        use: 'Sơ đồ chọn hướng chơi theo thứ bạn thật sự nhặt được — nâng cấp, cổ vật, khai cuộc. Trang từng đội hình có bảng theo mỗi cấp kèm tỉ lệ thắng vòng, vị trí đứng, nâng cấp pro chọn và VOD.',
+        caveat: 'Đường dẫn từng đội hình có nhúng số set nên sẽ chết sang set sau — vào từ Tier list thay vì lưu link cũ.',
+        deepLinks: [
+          { label: 'Flowchart điều kiện', href: 'https://tftflow.com/conditions' },
+          { label: 'Tier list đội hình', href: 'https://tftflow.com/tier-list' },
+        ],
+      },
+      {
+        name: 'TFT Academy',
+        href: 'https://tftacademy.com/',
+        best: 'Hướng dẫn từng bước',
+        use: 'Hướng dẫn triển khai gọn hơn TFT Flow: thứ tự ghép trang bị, mốc lên cấp, cách xếp đội.',
+        caveat: 'Lấy ý tưởng thôi — bảng hướng dẫn không biết bạn đang cầm gì trong tay.',
+        deepLinks: [{ label: 'Tier list đội hình', href: 'https://tftacademy.com/tierlist/comps' }],
       },
     ],
   },
@@ -58,44 +94,27 @@ export const learningGroups: LearningGroup[] = [
     hint: 'Dùng để kiểm chứng linh cảm của mình, không phải để chọn hộ đội hình.',
     sources: [
       {
+        name: 'MetaTFT',
+        href: 'https://www.metatft.com/',
+        best: 'Nhiều chỉ số nhất',
+        use: 'Bộ chỉ số sâu nhất, cập nhật nhanh sau mỗi patch, kèm bảng tra riêng cho từng cơ chế của set — thứ mà trang khác thường bỏ qua.',
+        deepLinks: [
+          { label: 'Đội hình', href: 'https://www.metatft.com/comps' },
+          { label: 'Tướng', href: 'https://www.metatft.com/units' },
+        ],
+      },
+      {
         name: 'Tactics.tools',
         href: 'https://tactics.tools/',
-        use: 'Thứ hạng trung bình, tỉ lệ top 4 và cỡ mẫu cho đội hình, tướng, trang bị, nâng cấp.',
-        caveat: 'Luôn lọc theo bậc rank của mình — số liệu Kim Cương+ không mô tả lobby bạn đang chơi.',
+        best: 'Lọc theo bậc rank',
+        use: 'Thứ hạng trung bình, tỉ lệ top 4 và cỡ mẫu, tách riêng từng bậc rank — dùng khi cần biết số liệu này có đúng với lobby của mình không.',
+        caveat: 'Số liệu Kim Cương+ không mô tả lobby Vàng. Đặt bộ lọc trước khi đọc con số.',
         deepLinks: [
           { label: 'Đội hình', href: 'https://tactics.tools/team-compositions' },
           { label: 'Tướng', href: 'https://tactics.tools/units' },
           { label: 'Trang bị', href: 'https://tactics.tools/items' },
           { label: 'Nâng cấp', href: 'https://tactics.tools/augments' },
         ],
-      },
-      {
-        name: 'MetaTFT',
-        href: 'https://www.metatft.com/',
-        use: 'Cùng loại số liệu, cập nhật nhanh sau mỗi patch, kèm bảng tra riêng cho từng cơ chế của set.',
-        deepLinks: [
-          { label: 'Đội hình', href: 'https://www.metatft.com/comps' },
-          { label: 'Tướng', href: 'https://www.metatft.com/units' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'doi-hinh',
-    question: 'Đội hình này chơi thế nào?',
-    hint: 'Xem để biết đường đi chuẩn, rồi tự sửa theo thứ bạn thật sự nhặt được.',
-    sources: [
-      {
-        name: 'TFT Academy',
-        href: 'https://tftacademy.com/',
-        use: 'Hướng dẫn từng đội hình: thứ tự ghép trang bị, mốc lên cấp, cách xếp đội.',
-        caveat: 'Lấy ý tưởng thôi — bảng hướng dẫn không biết bạn đang cầm gì trong tay.',
-        deepLinks: [{ label: 'Tier list đội hình', href: 'https://tftacademy.com/tierlist/comps' }],
-      },
-      {
-        name: 'Mobalytics',
-        href: 'https://mobalytics.gg/tft',
-        use: 'Tier list và hướng dẫn đội hình, trình bày gọn khi cần liếc nhanh giữa hai ván.',
       },
     ],
   },
@@ -107,7 +126,8 @@ export const learningGroups: LearningGroup[] = [
       {
         name: 'LoLCHESS',
         href: 'https://lolchess.gg/',
-        use: 'Tra lịch sử đấu của chính mình và của người trong lobby, mở lại từng vòng của ván vừa chơi.',
+        best: 'Lịch sử đấu của chính bạn',
+        use: 'Tra hồ sơ và lịch sử đấu của mình lẫn của người trong lobby, mở lại từng vòng của ván vừa chơi.',
         caveat: 'Soi quyết định giữa ván — vàng, mốc lên cấp, thời điểm roll — chứ không chỉ nhìn đội hình cuối.',
         deepLinks: [
           { label: 'Meta', href: 'https://lolchess.gg/meta' },

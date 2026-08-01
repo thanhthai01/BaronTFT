@@ -12,8 +12,8 @@ export default function ResourcesPage() {
           <span className="kicker">Nguồn học</span>
           <h1>Dùng dữ liệu để đặt câu hỏi tốt hơn</h1>
           <p>
-            Nguồn dữ liệu không thay bạn ra quyết định. Nó chỉ cho biết bạn nên đặt câu hỏi ở đâu — nên danh sách dưới đây
-            xếp theo câu hỏi bạn đang cần trả lời, không xếp theo tên trang.
+            Các trang TFT lớn trùng chức năng gần hết, nên trang này không dựng lại thứ họ đã làm tốt hơn — chỉ chỉ đúng
+            chỗ. Xếp theo câu hỏi bạn đang cần trả lời, và mỗi nguồn ghi rõ nó giỏi nhất ở việc gì.
           </p>
         </div>
       </header>
@@ -41,6 +41,9 @@ export default function ResourcesPage() {
                       {source.tag ? <span className={styles.sourceTag}>{source.tag}</span> : null}
                     </div>
 
+                    {/* Lý do nguồn này có mặt — đọc trước cả câu mô tả, vì các trang trùng
+                        chức năng gần hết nên "giỏi nhất ở đâu" mới là thứ để chọn. */}
+                    <p className={styles.best}>{source.best}</p>
                     <p className={styles.use}>{source.use}</p>
                     {source.caveat ? <p className={styles.caveat}>{source.caveat}</p> : null}
 
