@@ -78,9 +78,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Inferno',
-            tag: 'Tộc/Hệ · Hỏa Ngục',
+            tag: 'Tộc/Hệ · Hoả Ngục',
             quote:
-              'Sát thương từ tướng Hỏa Ngục luôn kèm Vết Thương Sâu 33% trong 4 giây — cố định, không tăng theo mốc kích hoạt (khác với % Thiêu Đốt).',
+              'Sát thương từ tướng Hoả Ngục luôn kèm Vết Thương Sâu 33% trong 4 giây — cố định, không tăng theo mốc kích hoạt (khác với % Thiêu Đốt).',
           },
           {
             kind: 'champion',
@@ -95,7 +95,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
             quote: 'Gây Thiêu Đốt và Vết Thương Sâu lên kẻ địch trong 10 giây (15 giây sau nâng cấp Hoa Linh).',
           },
         ],
-        note: 'Chỉ 3 nguồn này áp Vết Thương Sâu — nếu địch có nhiều hồi máu/hút máu mà bạn không chơi Hỏa Ngục, linh hỏa là cách duy nhất để bù.',
+        note: 'Chỉ 3 nguồn này áp Vết Thương Sâu — nếu địch có nhiều hồi máu/hút máu mà bạn không chơi Hoả Ngục, linh hỏa là cách duy nhất để bù.',
       },
       {
         id: 'giam-giap-khang-phep-pt',
@@ -215,9 +215,9 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'trait',
             name: 'Inferno',
-            tag: 'Tộc/Hệ · Hỏa Ngục',
+            tag: 'Tộc/Hệ · Hoả Ngục',
             quote:
-              'Sát thương từ tướng Hỏa Ngục luôn kèm Thiêu Đốt. Mốc (2) 1% · (5) 2% · (7) 3% Máu tối đa mỗi giây, trong 4 giây. 6 tướng hệ: Akali, Varus, Shen, Amumu, Kennen, Lux.',
+              'Sát thương từ tướng Hoả Ngục luôn kèm Thiêu Đốt. Mốc (2) 1% · (5) 2% · (7) 3% Máu tối đa mỗi giây, trong 4 giây. 6 tướng hệ: Akali, Varus, Shen, Amumu, Kennen, Lux.',
           },
           {
             kind: 'champion',
@@ -244,7 +244,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
             quote: 'Gây Làm Chậm, Thiêu Đốt, Cào Xé và Phân Tách lên kẻ địch trong 8 giây.',
           },
         ],
-        note: 'Amumu không tự gây Thiêu Đốt nhưng ăn theo: thời gian Choáng của Giận Dữ kéo dài hơn nếu mục tiêu đang Bỏng — nên Amumu luôn muốn đứng chung đội hình Hỏa Ngục.',
+        note: 'Amumu không tự gây Thiêu Đốt nhưng ăn theo: thời gian Choáng của Giận Dữ kéo dài hơn nếu mục tiêu đang Bỏng — nên Amumu luôn muốn đứng chung đội hình Hoả Ngục.',
       },
       {
         id: 'chay-mau',
@@ -1043,8 +1043,8 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           {
             kind: 'champion',
             name: 'Lux',
-            form: 'Hỏa Ngục',
-            tag: 'Thưởng Hỏa Ngục',
+            form: 'Hoả Ngục',
+            tag: 'Thưởng Hoả Ngục',
             quote: 'Lux hồi lại 8 năng lượng mỗi lần tham gia hạ gục.',
           },
           {
@@ -1103,7 +1103,7 @@ export const set18EffectCategories: Set18EffectCategory[] = [
           { form: 'Tiên Hắc Ám', trait: 'Coven', bonus: 'Giảm Giáp và Kháng Phép của mục tiêu trúng chiêu đi 12 đến hết giao tranh.' },
           { form: 'Thần Rừng', trait: 'Elderwood', bonus: 'Toàn đội nhận thêm 5% Máu tối đa đến hết giao tranh.' },
           { form: 'Tiên Linh', trait: 'Fae', bonus: 'Hồi máu đồng minh máu thấp nhất bằng 18% sát thương kỹ năng đã gây.' },
-          { form: 'Hỏa Ngục', trait: 'Inferno', bonus: 'Hồi lại 8 năng lượng mỗi lần tham gia hạ gục.' },
+          { form: 'Hoả Ngục', trait: 'Inferno', bonus: 'Hồi lại 8 năng lượng mỗi lần tham gia hạ gục.' },
           { form: 'Mặt Trăng', trait: 'Lunar', bonus: 'Gây Suy Yếu 12% lên kẻ địch trúng chiêu trong 6 giây (tăng sát thương gánh chịu).' },
           { form: 'Nguyên Sinh', trait: 'Primal', bonus: 'Bản thân nhận 60% Tốc Độ Đánh trong 6 giây sau khi thi triển.' },
           { form: 'Mặt Trời', trait: 'Solar', bonus: 'Làm Suy Yếu kẻ địch trúng đòn đi 12% trong 6 giây (giảm sát thương gây ra).' },
