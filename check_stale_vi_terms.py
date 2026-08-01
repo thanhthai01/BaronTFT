@@ -8,6 +8,7 @@ means content was regenerated from the PBE lookup and the wording pass was lost.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -34,6 +35,26 @@ STALE = {
 }
 
 CHAMPS = ROOT / "src/content/set18/set18-champions.ts"
+
+# "Linh hỏa" was the site's own name for the Wisp mechanic; Riot's article calls
+# it Tinh Linh. Checked separately from STALE because two mentions survive on
+# purpose in search-actions.ts (legacy search keyword + the comment explaining
+# it), and the ASCII slug `linh-hoa` is left alone so shared links keep working.
+WISP_RE = re.compile(r"[Ll]inh hỏa")
+WISP_ALLOWED = {"src/content/search-actions.ts": 2}
+
+
+def stray_wisp_names() -> list[tuple[str, int, int]]:
+    out = []
+    for path in sorted((ROOT / "src").rglob("*")):
+        if not path.is_file() or path.suffix not in (".ts", ".tsx", ".css", ".mdx"):
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        n = len(WISP_RE.findall(path.read_text(encoding="utf-8")))
+        allowed = WISP_ALLOWED.get(rel, 0)
+        if n > allowed:
+            out.append((rel, n, allowed))
+    return out
 
 
 def untranslated_champions() -> list[str]:
@@ -67,10 +88,12 @@ def main() -> int:
                 hits.append((rel, old, new, n))
 
     untranslated = untranslated_champions()
+    strays = stray_wisp_names()
 
-    if not hits and not untranslated:
+    if not hits and not untranslated and not strays:
         print(f"CLEAN — none of the {len(STALE)} stale terms remain in src/")
         print("CLEAN — every champion has a translated abilityVi")
+        print("CLEAN — no stray 'Linh hỏa'; the mechanic is Tinh Linh throughout")
         return 0
 
     if hits:
@@ -81,6 +104,10 @@ def main() -> int:
         print("Champions with an untranslated abilityVi:", file=sys.stderr)
         for name in untranslated:
             print(f"  {name}", file=sys.stderr)
+    if strays:
+        print("Stray 'Linh hỏa' (should be 'Tinh Linh'):", file=sys.stderr)
+        for rel, n, allowed in strays:
+            print(f"  {n}x (allowed {allowed})  {rel}", file=sys.stderr)
     return 1
 
 

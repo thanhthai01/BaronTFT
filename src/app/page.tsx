@@ -5,7 +5,7 @@ import styles from './page.module.css';
 const destinations = [
   {
     title: 'Mùa 18',
-    text: 'Tra cứu tướng, tộc hệ, linh hỏa và nâng cấp của set hiện tại.',
+    text: 'Tra cứu tướng, tộc hệ, Tinh Linh và nâng cấp của set hiện tại.',
     href: '/mua-18',
     cta: 'Xem Mùa 18',
   },

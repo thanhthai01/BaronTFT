@@ -137,7 +137,7 @@ export type Set18Wisp = {
   categoryVi: string;
   categoryIcon: string;
   tier: number;
-  /** null = linh hỏa không hiện giá mua riêng (thường là phần thưởng miễn phí). */
+  /** null = Tinh Linh không hiện giá mua riêng (thường là phần thưởng miễn phí). */
   cost: number | null;
   description: string;
   descriptionVi: string;

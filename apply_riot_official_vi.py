@@ -213,11 +213,51 @@ BULLETS: list[Repl] = [
     ),
 ]
 
+# -- Wisp = Tinh Linh ---------------------------------------------------------
+# The site called the mechanic "Linh hỏa" everywhere in its own copy, while the
+# imported Riot descriptions inside the very same pages already said "Tinh Linh"
+# (27x). Riot's article settles it: the mechanic is Tinh Linh throughout.
+#
+# Riot writes it capitalised as a game term, so the 7 lowercase mid-sentence
+# uses become "Tinh Linh" too — matching the 27 that were already correct.
+#
+# The URL slug `linh-hoa` (`?section=linh-hoa`, `id="linh-hoa"`) is deliberately
+# NOT renamed: it is an ASCII identifier, not display text, and changing it would
+# break any shared or bookmarked link. It is diacritic-free so none of the
+# patterns below can touch it.
+# (path, occurrences to rename, occurrences that legitimately survive)
+WISP_RENAME: list[tuple[str, int, int]] = [
+    ("src/content/set18-effects.ts", 47, 0),
+    ("src/components/features/season-18/Set18Codex.tsx", 11, 0),
+    ("src/components/features/patch/PatchBoard.tsx", 5, 0),
+    ("src/content/patch-notes.ts", 5, 0),
+    ("src/components/features/patch/PatchBoard.module.css", 4, 0),
+    ("src/components/features/season-18/Set18Codex.module.css", 3, 0),
+    # 2 survive on purpose: 'linh hỏa' is kept as a legacy search keyword (plus
+    # the comment explaining why), so people who knew the old name still find it.
+    ("src/content/search-actions.ts", 3, 2),
+    ("src/content/set18/set18-meta.ts", 2, 0),
+    ("src/app/page.tsx", 1, 0),
+    ("src/content/set18/set18-types.ts", 1, 0),
+]
+
 # Order matters: the longer Inferno (7) bullet must be rewritten before the
 # shorter (5) one, otherwise the (5) pattern would match inside it first.
 ALL: list[Repl] = (
     [r for r in GLOBAL_TERMS if r[3] > 0] + WISP_CATEGORIES + BULLETS
 )
+
+
+def house_normalised(s: str) -> str:
+    """Fold spellings that apply_vi_house_style.py later overrides.
+
+    The passes are layered: this script writes Riot's wording, then the house
+    style pass flips "Hỏa Ngục" to "Hoả Ngục". So when re-running on an
+    already-processed tree, a Riot target string won't be found verbatim — the
+    house pass has since rewritten it. Fold both spellings before deciding
+    whether a replacement is already in place.
+    """
+    return s.replace("Hoả Ngục", "Hỏa Ngục")
 
 
 def check_placeholders(old: str, new: str) -> None:
@@ -234,7 +274,7 @@ def main() -> int:
     args = ap.parse_args()
 
     cache: dict[str, str] = {}
-    problems, applied = [], []
+    problems, applied, already = [], [], []
 
     for rel, old, new, expected in ALL:
         check_placeholders(old, new)
@@ -242,14 +282,43 @@ def main() -> int:
         if rel not in cache:
             cache[rel] = path.read_text(encoding="utf-8")
         found = cache[rel].count(old)
-        if found != expected:
+        if found == expected:
+            cache[rel] = cache[rel].replace(old, new)
+            applied.append((rel, old, new, found))
+        elif found == 0 and house_normalised(cache[rel]).count(house_normalised(new)) >= expected:
+            # Already applied — the point of this script is to be re-runnable
+            # after the set18 content files are regenerated, and a regeneration
+            # may only clobber some of them.
+            already.append((rel, new))
+        else:
             problems.append(f"{rel}: expected {expected}x {old!r}, found {found}")
-            continue
-        cache[rel] = cache[rel].replace(old, new)
-        applied.append((rel, old, new, found))
+
+    # Wisp -> Tinh Linh. Case-insensitive on the first letter only, always
+    # producing the capitalised game term.
+    wisp_re = re.compile(r"[Ll]inh hỏa")
+    wisp_total = 0
+    for rel, expected, keep in WISP_RENAME:
+        if rel not in cache:
+            cache[rel] = (ROOT / rel).read_text(encoding="utf-8")
+        found = len(wisp_re.findall(cache[rel]))
+        if found == expected + keep:
+            # Rename only the leading `expected` hits, leaving the deliberate
+            # legacy mentions in place.
+            cache[rel] = wisp_re.sub("Tinh Linh", cache[rel], count=expected)
+            wisp_total += expected
+        elif found == keep and "Tinh Linh" in cache[rel]:
+            already.append((rel, "Tinh Linh"))
+        else:
+            problems.append(
+                f"{rel}: expected {expected + keep}x 'Linh hỏa', found {found}"
+            )
 
     for rel, old, new, n in applied:
         print(f"  {n}x  {old[:58]:60} -> {new[:58]}")
+    if wisp_total:
+        print(f"  {wisp_total}x  {'Linh hỏa':60} -> Tinh Linh")
+    if already:
+        print(f"  ({len(already)} replacements already in place, skipped)")
     print(f"\n{len(applied)} replacements across {len({r for r, *_ in applied})} files")
 
     if problems:

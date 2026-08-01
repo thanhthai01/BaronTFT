@@ -48,13 +48,13 @@ export type PatchEntry = {
    * thì UI hiện placeholder chữ viết tắt thay vì thẻ trống. */
   icon?: string;
   /** Giá vàng. Với tướng: 1-5, quyết định màu viền avatar và thứ tự 1 → 5 vàng.
-   * Với linh hỏa: giá mua, dùng để xếp thứ tự. Điền tay khi bản vá không thuộc
+   * Với Tinh Linh: giá mua, dùng để xếp thứ tự. Điền tay khi bản vá không thuộc
    * set đang có trong codex. */
   cost?: number;
   /** Bậc hiếm của nâng cấp — quyết định thứ tự Bạc → Vàng → Kim Cương. Bản vá
    * Set 18 tự lấy từ codex, mùa khác thì điền tay. */
   rarity?: PatchAugmentRarity;
-  /** Cấp bậc linh hỏa (1-3) và loại (Chiến đấu, Vật phẩm...). Bản vá Set 18 tự
+  /** Cấp bậc Tinh Linh (1-3) và loại (Chiến đấu, Vật phẩm...). Bản vá Set 18 tự
    * suy ra từ tên file icon, mùa khác thì điền tay. */
   wispTier?: number;
   wispCategory?: string;
@@ -154,7 +154,7 @@ export const patchCategoryMeta: Record<PatchCategory, { label: string; plural: s
   champion: { label: 'Tướng', plural: 'Tướng' },
   trait: { label: 'Tộc hệ', plural: 'Tộc hệ' },
   item: { label: 'Trang bị', plural: 'Trang bị' },
-  wisp: { label: 'Linh hỏa', plural: 'Linh hỏa' },
+  wisp: { label: 'Tinh Linh', plural: 'Tinh Linh' },
   augment: { label: 'Nâng cấp', plural: 'Nâng cấp' },
   mechanic: { label: 'Cơ chế', plural: 'Cơ chế' },
 };
@@ -633,7 +633,7 @@ export const patchReports: PatchReport[] = [
 ];
 
 /** Thứ tự đọc một bản vá: tướng trước (và trong tướng thì 1 → 5 vàng), rồi tộc
- * hệ đi kèm tướng, đến nâng cấp, trang bị, linh hỏa, cuối cùng mới tới cơ chế /
+ * hệ đi kèm tướng, đến nâng cấp, trang bị, Tinh Linh, cuối cùng mới tới cơ chế /
  * sửa lỗi. Dùng cho cả nhóm nội dung ở giữa lẫn bộ lọc bên trái. */
 export const patchCategoryReadingOrder: PatchCategory[] = [
   'champion',

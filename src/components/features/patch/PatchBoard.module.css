@@ -232,7 +232,7 @@
   color: var(--text-muted);
 }
 
-/* Nhóm theo loại nội dung (tướng → tộc hệ → nâng cấp → trang bị → linh hỏa →
+/* Nhóm theo loại nội dung (tướng → tộc hệ → nâng cấp → trang bị → Tinh Linh →
    cơ chế) chứ không theo tăng/giảm, vì đó là thứ tự người ta đọc patch note. */
 .groupTitle {
   display: flex;
@@ -333,7 +333,7 @@
 
 /* ─── Icon ──────────────────────────────────────────────────────────────────
    Icon thay luôn nhãn nhóm bằng chữ, nên phải đủ to để nhận ra ngay. Khung chỉ
-   tồn tại khi icon thật sự cần nền mới nhìn thấy — trang bị và linh hỏa tràn
+   tồn tại khi icon thật sự cần nền mới nhìn thấy — trang bị và Tinh Linh tràn
    hết ô: không viền, không padding. */
 .iconWrap {
   --patch-icon-size: 2.75rem;
@@ -401,7 +401,7 @@
   object-fit: cover;
 }
 
-/* Linh hỏa: PNG nền trong suốt, màu đậm, tự đứng được → bỏ hẳn khung/nền và
+/* Tinh Linh: PNG nền trong suốt, màu đậm, tự đứng được → bỏ hẳn khung/nền và
    phóng icon ra sát mép ô. */
 .variant-wisp {
   border: 0;
@@ -487,7 +487,7 @@
 }
 
 /* Huy hiệu bậc — cũng chính là khoá xếp thứ tự trong nhóm (giá vàng / bậc hiếm
-   / cấp linh hỏa), nên hiện ra để trật tự các thẻ tự giải thích được. */
+   / cấp Tinh Linh), nên hiện ra để trật tự các thẻ tự giải thích được. */
 .rankBadge {
   border: 1.5px solid var(--icon-accent, var(--border-line));
   border-radius: var(--r-pill);
