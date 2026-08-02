@@ -106,9 +106,14 @@ def main() -> int:
     problems: list[str] = []
     skipped = 0
 
-    def edit(rel: str, old: str, new: str, expected: int, label: str) -> None:
+    def edit(rel: str, old: str, new: str, expected: int, label: str, marker: str | None = None) -> None:
         # Re-runnable: this script exists to be replayed after the generated
         # set18 content files are rebuilt, which may only clobber some of them.
+        #
+        # `marker` là dấu hiệu "đã áp dụng rồi", dùng khi `new` có kèm phần khoá
+        # JSON (`"abilityVi":"..."`): apply_set18_content_fixes.py ghi lại file
+        # bằng json.dumps nên kiểu ngăn cách có thể đổi, làm `new` trượt dù nội
+        # dung đã đúng. Dò theo riêng phần nội dung thì không phụ thuộc định dạng.
         nonlocal skipped
         if rel not in cache:
             cache[rel] = (ROOT / rel).read_text(encoding="utf-8")
@@ -116,7 +121,7 @@ def main() -> int:
         if found == expected:
             cache[rel] = cache[rel].replace(old, new)
             print(f"  {found}x  {label}  ({rel})")
-        elif found == 0 and cache[rel].count(new) >= expected:
+        elif found == 0 and cache[rel].count(marker if marker is not None else new) >= expected:
             skipped += 1
         else:
             problems.append(f"{rel}: {label}: expected {expected}x, found {found}")
@@ -128,7 +133,7 @@ def main() -> int:
     print("\n2. Kha'Zix ability -> Vietnamese")
     # abilityVi and forms[].abilityHtmlVi only. `ability` (the English source
     # field, kept for reference) is deliberately left in English.
-    edit(CHAMPS, f'"abilityVi":"{KHAZIX_EN}"', f'"abilityVi":"{KHAZIX_VI}"', 1, "abilityVi")
+    edit(CHAMPS, f'"abilityVi":"{KHAZIX_EN}"', f'"abilityVi":"{KHAZIX_VI}"', 1, "abilityVi", marker=KHAZIX_VI)
     # The file stores this JSON minified, so the HTML's own quotes appear escaped.
     esc = lambda s: s.replace('"', '\\"')
     edit(
@@ -137,6 +142,7 @@ def main() -> int:
         f'"abilityHtmlVi":"{esc(KHAZIX_HTML_VI)}"',
         1,
         "abilityHtmlVi",
+        marker=esc(KHAZIX_HTML_VI),
     )
 
     if skipped:
