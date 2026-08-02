@@ -243,7 +243,19 @@ def load_array(path: Path) -> tuple[str, int, int, list]:
 
 
 def dump_array(path: Path, text: str, start: int, end: int, data: list) -> str:
-    return text[:start] + json.dumps(data, ensure_ascii=False) + text[end:]
+    """Ghi mảng JSON lại vào file .ts, GIỮ NGUYÊN kiểu ngăn cách của bản gốc.
+
+    json.dumps mặc định dùng `", "` / `": "`, trong khi set18-champions.ts được
+    sinh ra ở dạng gọn `","` / `":"`. Ghi bằng mặc định là định dạng lại cả file:
+    diff phình to vô ích, và mọi script anh em đang khớp chuỗi theo dạng gọn
+    (vd `"abilityVi":"..."` trong apply_vi_house_style.py) sẽ trượt hết.
+    Hai file không cùng kiểu — champions dạng gọn, traits có dấu cách — nên phải
+    dò từ chính đoạn văn bản đang thay.
+    """
+    src = text[start:end]
+    compact = src.count('":"') > src.count('": "')
+    separators = (",", ":") if compact else (", ", ": ")
+    return text[:start] + json.dumps(data, ensure_ascii=False, separators=separators) + text[end:]
 
 
 def fix_champions(problems: list[str], report: list[str]) -> str | None:
