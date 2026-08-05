@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   description: 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.png',
   },
 };
 

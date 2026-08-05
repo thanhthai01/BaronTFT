@@ -53,14 +53,13 @@
 }
 
 .mark {
-  display: grid;
+  display: block;
+  flex-shrink: 0;
   width: 2rem;
   height: 2.32rem;
-  place-items: center;
   clip-path: var(--hex-clip);
   background: var(--grad-accent);
-  color: var(--text-on-accent);
-  font-size: 0.8rem;
+  object-fit: cover;
 }
 
 .brand em {

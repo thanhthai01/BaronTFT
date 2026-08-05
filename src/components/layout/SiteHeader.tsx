@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
@@ -92,7 +93,7 @@ export function SiteHeader() {
     <header className={styles.header}>
       <div className={[styles.inner, 'wide-container'].join(' ')}>
         <Link className={styles.brand} href="/" aria-label="Baron TFT home">
-          <span className={styles.mark}>◆</span>
+          <Image alt="" className={styles.mark} height={64} priority src="/logo/logo-main.png" width={64} />
           BARON <em>TFT</em>
         </Link>
         <nav aria-label="Điều hướng chính" className={styles.nav}>
