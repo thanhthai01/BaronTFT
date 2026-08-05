@@ -1,0 +1,88 @@
+.shell {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.sectionTitle {
+  margin: 0 0 0.9rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+}
+
+.formsSection {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.panel {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-card);
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.panelHead h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  text-transform: uppercase;
+}
+
+.copyButton {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
+  padding: 0.45rem 0.9rem;
+  text-transform: uppercase;
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+
+.copyButton:hover {
+  border-color: var(--accent-primary);
+  background: var(--surface-hover);
+}
+
+.template {
+  margin: 0;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-canvas-deep);
+  padding: 1rem 1.15rem;
+  overflow-x: auto;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  white-space: pre-wrap;
+}
+
+.reviewSection {
+  border-top: 1px solid var(--border-line);
+  padding-top: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.reviewList {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+}
