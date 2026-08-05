@@ -11,14 +11,17 @@ test('home decision board updates the diagnostic panel', async ({ page }) => {
 test('foundational knowledge reader switches lessons', async ({ page }) => {
   await page.goto('/kien-thuc-nen-tang');
   await expect(page.getByRole('heading', { name: /Đọc đúng kỹ năng/i })).toBeVisible();
-  const desktopTocButton = page.getByRole('button', { name: /Gold \/ Roll/i });
-  if (await desktopTocButton.isVisible()) {
-    await desktopTocButton.click();
+  // TOC desktop là accordion — bài học nằm trong nhóm khác category đang active
+  // (mặc định là "Ra quyết định") chỉ có trong DOM sau khi mở nhóm chứa nó.
+  const desktopGroupToggle = page.getByRole('button', { name: /Vận hành kinh tế/i });
+  if (await desktopGroupToggle.isVisible()) {
+    await desktopGroupToggle.click();
+    await page.getByRole('button', { name: /Level, roll, outs và breakpoint/i }).click();
   } else {
-    await page.getByLabel('Chọn bài học').selectOption('kinh-te-level-roll');
+    await page.getByLabel('Chọn bài học').selectOption('level-roll-outs-va-breakpoint');
   }
-  await expect(page.getByRole('heading', { name: 'Kinh tế, lên cấp và roll' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Trước một rolldown tốt/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Level, roll, outs và breakpoint' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Thiết kế outs trước rolldown/i })).toBeVisible();
 });
 
 test('checklist persists a checked item after reload', async ({ page }) => {
@@ -72,7 +75,7 @@ test('visible navigation marks the current route', async ({ page }) => {
     await expect(nav.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
   }
 
-  await page.goto('/bai-hoc/kinh-te-level-roll');
+  await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
   const lessonNav = page.getByRole('navigation', { name: isDesktop ? 'Điều hướng chính' : 'Điều hướng nhanh trên điện thoại' });
   await expect(lessonNav.getByRole('link', { name: isDesktop ? 'Kiến thức nền tảng' : 'Học' })).toHaveAttribute('aria-current', 'page');
 });
