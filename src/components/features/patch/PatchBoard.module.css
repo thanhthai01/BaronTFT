@@ -63,12 +63,54 @@
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
+  text-align: left;
+  cursor: pointer;
 }
 
 .select:focus-visible {
   border-color: var(--accent-primary);
   outline: none;
   box-shadow: var(--ring);
+}
+
+/* Portal thẳng ra <body>, định vị bằng toạ độ thật của nút bấm — không nằm
+   trong .sidebar nên không bị overflow/sticky của sidebar cắt hay đè lên. */
+.selectPanel {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  gap: 0.15rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-offset-ink);
+  padding: 0.3rem;
+}
+
+.selectOption {
+  border: 0;
+  border-radius: var(--r-xs, 0.35rem);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+
+.selectOption:hover,
+.selectOption:focus-visible {
+  background: var(--gray-150, color-mix(in srgb, var(--accent-primary) 10%, var(--surface-card)));
+  outline: none;
+}
+
+.selectOption[aria-selected='true'] {
+  background: var(--accent-primary);
+  color: var(--text-on-accent, var(--text-primary));
 }
 
 .selectMeta {

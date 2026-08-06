@@ -63,6 +63,47 @@
   background: color-mix(in srgb, var(--accent-primary) 14%, var(--surface-card));
 }
 
+/* Phải tự huỷ box-shadow: globals.css có rule :focus-visible chung cho cả
+   site (outline: none; box-shadow: var(--ring)) — ring đó bị clip-path cắt
+   theo hình lục giác nên trông như viền xanh lệch hẳn kiểu, không phải bug ở
+   riêng ô nào. Ô này tự thay bằng cú "to ra + trồi lên" rồi GIỮ NGUYÊN trạng
+   thái đó suốt lúc đang focus (animation-fill-mode: forwards — không có thì
+   0.4s sau animation tự trả transform về base, nhìn như focus không có gì dù
+   vẫn đang giữ phím Tab ở đó). Rời focus thì mất class :focus-visible, hex
+   quay lại bình thường ngay — không cần code riêng cho việc "trở lại". */
+.hex:focus-visible {
+  outline: none;
+  box-shadow: none;
+  z-index: 1;
+  background: var(--accent-primary);
+  animation: hex-focus-pop 0.32s var(--ease-out) forwards;
+}
+
+.hex:focus-visible::before {
+  background: color-mix(in srgb, var(--accent-primary) 14%, var(--surface-card));
+}
+
+@keyframes hex-focus-pop {
+  0% {
+    transform: translateY(-2px) scale(0.94);
+  }
+
+  60% {
+    transform: translateY(-8px) scale(1.14);
+  }
+
+  100% {
+    transform: translateY(-6px) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hex:focus-visible {
+    animation: none;
+    transform: translateY(-6px) scale(1.1);
+  }
+}
+
 .hex span {
   max-width: 3.7rem;
   color: var(--text-primary);
@@ -74,12 +115,40 @@
   text-transform: uppercase;
 }
 
+/* Toàn bộ thẻ (khung + viền + nội dung) animate cùng nhau như MỘT khối —
+   không chỉ animate phần nội dung bên trong — để tránh cảm giác khung đứng
+   yên còn chữ trượt riêng khi nội dung dài/ngắn khác nhau giữa các kỹ năng. */
 .panel {
+  display: flex;
+  flex-direction: column;
+  /* Chiều cao chuẩn lấy theo nội dung dài nhất (Strongest board) — đo thật ở
+     desktop ~631px/16 ≈ 39.5rem — để 10 thẻ kỹ năng cùng cao bằng nhau, không
+     đẩy section co giãn mỗi lần đổi kỹ năng. */
+  min-height: 39.5rem;
   border: 1px solid var(--border-strong);
   border-radius: var(--r-xl);
   background: var(--surface-card);
   box-shadow: var(--shadow-offset-accent);
   padding: clamp(1.1rem, 3vw, 1.6rem);
+  animation: panel-fade-in 0.85s linear(0, 0.067, 0.1294, 0.1877, 0.2421, 0.2929, 0.3402, 0.3844, 0.4257, 0.4641, 0.5, 0.5335, 0.5647, 0.5939, 0.6211, 0.6464, 0.6701, 0.6922, 0.7128, 0.7321, 0.75, 0.7667, 0.7824, 0.7969, 0.8105, 0.8232, 0.8351, 0.8461, 0.8564, 0.866, 0.875, 0.8834, 0.8912, 0.8985, 0.9053, 0.9116, 0.9175, 0.9231, 0.9282, 0.933, 0.9375, 0.9417, 0.9456, 0.9492, 0.9526, 0.9558, 0.9588, 0.9615, 0.9641, 0.9665, 0.9688, 0.9708, 0.9728, 0.9746, 0.9763, 0.9779, 0.9794, 0.9808, 0.9821, 0.9833, 0.9844, 0.9854, 0.9864, 0.9873, 0.9882, 0.989, 0.9897, 0.9904, 0.991, 0.9916, 0.9922, 0.9927, 0.9932, 0.9937, 0.9941, 0.9945, 0.9948, 0.9952, 0.9955, 0.9958, 0.9961, 0.9964, 0.9966, 0.9968, 0.997, 0.9972, 0.9974, 0.9976, 0.9978, 0.9979, 0.998, 0.9982, 0.9983, 0.9984, 0.9985, 0.9986, 0.9987, 0.9988, 0.9989, 0.999, 1) both;
+}
+
+@keyframes panel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
 }
 
 .panel h2 {
@@ -124,6 +193,12 @@
   font-weight: var(--fw-semibold);
 }
 
+/* Ghim nút xuống đáy thẻ — nội dung ngắn không để trống khoảng trắng lơ lửng
+   phía trên nút, dài thì nút vẫn theo sau như bình thường. */
+.panel > a {
+  margin-top: auto;
+}
+
 @media (max-width: 900px) {
   .wrap {
     grid-template-columns: 1fr;
@@ -132,6 +207,15 @@
   .board {
     max-width: 100%;
     overflow: hidden;
+  }
+
+  /* Chiều cao chuẩn 39.5rem chỉ cần khi board + panel nằm CẠNH NHAU (desktop) để
+     không lệch hàng. Ở đây panel đã rớt xuống DƯỚI board (1 cột), không còn gì
+     để so hàng — giữ min-height cũ chỉ tổ bắt cuộn dài hơn cần thiết trên điện
+     thoại, có khi che mất cả nút "Mở bài học liên quan" ngoài màn hình. Để thẻ
+     cao đúng bằng nội dung của nó. */
+  .panel {
+    min-height: 0;
   }
 }
 

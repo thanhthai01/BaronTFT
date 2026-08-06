@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useId, useMemo, useState, type CSSProperties } from 'react';
 import { Tabs, tabElementId, tabPanelId } from '@/components/design-system/Tabs/Tabs';
+import { PatchVersionSelect } from './PatchVersionSelect';
 import { findSet18Entity, set18EntityById } from '@/content/set18/set18-entity-index';
 import {
   patchBreakpointColors,
@@ -319,18 +320,12 @@ export function PatchBoard() {
           <label className={styles.filterLabel} htmlFor={selectId}>
             Chọn bản vá
           </label>
-          <select
-            className={styles.select}
+          <PatchVersionSelect
             id={selectId}
+            options={patchReports.map((item) => ({ id: item.id, label: `${item.version} — ${item.dateVi}` }))}
             value={reportId}
-            onChange={(event) => setReportId(event.target.value)}
-          >
-            {patchReports.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.version} — {item.dateVi}
-              </option>
-            ))}
-          </select>
+            onChange={setReportId}
+          />
           {/* Danh tính bản vá (ngày + nguồn) chỉ nói một lần ở đây; thanh đầu cột
               phải chỉ giữ con số của lượt xem hiện tại. */}
           <p className={styles.selectMeta}>
