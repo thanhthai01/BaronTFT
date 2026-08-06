@@ -181,6 +181,32 @@ export type Set18Augment = {
   roundVariants: string[];
 };
 
+/** 'Radiant'/'Artifact' là ràng buộc hiển thị: quyết định viền vàng (Radiant)
+ * hay viền Ornn cam/đỏ (Artifact) trên thẻ item — không có category nào khác
+ * đổi kiểu viền. 'Armory' = vật phẩm tiêu hao (không trang bị lên tướng). */
+export type Set18ItemCategory = 'Component' | 'Normal' | 'Emblem' | 'Artifact' | 'Radiant' | 'Other' | 'Armory';
+
+export type Set18ItemStatBadge = { stat: string; value: string };
+
+/** Nguồn: Set18/data/metatft_set18_vi.json (items + armory_items), đối chiếu
+ * phân loại với datatft.com/database#item. `statBadges` chỉ có ở item đã soát
+ * tay khớp game thật — item chưa soát dùng `statLine` thô làm fallback hiển thị.
+ * `icon` là ảnh trang bị thật; icon+màu cho từng chỉ số trong statBadges là
+ * hằng số phía UI (STAT_ICON/STAT_COLOR), không lưu trong dữ liệu này. */
+export type Set18Item = {
+  apiName: string;
+  name: string;
+  nameVi: string;
+  category: Set18ItemCategory;
+  description: string;
+  descriptionVi: string;
+  icon: string;
+  statLine?: string;
+  compositionApi: string[];
+  unique: boolean;
+  statBadges?: Set18ItemStatBadge[];
+};
+
 export type Set18CostMeta = { cost: number; label: string; color: string };
 
 
