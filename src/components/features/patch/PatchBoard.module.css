@@ -469,6 +469,16 @@
   font-weight: var(--fw-regular);
 }
 
+/* Tên gốc tiếng Anh cạnh tên tiếng Việt — cùng convention với .traitEn/
+   .augmentNameEn ở Set18Codex.module.css. */
+.nameEn {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  font-weight: var(--fw-regular);
+}
+
 .cardTags {
   display: flex;
   flex-wrap: wrap;

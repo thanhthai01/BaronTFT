@@ -66,6 +66,15 @@ function resolveEntity(entry: PatchEntry, entitySet: number) {
   return kind ? findSet18Entity(kind, entry.name) : undefined;
 }
 
+/** Tên hiển thị: tiếng Việt chuẩn từ codex (đậm) + tiếng Anh gốc (phụ), đúng
+ * convention /mua-18 đang dùng cho trait/augment/wisp. Tướng không có
+ * `nameVi` trong entity-index (quy ước: tên tướng luôn giữ tiếng Anh) nên
+ * `en` trả về null — nơi gọi chỉ hiện 1 dòng như cũ, không đổi hành vi. */
+function resolveDisplayName(entry: PatchEntry, entitySet: number): { vi: string; en: string | null } {
+  const entity = resolveEntity(entry, entitySet);
+  return entity?.nameVi ? { vi: entity.nameVi, en: entry.name } : { vi: entry.name, en: null };
+}
+
 /** Icon Tinh Linh của Set 18 mã hoá sẵn loại + cấp trong tên file, vd
  * `t_shopcardsicon18_misc_tier2.png`. Đọc từ đó thay vì kéo cả bảng Tinh Linh
  * vào bundle chỉ để lấy hai con số dùng cho việc xếp thứ tự. */
@@ -413,7 +422,9 @@ export function PatchBoard() {
                 <span className={styles.groupCount}>{group.entries.length}</span>
               </h2>
               <div className={styles.cards}>
-                {group.entries.map((entry) => (
+                {group.entries.map((entry) => {
+                  const name = resolveDisplayName(entry, entitySet);
+                  return (
                   <article
                     className={[styles.card, styles[`edge-${entry.kind}`]].join(' ')}
                     id={entryAnchorId(entry.id)}
@@ -423,7 +434,8 @@ export function PatchBoard() {
                       <EntryIcon entry={entry} entitySet={entitySet} />
                       <div className={styles.cardHeadText}>
                         <h3 className={styles.name}>
-                          {entry.name}
+                          {name.vi}
+                          {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
                           {entry.note ? <span className={styles.note}> {entry.note}</span> : null}
                         </h3>
                         <span className={styles.cardTags}>
@@ -452,7 +464,8 @@ export function PatchBoard() {
                       <span className={styles.mechanicLabel}>Không có chỉ số trước/sau</span>
                     )}
                   </article>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ))}
@@ -520,7 +533,9 @@ export function PatchBoard() {
                           đúng thẻ ở trên, khỏi phải cuộn tìm lại. */}
                       {related.length ? (
                         <ul className={styles.impactRelated}>
-                          {related.map((entry) => (
+                          {related.map((entry) => {
+                            const name = resolveDisplayName(entry, entitySet);
+                            return (
                             <li key={entry.id}>
                               <a
                                 className={[styles.impactChip, styles[`chip-${entry.kind}`]].join(' ')}
@@ -528,12 +543,14 @@ export function PatchBoard() {
                               >
                                 <EntryIcon entry={entry} entitySet={entitySet} size="xs" />
                                 <span>
-                                  {entry.name}
+                                  {name.vi}
+                                  {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
                                   {entry.note ? <span className={styles.note}> {entry.note}</span> : null}
                                 </span>
                               </a>
                             </li>
-                          ))}
+                            );
+                          })}
                         </ul>
                       ) : null}
 
