@@ -79,6 +79,7 @@ function ReadingProgressBar() {
 
 const links = [
   { href: '/kien-thuc-nen-tang', label: 'Kiến thức nền tảng' },
+  { href: '/cay-quyet-dinh', label: 'Cây quyết định' },
   { href: '/lo-trinh', label: 'Lộ trình' },
   { href: '/mua-18', label: 'Mùa 18' },
   { href: '/checklist', label: 'Checklist' },
