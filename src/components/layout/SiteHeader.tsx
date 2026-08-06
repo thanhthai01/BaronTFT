@@ -83,8 +83,6 @@ const links = [
   { href: '/mua-18', label: 'Mùa 18' },
   { href: '/checklist', label: 'Checklist' },
   { href: '/patch', label: 'Patch' },
-  { href: '/bieu-mau', label: 'Biểu mẫu' },
-  { href: '/thuat-ngu', label: 'Thuật ngữ' },
   { href: '/nguon-hoc', label: 'Nguồn học' },
 ];
 

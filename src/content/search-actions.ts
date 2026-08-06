@@ -53,7 +53,7 @@ export const searchActions: SearchAction[] = [
     group: 'Bài học',
     label: 'Đọc bài Tempo',
     description: 'Hiểu khi nào mua nhịp, giữ máu hoặc giữ vàng.',
-    href: '/bai-hoc/ke-hoach-tft-theo-stage',
+    href: '/kien-thuc-nen-tang',
     keywords: ['tempo', 'nhịp', 'stage', 'level'],
   },
   {
@@ -77,7 +77,7 @@ export const searchActions: SearchAction[] = [
     group: 'Bài học',
     label: 'Đọc bài slam đồ hay giữ đồ',
     description: 'Học item theo chức năng thay vì chờ công thức hoàn hảo.',
-    href: '/bai-hoc/trang-bi-va-phan-bo-chi-so',
+    href: '/kien-thuc-nen-tang',
     keywords: ['item', 'đồ', 'slam', 'trang bị'],
   },
   {

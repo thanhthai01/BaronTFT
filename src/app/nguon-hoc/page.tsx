@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { glossaryTerms } from '@/content/glossary.generated';
 import { learningGroups } from '@/content/learning-sources';
 import styles from './page.module.css';
 
@@ -77,6 +78,23 @@ export default function ResourcesPage() {
               </ul>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className={['section', styles.glossarySection].join(' ')} id="thuat-ngu">
+        <div className="wide-container">
+          <div className={styles.glossaryHead}>
+            <h2>Thuật ngữ</h2>
+            <p>{glossaryTerms.length} thuật ngữ dùng trong giáo trình evergreen, sắp theo bảng chữ cái. Dùng Ctrl+F để tìm nhanh.</p>
+          </div>
+          <dl className={styles.glossaryList}>
+            {glossaryTerms.map((entry) => (
+              <div className={styles.glossaryEntry} key={entry.term}>
+                <dt className={styles.glossaryTerm}>{entry.term}</dt>
+                <dd className={styles.glossaryDefinition}>{entry.definition}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
     </>
