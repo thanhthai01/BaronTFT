@@ -164,6 +164,122 @@ Chú thích: ▲ = buff, ▼ = nerf, không có mũi tên = rework/cơ chế/bug
 
 ---
 
+## Linh Hỏa (Wisps)
+
+- ▲ **Barrier**
+  - Shield: 1000 → 1200
+  - Duration: 5s → 6s
+  - Upgrade Duration: 8s → 9s
+- ▼ **Blood Ritual**
+  - Cost: 5g → 6g
+  - Health Cost: 9 → 10
+  - Upgrade Health Cost: 5 → 6
+- ▼ **Booster Shot** — Cost: 4g → 6g
+- ▼ **Cutpurse** — Cost: 2g → 3g
+- ▼ **Downpour** — Cost: 2g → 3g
+- ▼ **Flow** — Cost: 2g → 3g
+- ▼ **Flood**
+  - Streak Addition: 2 → 1
+  - Upgrade Streak Addition: 3 → 2
+- ▲ **Grow Up**
+  - Cost: 10g → 7g
+  - XP Gain: 16 → 10
+  - Upgrade XP Gain: 20 → 12
+- ▼ **Hand of Baron**
+  - Attack Damage: 5% → 4%
+  - Ability Power: 5% → 4%
+  - Attack Speed: 5% → 4%
+  - Health: 50 → 40
+  - Magic Resist: 5 → 4
+  - Armor: 5 → 4
+  - Upgrade Attack Damage: 9% → 6%
+  - Upgrade Ability Power: 9% → 6%
+  - Upgrade Attack Speed: 9% → 6%
+  - Upgrade Health: 90 → 60
+  - Upgrade Armor: 9 → 6
+  - Upgrade Magic Resist: 9 → 6
+  - Upgrade Omnivamp: 7% → 6%
+- ▼ **Heroic Sacrifice**
+  - Health Regen: 2% per second → Removed
+  - Upgrade Health Regen: 2.5% per second → Removed
+  - Upgrade Health: 2000 → 1800
+  - Upgrade Omnivamp: 15% → 12%
+- ▼ **Homing Fireflies** — Damage: 150 → 125
+- ▼ **Infliction**
+  - Cost: 5g → 6g
+  - Upgrade Duration: 14s → 12s
+- ▲ **Killer's Regret**
+  - Stun Duration: 1s → 1.25s
+  - Upgrade Stun Duration: 1.25s → 1.5s
+- ▲ **Killing Frenzy**
+  - Execute Threshold: 10% → 12%
+  - Upgrade Execute Threshold: 12% → 15%
+- ▼ **Late Bloomer**
+  - Items: 1 → 0
+  - Upgrade Items: 2 → 1
+- ▼ **Lost Travelers** — Upgrade Gold value of champions: 5g → 4g
+- ▼ **Major Gambit**
+  - Cost: 2g → 3g
+  - Upgrade không còn cho component
+  - Upgrade Gold: 10g → 12g
+- ▲ **Marksmen's Marks** — Chance to double attack: 25% → 30%
+- **Nature's Wrath** — Removed
+- ▼ **Payday** — Cost: 3g → 4g
+- **Prolific Power** — Có thể xuất hiện từ vòng 4-2 đến 4-6
+- ▲ **Quicken**
+  - Attack Speed gain: 25% → 30%
+  - Upgrade Attack Speed gain: 30% → 40%
+- **Refreshing Light** — Không còn xuất hiện từ vòng 5-1 đến 5-6
+- ▼ **Resistant**
+  - Flat Damage Reduction: 15 → 10
+  - Upgrade Flat Damage Reduction: 25 → 18
+- ▼ **Roly-Polys** — Cost: 3g → 4g
+- **Salvager** — Không còn được đề xuất nếu người chơi đã có Crafted Crafting
+- ▼ **Slow Study** — Cost: 3g → 4g
+- ▲ **Snacktime!**
+  - Execute Threshold: 12% → 15%
+  - Upgrade Execute Threshold: 15% → 20%
+- ▼ **Ultra Ascension** — Cost: 0g → 1g
+- **Verdant Vitality** — Có thể xuất hiện từ vòng 4-2 đến 4-6
+
+---
+
+## Sửa Lỗi (Bugfixes)
+
+- Sửa lỗi Chatbox hoạt động không đúng với một số người chơi
+- Sửa lỗi combat Double Up kết thúc sớm hơn dự kiến
+- Sửa lỗi Augment không xuất hiện cho một số người chơi trong vòng Augment
+- Sửa lỗi tướng Carousel di chuyển nhanh hơn dự kiến
+- Thêm bản sửa cho Destiny Augments — chỉ đề xuất Augment hợp lệ cho vòng đó
+- Điều chỉnh cỡ chữ cho Linh Hỏa Blossom đã nâng cấp
+- Sửa lỗi SFX đòn đánh kết thúc sớm hơn dự kiến
+- Cải thiện VFX highlight ô (hex)
+- Augment Magic Roll giờ hiển thị đúng VFX 3 xúc xắc
+- Sửa lỗi lính triệu hồi (hồn ma Yorick, Nesting Dolls, Kruglets) ngừng tấn công sau khi xuất hiện
+- Sửa lỗi prop hiệu ứng Coven hiển thị sai giá trị sau combat
+- Sửa lỗi prop hiển thị Coven bị chồng lên nhau
+- Sửa lỗi Training Dummies có thể xuất hiện ở phía đối diện bàn cờ
+- Sửa lỗi Primal Bear blessing có thể được chọn hai lần
+- Sửa lỗi Extra Buckles không cho phần thưởng Extra Buckles
+
+---
+
+## Cập nhật bổ sung — Elise (bỏ sót trong bài gốc)
+
+**Nguồn:** [@TheTruexy trên X](https://x.com/TheTruexy/status/2084291498116555198) — tweet riêng, đăng sau bài gốc, dev thừa nhận quên đổi Elise.
+
+> "Amidst all the changes, I missed an Elise change. We still want the AS tank build to be viable, but she's first and foremost a tank. So we're also supporting normal tank items on her and lowering her carry potential. Think of her as Set 15 Udyr."
+
+- ▼ **Elise** 
+  - Base AD: 30 → 20
+  - On-Hit Damage: 55/80/130 AP → 35/50/80 AP
+  - On-Attack Healing: 65/100/155 AP → 55/80/160 AP *(mốc 3 sao tăng nhẹ, 2 mốc đầu giảm)*
+  - ▲ Transform Max HP: 325/425/650 → 375/475/725
+
+*(Định hướng dev: giảm sát thương on-hit/carry, bù lại máu lúc biến hình — đẩy Elise về xây tank thuần thay vì AS carry, tương tự Udyr ở Set 15. Build AS tank vẫn được hỗ trợ nhưng không còn là carry chính.)*
+
+---
+
 ## Cần đối chiếu trước khi đưa lên site
 
 Vài mục trong ảnh gốc có ký hiệu ▲/▼ ngược với chiều số liệu — đánh dấu lại để không dịch sai khi lên `patch-notes.ts`:
