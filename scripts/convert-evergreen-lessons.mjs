@@ -18,10 +18,10 @@ const EXCLUDED_FILES = new Set([
   'references/source-map.md',
   'references/tftacademy-guide-map.md',
   'references/video-library.md',
+  '06-luyen-tap-va-review/04-bieu-mau-thuc-hanh.md',
   'README.md',
 ]);
 const ROADMAP_FILES = ['00-lo-trinh/01-ban-do-ky-nang.md', '00-lo-trinh/02-lo-trinh-8-tuan.md'];
-const PRACTICE_FORM_FILE = '06-luyen-tap-va-review/04-bieu-mau-thuc-hanh.md';
 const GLOSSARY_FILE = 'references/glossary.md';
 
 const CATEGORY_LABELS = {
@@ -152,17 +152,6 @@ function parseMarkdownTable(body) {
     .filter((l) => l.startsWith('|'));
   const rows = lines.slice(2);
   return rows.map((line) => line.slice(1, -1).split('|').map((c) => c.trim()));
-}
-
-function slugify(text) {
-  return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 function resolveRelated(fromRelPath, target, fileMap) {
@@ -354,28 +343,6 @@ function buildRoadmap(fileMap) {
   return { tiers, symptomMap, weeks, afterSteps };
 }
 
-function buildPracticeForms() {
-  const relPath = PRACTICE_FORM_FILE;
-  const { content } = frontMatterByPath.get(relPath);
-  const { sections } = splitSections(stripLeadingH1(content));
-  const forms = [];
-  let reviewQuestions = [];
-  for (const { heading, body } of sections) {
-    const numMatch = heading.match(/^(\d+)\.\s+(.+)$/);
-    if (!numMatch) throw new Error(`Heading biểu mẫu không đúng dạng "N. Tên": "${heading}" (${relPath})`);
-    const [, num, title] = numMatch;
-    if (num === '7') {
-      reviewQuestions = extractOrderedItems(body);
-      continue;
-    }
-    const codeMatch = body.match(/```text\n([\s\S]*?)```/);
-    if (!codeMatch) throw new Error(`Không tìm thấy code block cho biểu mẫu "${heading}" (${relPath})`);
-    forms.push({ id: slugify(title), title, template: codeMatch[1].replace(/\n$/, '') });
-  }
-  if (!reviewQuestions.length) throw new Error(`Không tìm thấy 10 câu review sâu trong ${relPath}`);
-  return { forms, reviewQuestions };
-}
-
 function buildGlossary() {
   const relPath = GLOSSARY_FILE;
   const { content } = frontMatterByPath.get(relPath);
@@ -410,7 +377,6 @@ async function main() {
     (rel) =>
       !EXCLUDED_FILES.has(rel) &&
       !ROADMAP_FILES.includes(rel) &&
-      rel !== PRACTICE_FORM_FILE &&
       rel !== GLOSSARY_FILE &&
       !rel.startsWith('references/legacy/'),
   );
@@ -427,15 +393,13 @@ async function main() {
 
   const fileMap = new Map();
   for (const rel of lessonFiles) {
-    fileMap.set(rel, `/bai-hoc/${frontMatterByPath.get(rel).data.slug}`);
+    fileMap.set(rel, '/kien-thuc-nen-tang');
   }
   for (const rel of ROADMAP_FILES) fileMap.set(rel, '/lo-trinh');
-  fileMap.set(PRACTICE_FORM_FILE, '/bieu-mau');
-  fileMap.set(GLOSSARY_FILE, '/thuat-ngu');
+  fileMap.set(GLOSSARY_FILE, '/nguon-hoc#thuat-ngu');
 
   const lessons = lessonFiles.map((rel) => buildLesson(rel, fileMap, warnings));
   const roadmap = buildRoadmap(fileMap);
-  const practiceForms = buildPracticeForms();
   const glossary = buildGlossary();
 
   writeGenerated(
@@ -465,15 +429,6 @@ async function main() {
   );
 
   writeGenerated(
-    'practice-forms.generated.ts',
-    `${GENERATED_HEADER}\nexport type PracticeForm = { id: string; title: string; template: string };\n\nexport const practiceForms: PracticeForm[] = ${JSON.stringify(
-      practiceForms.forms,
-      null,
-      2,
-    )};\n\nexport const practiceReviewQuestions: string[] = ${JSON.stringify(practiceForms.reviewQuestions, null, 2)};\n`,
-  );
-
-  writeGenerated(
     'glossary.generated.ts',
     `${GENERATED_HEADER}\nexport type GlossaryTerm = { term: string; definition: string };\n\nexport const glossaryTerms: GlossaryTerm[] = ${JSON.stringify(
       glossary.terms,
@@ -487,7 +442,7 @@ async function main() {
     warnings.forEach((w) => console.warn(` - ${w}`));
   }
   console.log(
-    `\nĐã sinh ${lessons.length} lesson, ${roadmap.weeks.length} tuần lộ trình, ${practiceForms.forms.length} biểu mẫu, ${glossary.terms.length} thuật ngữ.`,
+    `\nĐã sinh ${lessons.length} lesson, ${roadmap.weeks.length} tuần lộ trình, ${glossary.terms.length} thuật ngữ.`,
   );
 }
 

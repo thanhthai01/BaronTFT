@@ -21,15 +21,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Tài nguyên và giá trị lựa chọn",
-        "href": "/bai-hoc/tai-nguyen-va-gia-tri-lua-chon"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc trạng thái và mục tiêu thứ hạng",
-        "href": "/bai-hoc/doc-trang-thai-va-muc-tieu-thu-hang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "VOD review và phân loại lỗi",
-        "href": "/bai-hoc/vod-review-va-phan-loai-loi"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -129,15 +129,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Kinh tế, máu, chuỗi và tempo",
-        "href": "/bai-hoc/kinh-te-mau-chuoi-va-tempo"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Flex, transition và pivot",
-        "href": "/bai-hoc/flex-transition-va-pivot"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -222,15 +222,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Strongest board và opener",
-        "href": "/bai-hoc/strongest-board-va-opener"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Kế hoạch theo stage",
-        "href": "/bai-hoc/ke-hoach-tft-theo-stage"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Scouting và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -315,15 +315,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Kinh tế, máu, chuỗi và tempo",
-        "href": "/bai-hoc/kinh-te-mau-chuoi-va-tempo"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Vai trò, tộc hệ và board cap",
-        "href": "/bai-hoc/vai-tro-toc-he-va-board-cap"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/bai-hoc/positioning-targeting-va-pathing"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -419,15 +419,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc trạng thái và mục tiêu thứ hạng",
-        "href": "/bai-hoc/doc-trang-thai-va-muc-tieu-thu-hang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -524,15 +524,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Kinh tế, máu, chuỗi và tempo",
-        "href": "/bai-hoc/kinh-te-mau-chuoi-va-tempo"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Xác suất shop, pool và variance",
-        "href": "/bai-hoc/xac-suat-shop-pool-va-variance"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -623,19 +623,19 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Strongest board và opener",
-        "href": "/bai-hoc/strongest-board-va-opener"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Flex, transition và pivot",
-        "href": "/bai-hoc/flex-transition-va-pivot"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Cập nhật Set và patch",
-        "href": "/bai-hoc/cap-nhat-set-va-patch-tft"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -726,15 +726,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Chọn Nâng Cấp",
-        "href": "/bai-hoc/chon-nang-cap-tft"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Roll, lobby, item và trait nâng cao",
-        "href": "/bai-hoc/roll-lobby-item-trait-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -825,15 +825,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Chỉ số, item, tộc hệ, crit và blind spots",
-        "href": "/bai-hoc/chi-so-trang-bi-chi-mang-can-bang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Mana, chu kỳ cast và animation",
-        "href": "/bai-hoc/mana-chu-ky-cast-va-animation"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc dữ liệu không bị đánh lừa",
-        "href": "/bai-hoc/doc-du-lieu-tft-khong-bi-danh-lua"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -930,15 +930,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Đọc trạng thái và mục tiêu thứ hạng",
-        "href": "/bai-hoc/doc-trang-thai-va-muc-tieu-thu-hang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc dữ liệu không bị đánh lừa",
-        "href": "/bai-hoc/doc-du-lieu-tft-khong-bi-danh-lua"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1034,15 +1034,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Tài nguyên và giá trị lựa chọn",
-        "href": "/bai-hoc/tai-nguyen-va-gia-tri-lua-chon"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1134,15 +1134,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/bai-hoc/positioning-targeting-va-pathing"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Roll, lobby, item và trait nâng cao",
-        "href": "/bai-hoc/roll-lobby-item-trait-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1244,15 +1244,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Mana, chu kỳ cast và animation",
-        "href": "/bai-hoc/mana-chu-ky-cast-va-animation"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "VOD review và phân loại lỗi",
-        "href": "/bai-hoc/vod-review-va-phan-loai-loi"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1360,19 +1360,19 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Cast time và animation lock",
-        "href": "/bai-hoc/cast-time-va-animation-lock"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Breakpoint mana nâng cao",
-        "href": "/bai-hoc/breakpoint-mana-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/bai-hoc/positioning-targeting-va-pathing"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1459,15 +1459,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Mana và chu kỳ cast cơ bản",
-        "href": "/bai-hoc/mana-chu-ky-cast-va-animation"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Breakpoint mana nâng cao",
-        "href": "/bai-hoc/breakpoint-mana-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/bai-hoc/positioning-targeting-va-pathing"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1553,15 +1553,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Mana và chu kỳ cast cơ bản",
-        "href": "/bai-hoc/mana-chu-ky-cast-va-animation"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Cast time và animation lock",
-        "href": "/bai-hoc/cast-time-va-animation-lock"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/bai-hoc/positioning-targeting-va-pathing"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1647,15 +1647,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Cập nhật Set và patch",
-        "href": "/bai-hoc/cap-nhat-set-va-patch-tft"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Unknown unknowns và kiểm chứng",
-        "href": "/bai-hoc/unknown-unknowns-va-kiem-chung-tft"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1747,11 +1747,11 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Kế hoạch theo stage",
-        "href": "/bai-hoc/ke-hoach-tft-theo-stage"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc dữ liệu không bị đánh lừa",
-        "href": "/bai-hoc/doc-du-lieu-tft-khong-bi-danh-lua"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1843,15 +1843,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Roll, lobby, item và trait nâng cao",
-        "href": "/bai-hoc/roll-lobby-item-trait-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -1948,15 +1948,11 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Tư duy TFT xuyên mùa",
-        "href": "/bai-hoc/tu-duy-tft-xuyen-mua"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Bài tập theo kỹ năng",
-        "href": "/bai-hoc/bai-tap-tft-theo-ky-nang"
-      },
-      {
-        "label": "Biểu mẫu thực hành",
-        "href": "/bieu-mau"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2037,11 +2033,7 @@ export const lessons: Lesson[] = [
       },
       {
         "label": "VOD review và phân loại lỗi",
-        "href": "/bai-hoc/vod-review-va-phan-loai-loi"
-      },
-      {
-        "label": "Biểu mẫu thực hành",
-        "href": "/bieu-mau"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2130,11 +2122,7 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "VOD review và phân loại lỗi",
-        "href": "/bai-hoc/vod-review-va-phan-loai-loi"
-      },
-      {
-        "label": "Biểu mẫu thực hành",
-        "href": "/bieu-mau"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2221,15 +2209,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Item index nâng cao và blind spots",
-        "href": "/bai-hoc/item-index-nang-cao-va-blind-spots"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Unknown unknowns và kiểm chứng cơ chế TFT",
-        "href": "/bai-hoc/unknown-unknowns-va-kiem-chung-tft"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2326,23 +2314,23 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/bai-hoc/level-roll-outs-va-breakpoint"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Xác suất shop, pool và variance",
-        "href": "/bai-hoc/xac-suat-shop-pool-va-variance"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Lobby ecology nâng cao",
-        "href": "/bai-hoc/lobby-ecology-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Giá trị trang bị theo thời gian và trait breakpoint nâng cao",
-        "href": "/bai-hoc/item-value-va-trait-breakpoint-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2433,15 +2421,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Mana, chu kỳ cast và animation",
-        "href": "/bai-hoc/mana-chu-ky-cast-va-animation"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Chỉ số, item, tộc hệ, crit và blind spots",
-        "href": "/bai-hoc/chi-so-trang-bi-chi-mang-can-bang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Đọc dữ liệu không bị đánh lừa",
-        "href": "/bai-hoc/doc-du-lieu-tft-khong-bi-danh-lua"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2528,15 +2516,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Chỉ số tướng, trang bị và chí mạng: nguyên lý cân bằng",
-        "href": "/bai-hoc/chi-so-trang-bi-chi-mang-can-bang"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Unknown unknowns và kiểm chứng cơ chế TFT",
-        "href": "/bai-hoc/unknown-unknowns-va-kiem-chung-tft"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2613,15 +2601,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/bai-hoc/scouting-contest-va-lobby-ecology"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Kinh tế, máu, chuỗi và tempo",
-        "href": "/bai-hoc/kinh-te-mau-chuoi-va-tempo"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Xác suất shop và giá trị roll nâng cao",
-        "href": "/bai-hoc/roll-lobby-item-trait-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [
@@ -2707,15 +2695,15 @@ export const lessons: Lesson[] = [
     "related": [
       {
         "label": "Trang bị và phân bố chỉ số",
-        "href": "/bai-hoc/trang-bi-va-phan-bo-chi-so"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Vai trò, tộc hệ và board cap",
-        "href": "/bai-hoc/vai-tro-toc-he-va-board-cap"
+        "href": "/kien-thuc-nen-tang"
       },
       {
         "label": "Xác suất shop và giá trị roll nâng cao",
-        "href": "/bai-hoc/roll-lobby-item-trait-nang-cao"
+        "href": "/kien-thuc-nen-tang"
       }
     ],
     "blocks": [

@@ -321,7 +321,7 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
         <h2 className={styles.applyTitle}>Áp dụng ngay</h2>
         <div className={styles.applyActions}>
-          <Button href="/checklist" variant="secondary" block>Mở checklist</Button>
+          <Button href="/patch" variant="secondary" block>Patch cập nhật</Button>
           <Button href="/mua-18" variant="secondary" block>Xem Mùa 18</Button>
         </div>
       </aside>

@@ -187,3 +187,58 @@
   background: var(--accent-primary-soft);
   color: var(--text-primary);
 }
+
+/* Thuật ngữ — section riêng cuối trang, tách khỏi lưới nguồn học bằng viền trên. */
+.glossarySection {
+  border-top: 1px solid var(--border-line);
+  padding-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  scroll-margin-top: 5.5rem;
+}
+
+.glossaryHead {
+  margin-bottom: 1rem;
+}
+
+.glossaryHead h2 {
+  margin: 0 0 0.35rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+}
+
+.glossaryHead p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.glossaryList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.glossaryEntry {
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-card);
+  padding: 0.9rem 1rem;
+}
+
+.glossaryTerm {
+  margin: 0 0 0.35rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+}
+
+.glossaryDefinition {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
