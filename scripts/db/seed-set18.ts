@@ -8,11 +8,12 @@
 
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/client';
-import { set18Champions, set18Traits, set18Augments, set18Wisps, patchReports, patchEntries } from '../../src/db/schema';
+import { set18Champions, set18Traits, set18Augments, set18Wisps, set18Items, patchReports, patchEntries } from '../../src/db/schema';
 import { set18Champions as champions } from '../../src/content/set18/set18-champions';
 import { set18Traits as traits } from '../../src/content/set18/set18-traits';
 import { set18Augments as augments } from '../../src/content/set18/set18-augments';
 import { set18Wisps as wisps } from '../../src/content/set18/set18-wisps';
+import { set18Items as items } from '../../src/content/set18/set18-items';
 import { set18EntityByKindAndName } from '../../src/content/set18/set18-entity-index';
 import { patchReports as reports } from '../../src/content/patch-notes';
 
@@ -149,6 +150,30 @@ async function seedWisps() {
   console.log(`✓ set18_wisps: ${rows.length} dòng`);
 }
 
+async function seedItems() {
+  const rows = items.map((it) => ({
+    id: `item:${it.apiName.toLowerCase()}`,
+    apiName: it.apiName,
+    name: it.name,
+    nameVi: it.nameVi,
+    category: it.category,
+    description: it.description,
+    descriptionVi: it.descriptionVi,
+    icon: it.icon,
+    statLine: it.statLine ?? null,
+    compositionApi: it.compositionApi,
+    unique: it.unique,
+    statBadges: it.statBadges ?? null,
+  }));
+  for (const row of rows) {
+    await db
+      .insert(set18Items)
+      .values(row)
+      .onConflictDoUpdate({ target: set18Items.id, set: { ...row, updatedAt: sql`now()` } });
+  }
+  console.log(`✓ set18_items: ${rows.length} dòng`);
+}
+
 async function seedPatchNotes() {
   // reports[0] trong patch-notes.ts là bản mới nhất — giữ nguyên ý nghĩa đó bằng
   // reportOrder tường minh (0 = mới nhất) thay vì suy ra từ thời điểm insert.
@@ -177,6 +202,7 @@ async function main() {
   await seedTraits();
   await seedAugments();
   await seedWisps();
+  await seedItems();
   await seedPatchNotes();
   console.log('Seed hoàn tất.');
 }

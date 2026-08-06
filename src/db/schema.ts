@@ -91,6 +91,27 @@ export const set18Wisps = pgTable('set18_wisps', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export const set18Items = pgTable('set18_items', {
+  id: text('id').primaryKey(), // vd "item:da_deathblade"
+  apiName: text('api_name').notNull(),
+  name: text('name').notNull(),
+  nameVi: text('name_vi').notNull(),
+  /** Quyết định luôn kiểu viền hiển thị: Radiant = viền vàng, Artifact = viền
+   * Ornn (cam/đỏ). Component/Normal/Emblem/Other/Armory dùng viền xám mặc định. */
+  category: text('category').notNull(), // 'Component'|'Normal'|'Emblem'|'Artifact'|'Radiant'|'Other'|'Armory'
+  description: text('description').notNull(),
+  descriptionVi: text('description_vi').notNull(),
+  icon: text('icon').notNull(),
+  statLine: text('stat_line'), // chuỗi số liệu thô tiếng Anh từ MetaTFT, chưa soát — fallback khi chưa có statBadges
+  compositionApi: jsonb('composition_api').$type<string[]>().notNull(), // apiName của 2 nguyên liệu ghép ra item này, [] nếu không ghép
+  unique: boolean('unique').notNull(),
+  /** Chỉ set cho item đã soát tay khớp giữa statLine và mô tả thật trong game —
+   * KHÔNG suy đoán hàng loạt từ statLine (đã phát hiện lệch, vd Titan's Resolve
+   * có giá trị HP hard-code không nằm trong statLine tự động trích xuất). */
+  statBadges: jsonb('stat_badges').$type<{ stat: string; value: string }[]>(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export const patchReports = pgTable('patch_reports', {
   id: text('id').primaryKey(), // vd "patch-17-8"
   /** Thứ tự hiển thị — SỐ CÀNG NHỎ CÀNG MỚI (0 = patchReports[0] = bản mới nhất).
