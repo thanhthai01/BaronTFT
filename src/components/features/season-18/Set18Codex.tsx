@@ -477,7 +477,43 @@ function ChampionCostGrid({ champions }: { champions: Set18Champion[] }) {
   );
 }
 
-function ChampionDetails({ costFilter, grouped }: { costFilter: number | 'all'; grouped: ChampionCostGroup[] }) {
+/** Trước đây dựng cả 65 thẻ lật cùng lúc (không lô như Tinh Linh/Nâng cấp) — mỗi
+ * thẻ lật nặng hơn nhiều so với thẻ Tinh Linh/Nâng cấp (ảnh lớn, 2 mặt, đo chiều
+ * cao bằng JS), 4 cột × ~17 hàng đẩy trang dài bất thường (~20 nghìn px) ngay cả
+ * khi người dùng chỉ cần lướt vài tướng đầu. Áp cùng kiểu phân lô 'Hiển thị thêm'
+ * như WispSection/AugmentDetails, tính theo TỔNG số tướng đang lọc (không phải
+ * theo từng nhóm giá) để nút "hiển thị thêm" có ý nghĩa nhất quán dù đang xem 1
+ * hay cả 5 mức giá. */
+function ChampionDetails({
+  costFilter,
+  grouped,
+  focusSlug,
+}: {
+  costFilter: number | 'all';
+  grouped: ChampionCostGroup[];
+  focusSlug: string | null;
+}) {
+  const batchSize = 16;
+  const [visibleCount, setVisibleCount] = useState(batchSize);
+  const visible = grouped.filter((group) => costFilter === 'all' || costFilter === group.cost);
+  const total = visible.reduce((sum, group) => sum + group.champions.length, 0);
+  const visibleNames = new Set(
+    visible.flatMap((group) => group.champions).slice(0, visibleCount).map((champion) => champion.name),
+  );
+  const batchedGroups = visible
+    .map((group) => ({ ...group, champions: group.champions.filter((champion) => visibleNames.has(champion.name)) }))
+    .filter((group) => group.champions.length > 0);
+
+  useEffect(() => setVisibleCount(batchSize), [costFilter]);
+
+  // Tới từ search (?focus=slug): xem giải thích ở WispSection — cùng lý do, hiện
+  // thêm đủ để tướng cần cuộn tới lọt vào DOM trước khi hiệu ứng cuộn chạy.
+  useEffect(() => {
+    if (!focusSlug) return;
+    const targetIndex = visible.flatMap((group) => group.champions).findIndex((champion) => set18ChampionSlugByRef.get(champion) === focusSlug);
+    if (targetIndex >= 0) setVisibleCount((count) => Math.max(count, targetIndex + 1));
+  }, [focusSlug, visible]);
+
   return (
     <section className={styles.section} id="chi-tiet-tuong">
       <header className={styles.sectionHead}>
@@ -485,18 +521,28 @@ function ChampionDetails({ costFilter, grouped }: { costFilter: number | 'all'; 
         <h2>Chi tiết tướng</h2>
       </header>
 
-      {grouped
-        .filter((group) => costFilter === 'all' || costFilter === group.cost)
-        .map((group) => (
-          <div className={styles.costGroup} key={group.cost}>
-            <h3 className={styles.groupHeading} style={{ borderColor: group.color }}>
-              <i className={styles.legendDot} style={{ background: group.color }} />
-              {group.label}
-              <span>{group.champions.length} tướng</span>
-            </h3>
-            <ChampionCostGrid champions={group.champions} />
-          </div>
-        ))}
+      {batchedGroups.map((group) => (
+        <div className={styles.costGroup} key={group.cost}>
+          <h3 className={styles.groupHeading} style={{ borderColor: group.color }}>
+            <i className={styles.legendDot} style={{ background: group.color }} />
+            {group.label}
+            <span>{group.champions.length} tướng</span>
+          </h3>
+          <ChampionCostGrid champions={group.champions} />
+        </div>
+      ))}
+
+      <div className={styles.batchControls}>
+        <span aria-live="polite">Đang hiển thị {Math.min(visibleCount, total)} / {total} tướng</span>
+        {visibleCount < total ? (
+          <>
+            <button onClick={() => setVisibleCount((count) => Math.min(total, count + batchSize))} type="button">
+              Hiển thị thêm {Math.min(batchSize, total - visibleCount)}
+            </button>
+            <button onClick={() => setVisibleCount(total)} type="button">Hiển thị tất cả</button>
+          </>
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -1224,12 +1270,19 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
           html.style.scrollBehavior = previousScrollBehavior;
         },
       });
+      // Vòng sáng phải sống ít nhất bằng thời gian cuộn thật (duration) rồi mới
+      // đọc được — trước đây khoá cứng 2.2s trong CSS trong khi cuộn quãng xa (thẻ
+      // nằm sâu trong lô 261 nâng cấp) tới 1.8s, cộng lúc chờ layout ổn định, làm
+      // vòng sáng mờ gần hết trước khi mắt kịp thấy thẻ dừng lại. Ghi thời lượng
+      // thật vào biến CSS thay vì hằng số, cùng công thức +1.35s giữ thêm sau khi
+      // cuộn xong như setTimeout dưới đây.
+      const pulseSeconds = duration + 1.35;
+      target.style.setProperty('--focus-pulse-duration', `${pulseSeconds}s`);
       target.classList.add(styles.focusPulse);
-      // Giữ vòng sáng thêm ~1.35s SAU KHI tween cuộn xong (không phải sau khi
-      // BẮT ĐẦU) — quãng dài giờ có duration tới 1.8s, nếu vẫn trừ cứng theo mốc
-      // cũ (2.2s tính từ lúc bắt đầu) thì vòng sáng tắt gần như ngay khi vừa
-      // dừng cuộn, không kịp cho người dùng nhìn thấy.
-      setTimeout(() => target.classList.remove(styles.focusPulse), duration * 1000 + 1350);
+      setTimeout(() => {
+        target.classList.remove(styles.focusPulse);
+        target.style.removeProperty('--focus-pulse-duration');
+      }, pulseSeconds * 1000);
     }
 
     const frame = requestAnimationFrame(tryScroll);
@@ -1319,7 +1372,9 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
         ) : null}
 
         {isSectionReady && activeSection === 'ma-tran-toc-he' ? <SynergyMatrix onHide={hideTooltip} onShow={showTooltip} /> : null}
-        {isSectionReady && activeSection === 'chi-tiet-tuong' ? <ChampionDetails costFilter={costFilter} grouped={championGroups} /> : null}
+        {isSectionReady && activeSection === 'chi-tiet-tuong' ? (
+          <ChampionDetails costFilter={costFilter} focusSlug={focusSlug} grouped={championGroups} />
+        ) : null}
         {isSectionReady && activeSection === 'chi-tiet-toc-he' ? (
           <TraitDetails onHide={hideTooltip} onShow={showTooltip} typeFilter={traitTypeFilter} />
         ) : null}

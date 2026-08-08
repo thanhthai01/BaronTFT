@@ -612,18 +612,42 @@
 }
 
 /* Vòng sáng tạm khi tới từ search (?focus=slug) — báo hiệu "đây là thẻ bạn vừa
-   tìm", tự tắt sau 2.2s (khớp setTimeout trong Set18Codex.tsx). Áp cho cả 4 loại
-   card (tướng/tộc/tinh linh/nâng cấp) nên đặt ở top-level, không gắn riêng .flip. */
+   tìm". Thay vì viền màu (dễ chìm vào các mảng clay/accent có sẵn trên thẻ), tối
+   hết phần xung quanh bằng box-shadow lan ra toàn viewport (kỹ thuật spotlight:
+   shadow không inset, bán kính cực lớn, bo theo đúng border-radius của thẻ) —
+   chỉ mỗi thẻ đích còn sáng rõ. z-index đẩy thẻ lên trên phần còn lại của lưới.
+   Thời lượng đọc từ --focus-pulse-duration (Set18Codex.tsx set inline theo đúng
+   thời gian cuộn thật, xem waitForStableLayout/startScroll) — cứng 2.2s trước
+   đây hết trước khi cuộn xong với thẻ nằm sâu trong lô 48/261, làm vòng sáng biến
+   mất ngay khi vừa cuộn tới. position: relative để z-index có tác dụng, áp luôn
+   cho cả 4 loại card nên đặt ở top-level, không gắn riêng .flip. */
 .focusPulse {
-  animation: focusPulse 2.2s ease-out;
+  position: relative;
+  z-index: 5;
+  border-radius: var(--r-lg);
+  animation: focusPulse var(--focus-pulse-duration, 2.2s) var(--ease-bounce) both;
 }
 
+/* Mọi mốc phải cùng SỐ LƯỢNG lớp box-shadow (2 lớp: màn tối + viền clay) — khác
+   số lớp giữa các mốc thì trình duyệt không nội suy được (box-shadow chỉ animate
+   mượt khi list độ dài bằng nhau ở mọi keyframe), sẽ đứng hình ở giá trị trong
+   suốt thay vì mờ dần. Mốc 0%/100% giữ đủ 2 lớp, chỉ alpha = 0. */
 @keyframes focusPulse {
-  0%, 40% {
-    box-shadow: 0 0 0 4px var(--clay, #d97757);
+  0% {
+    box-shadow: 0 0 0 9999px rgba(20, 20, 19, 0), 0 0 0 3px rgba(217, 119, 87, 0);
+    transform: scale(0.97);
+  }
+  12% {
+    box-shadow: 0 0 0 9999px rgba(20, 20, 19, 0.55), 0 0 0 3px rgba(217, 119, 87, 1);
+    transform: scale(1.015);
+  }
+  75% {
+    box-shadow: 0 0 0 9999px rgba(20, 20, 19, 0.55), 0 0 0 3px rgba(217, 119, 87, 1);
+    transform: scale(1);
   }
   100% {
-    box-shadow: 0 0 0 4px transparent;
+    box-shadow: 0 0 0 9999px rgba(20, 20, 19, 0), 0 0 0 3px rgba(217, 119, 87, 0);
+    transform: scale(1);
   }
 }
 
