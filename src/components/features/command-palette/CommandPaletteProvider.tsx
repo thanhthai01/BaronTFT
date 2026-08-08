@@ -20,12 +20,20 @@ export function useCommandPalette() {
 
 export function CommandPaletteProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  // Vẫn giữ dynamic import chỉ tải khi mở lần đầu (bundle cmdk + search index
+  // không cần trong tải trang ban đầu), nhưng KHÔNG gỡ khỏi cây React mỗi lần
+  // đóng như trước (`open ? <Dialog/> : null`) — Radix Dialog (cmdk dựng trên đó)
+  // tự chạy animation đóng qua Presence dựa vào CSS animation trên
+  // [data-state="closed"], nhưng chỉ hoạt động nếu component còn đứng trong DOM
+  // để đợi animationend; gỡ ngay theo `open` cắt animation đóng giữa chừng.
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const groups = useMemo(() => Array.from(new Set(searchActions.map((action) => action.group))), []);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
+        setHasOpenedOnce(true);
         setOpen((current) => !current);
       }
     }
@@ -35,9 +43,16 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <CommandPaletteContext.Provider value={{ openPalette: () => setOpen(true) }}>
+    <CommandPaletteContext.Provider
+      value={{
+        openPalette: () => {
+          setHasOpenedOnce(true);
+          setOpen(true);
+        },
+      }}
+    >
       {children}
-      {open ? <CommandPaletteDialog groups={groups} open={open} onOpenChange={setOpen} /> : null}
+      {hasOpenedOnce ? <CommandPaletteDialog groups={groups} open={open} onOpenChange={setOpen} /> : null}
     </CommandPaletteContext.Provider>
   );
 }
