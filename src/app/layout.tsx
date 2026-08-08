@@ -7,6 +7,7 @@ import { CommandPaletteProvider } from '@/components/features/command-palette/Co
 import { MobileNavigation } from '@/components/layout/MobileNavigation';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { SITE_URL, IS_PRODUCTION_DEPLOY } from '@/lib/site';
 import '@/styles/globals.css';
 import '@/styles/prose.css';
 
@@ -14,21 +15,54 @@ const epilogue = Epilogue({ subsets: ['latin', 'latin-ext'], variable: '--font-e
 const libreFranklin = Libre_Franklin({ subsets: ['latin', 'latin-ext'], variable: '--font-libre-franklin', display: 'swap' });
 const jetBrainsMono = JetBrains_Mono({ subsets: ['latin', 'latin-ext'], variable: '--font-jetbrains-mono', display: 'swap' });
 
+const SITE_TITLE = 'Baron TFT — Evergreen Rank Manual';
+const SITE_DESCRIPTION = 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Baron TFT — Evergreen Rank Manual',
+    default: SITE_TITLE,
     template: '%s · Baron TFT',
   },
-  description: 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.',
+  description: SITE_DESCRIPTION,
   icons: {
     icon: '/favicon.png',
   },
+  alternates: { canonical: '/' },
+  robots: IS_PRODUCTION_DEPLOY ? { index: true, follow: true } : { index: false, follow: false },
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    siteName: 'Baron TFT',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+};
+
+// KHÔNG kèm `potentialAction: SearchAction` — schema đó đòi hỏi 1 URL mẫu
+// (vd /search?q={query}) thực sự trả kết quả. Site chỉ có command palette phía
+// client (Ctrl+K), không có trang kết quả tìm kiếm server-rendered nào để trỏ
+// tới; khai báo SearchAction giả sẽ là structured data sai, Search Console sẽ
+// gắn cờ lỗi.
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Baron TFT',
+  url: SITE_URL,
+  inLanguage: 'vi-VN',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="vi" className={`${epilogue.variable} ${libreFranklin.variable} ${jetBrainsMono.variable}`}>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} type="application/ld+json" />
         <CommandPaletteProvider>
           <a className="skip-link" href="#main-content">Bỏ qua điều hướng</a>
           <SiteHeader />

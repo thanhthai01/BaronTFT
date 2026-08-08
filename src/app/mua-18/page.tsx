@@ -1,18 +1,8 @@
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { Set18Codex } from '@/components/features/season-18/Set18Codex';
-import styles from './page.module.css';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'Mùa 18',
-};
-
+// Trang không-section redirect sang section đầu tiên (ma-tran-toc-he) thay vì tự
+// render Set18Codex ở đây: tránh /mua-18 và /mua-18/ma-tran-toc-he cùng serve một
+// nội dung — cùng lý do với redirect ở /kien-thuc-nen-tang/page.tsx.
 export default function Season18Page() {
-  return (
-    <section aria-label="Nội dung Mùa 18" className={styles.readerSection}>
-      <Suspense fallback={null}>
-        <Set18Codex />
-      </Suspense>
-    </section>
-  );
+  redirect('/mua-18/ma-tran-toc-he');
 }

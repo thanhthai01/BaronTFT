@@ -13,7 +13,7 @@ export const searchActions: SearchAction[] = [
     group: 'Mùa 18',
     label: 'Xem ma trận tộc hệ Mùa 18',
     description: 'Tra cứu nhanh tướng theo từng cặp tộc × hệ.',
-    href: '/mua-18?section=ma-tran-toc-he',
+    href: '/mua-18/ma-tran-toc-he',
     keywords: ['mùa 18', 'set 18', 'ma trận', 'tộc hệ', 'matrix'],
   },
   {
@@ -21,7 +21,7 @@ export const searchActions: SearchAction[] = [
     group: 'Mùa 18',
     label: 'Xem chi tiết tướng Mùa 18',
     description: '65 tướng theo giá vàng, kỹ năng, tộc hệ và số liệu.',
-    href: '/mua-18?section=chi-tiet-tuong',
+    href: '/mua-18/chi-tiet-tuong',
     keywords: ['mùa 18', 'set 18', 'tướng', 'champion', 'skill', 'kỹ năng'],
   },
   {
@@ -29,7 +29,7 @@ export const searchActions: SearchAction[] = [
     group: 'Mùa 18',
     label: 'Xem chi tiết tộc hệ Mùa 18',
     description: '36 trait cùng mốc kích hoạt và toàn bộ tướng thuộc trait.',
-    href: '/mua-18?section=chi-tiet-toc-he',
+    href: '/mua-18/chi-tiet-toc-he',
     keywords: ['mùa 18', 'set 18', 'tộc hệ', 'trait', 'mốc kích hoạt'],
   },
   {
@@ -37,7 +37,7 @@ export const searchActions: SearchAction[] = [
     group: 'Mùa 18',
     label: 'Xem Tinh Linh Mùa 18',
     description: '176 Tinh Linh (wisp), nhóm theo loại hiệu ứng.',
-    href: '/mua-18?section=tinh-linh',
+    href: '/mua-18/tinh-linh',
     keywords: ['mùa 18', 'set 18', 'tinh linh', 'wisp'],
   },
   {
@@ -45,7 +45,7 @@ export const searchActions: SearchAction[] = [
     group: 'Mùa 18',
     label: 'Xem nâng cấp Mùa 18',
     description: '261 nâng cấp (augment), lọc theo độ hiếm và phân loại.',
-    href: '/mua-18?section=nang-cap',
+    href: '/mua-18/nang-cap',
     keywords: ['mùa 18', 'set 18', 'nâng cấp', 'augment'],
   },
   {

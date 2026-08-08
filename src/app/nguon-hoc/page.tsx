@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Nguồn học',
   description:
     'Các trang TFT lớn trùng chức năng gần hết, nên đây không phải danh sách bookmark — mỗi nguồn chỉ ghi đúng việc nó làm tốt hơn phần còn lại, xếp theo câu hỏi bạn đang cần trả lời.',
+  alternates: { canonical: '/nguon-hoc' },
 };
 
 export default function ResourcesPage() {

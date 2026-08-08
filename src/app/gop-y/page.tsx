@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { FeedbackForm } from '@/components/features/feedback/FeedbackForm';
 
-export const metadata: Metadata = { title: 'Góp ý' };
+export const metadata: Metadata = {
+  title: 'Góp ý',
+  description: 'Báo lỗi dữ liệu Mùa 18 hoặc đề xuất tính năng cho Baron TFT qua email.',
+  alternates: { canonical: '/gop-y' },
+};
 
 export default function FeedbackPage() {
   return (

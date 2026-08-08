@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import { DecisionMindmap } from '@/components/features/decision-mindmap/DecisionMindmap';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'Cây quyết định' };
+export const metadata: Metadata = {
+  title: 'Cây quyết định',
+  description: 'Cây quyết định TFT dạng mindmap: khi nào lên cấp, roll, pivot, giữ đồ hay all-in — mỗi nhánh kết thúc bằng một hành động cụ thể.',
+  alternates: { canonical: '/cay-quyet-dinh' },
+};
 
 export default function DecisionTreesPage() {
   return (

@@ -4,6 +4,8 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Lộ trình học',
+  description: 'Lộ trình học TFT 9 tuần: bắt đầu từ chẩn đoán triệu chứng trong trận, mỗi tuần luyện đúng một năng lực chính theo thứ tự.',
+  alternates: { canonical: '/lo-trinh' },
 };
 
 export default function RoadmapPage() {
