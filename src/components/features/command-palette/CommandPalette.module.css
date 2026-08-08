@@ -25,6 +25,68 @@
   box-shadow: 10px 10px 0 var(--accent-primary);
 }
 
+/* Radix Dialog (cmdk dựng trên đó) gắn data-state="open"/"closed" lên chính
+   Overlay/Content khi mở/đóng, và tự trì hoãn unmount tới khi animation này kết
+   thúc (Presence nội bộ) — miễn component cha còn đứng trong cây React lúc đóng
+   (xem ghi chú ở CommandPaletteProvider). Mở dùng --ease-bounce cho cảm giác nảy
+   nhẹ; đóng dùng ease-in tuyến tính, nhanh hơn — đóng bằng easing nảy sẽ như bị
+   khựng lại giữa chừng, không hợp với thao tác "thoát nhanh". */
+.overlay[data-state='open'] {
+  animation: overlayIn var(--dur-slow) var(--ease-out);
+}
+
+.overlay[data-state='closed'] {
+  animation: overlayOut var(--dur-base) var(--ease-in-out);
+}
+
+.dialog[data-state='open'] {
+  animation: dialogIn 420ms var(--ease-bounce);
+}
+
+.dialog[data-state='closed'] {
+  animation: dialogOut var(--dur-base) var(--ease-in-out);
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -0.75rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes dialogOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -0.5rem) scale(0.98);
+  }
+}
+
 .input {
   width: 100%;
   border: 0;
