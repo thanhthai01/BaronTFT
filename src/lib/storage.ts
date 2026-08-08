@@ -3,6 +3,7 @@ export const storageKeys = {
   checklist: 'baron-tft:v1:checklist',
   reviewDraft: 'baron-tft:v1:review-draft',
   curriculumProgress: 'baron-tft:v1:curriculum-progress',
+  navBubble: 'baron-tft:v1:nav-bubble',
 } as const;
 
 export function readJson<T>(key: string, fallback: T): T {
