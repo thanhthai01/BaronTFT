@@ -48,10 +48,8 @@ test('command palette opens from the visible search control', async ({ page }) =
   if (isDesktop) {
     await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
   } else {
-    await page
-      .getByRole('navigation', { name: 'Điều hướng nhanh trên điện thoại' })
-      .getByRole('button', { name: 'Tìm' })
-      .click();
+    await page.getByRole('button', { name: 'Mở điều hướng' }).click();
+    await page.getByRole('dialog', { name: 'Điều hướng nhanh' }).getByRole('button', { name: 'Tìm' }).click();
   }
 
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
@@ -62,22 +60,35 @@ test('command palette opens from the visible search control', async ({ page }) =
 test('visible navigation marks the current route', async ({ page }) => {
   await page.goto('/checklist');
   const isDesktop = (page.viewportSize()?.width ?? 0) > 980;
-  const nav = page.getByRole('navigation', { name: isDesktop ? 'Điều hướng chính' : 'Điều hướng nhanh trên điện thoại' });
-  await expect(nav.getByRole('link', { name: isDesktop ? 'Checklist' : /^Checklist$/ })).toHaveAttribute('aria-current', 'page');
 
-  // Trước đây chỗ này bám vào link "Review" — link đó đã bị bỏ khỏi cả hai thanh
-  // điều hướng nên test hỏng ở cả 3 project. Thay bằng chính bất biến cần kiểm:
-  // đúng MỘT mục được đánh dấu là trang hiện tại. Không bám nhãn nào nên đổi,
-  // thêm hay bớt mục điều hướng sau này cũng không làm hỏng test.
-  await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
+  if (isDesktop) {
+    const nav = page.getByRole('navigation', { name: 'Điều hướng chính' });
+    await expect(nav.getByRole('link', { name: 'Checklist' })).toHaveAttribute('aria-current', 'page');
 
-  if (!isDesktop) {
-    await expect(nav.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
+    // Trước đây chỗ này bám vào link "Review" — link đó đã bị bỏ khỏi thanh điều
+    // hướng nên test hỏng. Thay bằng chính bất biến cần kiểm: đúng MỘT mục được
+    // đánh dấu là trang hiện tại. Không bám nhãn nào nên đổi, thêm hay bớt mục
+    // điều hướng sau này cũng không làm hỏng test.
+    await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
+
+    await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
+    const lessonNav = page.getByRole('navigation', { name: 'Điều hướng chính' });
+    await expect(lessonNav.getByRole('link', { name: 'Kiến thức nền tảng' })).toHaveAttribute('aria-current', 'page');
+    return;
   }
 
+  // Mobile: điều hướng là NavBubble — chỉ hiện mục sau khi mở panel.
+  await page.getByRole('button', { name: 'Mở điều hướng' }).click();
+  const panel = page.getByRole('dialog', { name: 'Điều hướng nhanh' });
+  await expect(panel.getByRole('link', { name: 'Checklist' })).toHaveAttribute('aria-current', 'page');
+  await expect(panel.locator('[aria-current="page"]')).toHaveCount(1);
+  await expect(panel.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
+  await page.keyboard.press('Escape');
+
   await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
-  const lessonNav = page.getByRole('navigation', { name: isDesktop ? 'Điều hướng chính' : 'Điều hướng nhanh trên điện thoại' });
-  await expect(lessonNav.getByRole('link', { name: isDesktop ? 'Kiến thức nền tảng' : 'Học' })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Mở điều hướng' }).click();
+  const lessonPanel = page.getByRole('dialog', { name: 'Điều hướng nhanh' });
+  await expect(lessonPanel.getByRole('link', { name: 'Kiến thức' })).toHaveAttribute('aria-current', 'page');
 });
 
 test('compact desktop header keeps search visible', async ({ page }, testInfo) => {
