@@ -222,3 +222,9 @@ export type Set18EntityIndexEntry = {
   cost?: number;
   rarity?: 'Silver' | 'Gold' | 'Prismatic';
 };
+
+export type Set18SlugEntry = {
+  slug: string;
+  id: string;
+  kind: Set18EntityKind;
+};

@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import { PatchBoard } from '@/components/features/patch/PatchBoard';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'Patch' };
+export const metadata: Metadata = {
+  title: 'Patch',
+  description: 'Thay đổi bản vá TFT mới nhất: buff, nerf, rework tướng/tộc hệ/nâng cấp và ảnh hưởng tới meta Mùa 18.',
+  alternates: { canonical: '/patch' },
+};
 
 /** Không dùng band tiêu đề lớn như các trang khác: mục tiêu của trang này là
  * thấy được thay đổi của bản vá ngay trong khung hình đầu tiên, nên H1 nằm gọn

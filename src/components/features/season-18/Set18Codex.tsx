@@ -1,23 +1,30 @@
 'use client';
 
+import gsap from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { set18Costs, set18Sections, set18TraitTypes, type Set18SectionId } from '@/content/set18/set18-meta';
 import type {
   Set18Augment,
   Set18Champion,
-  Set18ChampionForm,
-  Set18ChampionStats,
   Set18CostMeta,
   Set18Trait,
-  Set18TraitBreakpointBullet,
   Set18TraitType,
   Set18Wisp,
 } from '@/content/set18/set18-types';
 import type { Set18EffectCategory, Set18EffectSource } from '@/content/set18-effects';
+import { buildSlugRefMap } from '@/content/set18/set18-slug-index';
 import styles from './Set18Codex.module.css';
+
+gsap.registerPlugin(ScrollToPlugin);
+import { AugmentCard } from './cards/AugmentCard';
+import { ChampionCard, MIN_CARD_HEIGHT } from './cards/ChampionCard';
+import { CostPill, TraitIcon, traitTitle } from './cards/shared';
+import { TraitCard } from './cards/TraitCard';
+import { WispCard } from './cards/WispCard';
 
 let set18Traits: Set18Trait[] = [];
 let set18Champions: Set18Champion[] = [];
@@ -32,44 +39,31 @@ let set18ChampionByName = new Map<string, Set18Champion>();
  * trỏ tới cái nào trong số đó. */
 let set18WispByNameVi = new Map<string, Set18Wisp>();
 
+/** slug theo tham chiếu object — chỉ nạp khi section đó thật sự cần (xem
+ * loadSectionData), dùng để gắn id DOM cho search (?focus=slug) cuộn tới đúng
+ * thẻ. Rỗng nếu chưa nạp — card khi đó chỉ đơn giản không có id, không lỗi. */
+let set18ChampionSlugByRef = new Map<Set18Champion, string>();
+let set18TraitSlugByRef = new Map<Set18Trait, string>();
+let set18WispSlugByRef = new Map<Set18Wisp, string>();
+let set18AugmentSlugByRef = new Map<Set18Augment, string>();
+
 const SECTIONS = set18Sections;
 type SectionId = Set18SectionId;
+
+/** Tiền tố id DOM mỗi card tự gắn (xem ChampionCard/TraitCard/WispCard/AugmentCard
+ * trong cards/) — dùng để tìm đúng thẻ cần cuộn tới khi tới từ search ?focus=slug.
+ * Section không có ở đây (ma-tran-toc-he, hieu-ung) không phải lưới card đơn lẻ
+ * theo slug nên không hỗ trợ focus. */
+const FOCUS_ID_PREFIX: Partial<Record<SectionId, string>> = {
+  'chi-tiet-tuong': 'champion',
+  'chi-tiet-toc-he': 'trait',
+  'tinh-linh': 'wisp',
+  'nang-cap': 'augment',
+};
 
 function traitLabel(name: string) {
   const trait = set18TraitByName.get(name);
   return trait ? `${trait.vi} (${trait.name})` : name;
-}
-
-function traitTitle(trait: Set18Trait) {
-  return `${trait.vi} (${trait.name}) — ${trait.typeVi}, mốc ${trait.breaksLabel}`;
-}
-
-/**
- * Mọi icon tộc hệ đều là silhouette trắng nền trong suốt (chuẩn hoá bởi
- * Set18/normalize_trait_icons.py), nên chỉ cần một kiểu nền duy nhất — màu
- * nền lấy từ `trait.accent` trong dữ liệu, không suy đoán trong component.
- */
-function TraitIcon({ trait, size = 26 }: { trait: Set18Trait; size?: number }) {
-  return (
-    <span
-      className={styles.iconWrap}
-      style={{ background: trait.accent, width: size, height: size } as CSSProperties}
-    >
-      <Image alt="" height={Math.round(size * 0.68)} src={trait.icon} width={Math.round(size * 0.68)} />
-    </span>
-  );
-}
-
-/** Badge giá vàng dùng chung ở mọi nơi hiện giá (thẻ tướng, tooltip, thẻ nguồn hiệu
- * ứng) — icon vàng + số, nền/viền đổi màu theo `--cost-color` (đúng bậc giá của
- * tướng đó), thay cho chấm tròn/chữ "X vàng" trước đây. */
-function CostPill({ cost, color }: { cost: number; color: string }) {
-  return (
-    <span className={styles.costPill} style={{ '--cost-color': color } as CSSProperties}>
-      <i className={styles.costPillIcon} />
-      {cost}
-    </span>
-  );
 }
 
 type TooltipState = { champion: Set18Champion; x: number; y: number } | null;
@@ -282,313 +276,6 @@ function SynergyMatrix({
   );
 }
 
-function statRows(s: Set18ChampionStats) {
-  return [
-    { key: 'health', label: 'Máu', icon: styles.statIconHealth, value: s.health.join('/') },
-    { key: 'mana', label: 'Mana', icon: styles.statIconMana, value: s.mana.join('/') },
-    { key: 'attackDamage', label: 'Sát thương tấn công', icon: styles.statIconAd, value: s.attackDamage.join('/') },
-    { key: 'abilityPower', label: 'Sát thương kỹ năng', icon: styles.statIconAp, value: String(s.abilityPower) },
-    { key: 'armor', label: 'Giáp', icon: styles.statIconArmor, value: String(s.armor) },
-    { key: 'magicResist', label: 'Kháng phép', icon: styles.statIconMr, value: String(s.magicResist) },
-    { key: 'attackSpeed', label: 'Tốc độ tấn công', icon: styles.statIconAs, value: String(s.attackSpeed) },
-    { key: 'critChance', label: 'Tỷ lệ chí mạng', icon: styles.statIconCritChance, value: s.critChance_pct },
-    { key: 'critMultiplier', label: 'Sát thương chí mạng', icon: styles.statIconCritDmg, value: s.critMultiplier_pct },
-    { key: 'range', label: 'Tầm bắn', icon: styles.statIconRange, value: String(s.range) },
-  ];
-}
-
-function resolveTraits(names: string[]): Set18Trait[] {
-  return names.map((name) => set18TraitByName.get(name)).filter((trait): trait is Set18Trait => Boolean(trait));
-}
-
-/** Tướng không có nhiều dạng chỉ dùng field cấp tướng làm 1 "dạng" duy nhất, để
- * ChampionCard luôn render qua chung một đường (form-based), không tách 2 nhánh code. */
-function escapeAbilityText(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .split('\n')
-    .join('<br>');
-}
-
-function championForms(champion: Set18Champion): Set18ChampionForm[] {
-  if (champion.forms?.length) return champion.forms;
-  return [
-    {
-      label: '',
-      image: champion.image,
-      bigImage: champion.image,
-      traits: champion.traits,
-      abilityIcon: champion.abilityIcon,
-      abilityName: champion.abilityName,
-      abilityNameVi: champion.abilityNameVi,
-      abilityHtmlVi: escapeAbilityText(champion.abilityVi),
-      mana: champion.mana,
-      calcs: [],
-      stats: champion.stats,
-    },
-  ];
-}
-
-/** Sàn chiều cao thẻ tướng — dưới mức này thẻ trông hụt so với ảnh và hàng chỉ số. */
-const MIN_CARD_HEIGHT = 400;
-
-/** Cả mặt thẻ là vùng bấm để lật (thay cho nút "Xem số liệu" ở góc). Vì dùng
- * div role="button" nên phải tự nối phím: trình duyệt chỉ tự xử lý Enter/Space
- * cho <button> thật. preventDefault ở Space để trang không cuộn xuống. */
-function flipKeyDown(action: () => void) {
-  return (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    action();
-  };
-}
-
-/** Phần nội dung mặt trước (định danh + kỹ năng) — tách riêng để thước đo ẩn
- * dựng lại được y hệt cho MỌI dạng, phục vụ việc khoá chiều cao thẻ. */
-function CardFrontContent({
-  champion,
-  form,
-  traitRow,
-  frontIdRef,
-  bodyRef,
-}: {
-  champion: Set18Champion;
-  form: Set18ChampionForm;
-  traitRow: React.ReactNode;
-  frontIdRef?: React.Ref<HTMLDivElement>;
-  bodyRef?: React.Ref<HTMLDivElement>;
-}) {
-  return (
-    <>
-      <div className={styles.frontId} ref={frontIdRef}>
-        <div className={styles.miniHead}>
-          <Image alt={champion.name} className={styles.miniLogo} height={56} src={form.image} width={56} />
-          <div className={styles.nameCol}>
-            <strong className={styles.uname}>{champion.name}</strong>
-            <span className={styles.urole}>{champion.role}</span>
-          </div>
-          <CostPill color={champion.costColor} cost={champion.cost} />
-        </div>
-        {traitRow}
-      </div>
-      <div className={styles.body} ref={bodyRef}>
-        <div className={styles.abhead}>
-          {form.abilityIcon ? (
-            <Image alt="" className={styles.abilityIcon} height={28} src={form.abilityIcon} width={28} />
-          ) : null}
-          <strong className={styles.abname}>{form.abilityNameVi || form.abilityName}</strong>
-          <span className={styles.manaTag}>
-            <span className={`${styles.statIcon} ${styles.statIconMana}`} />
-            {form.mana}
-          </span>
-        </div>
-        <p className={styles.abdesc} dangerouslySetInnerHTML={{ __html: form.abilityHtmlVi }} />
-        {form.calcs.length ? (
-          <div className={styles.calcs}>
-            {form.calcs.map((calc) => (
-              <div key={calc.id}>
-                <div className={styles.calc}>
-                  <span className={calc.style}>{calc.label}:</span>
-                  <span>{calc.total}</span>
-                </div>
-                <div className={styles.calcTerms} dangerouslySetInnerHTML={{ __html: calc.terms }} />
-              </div>
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </>
-  );
-}
-
-/** Thẻ lật — mặt trước logo mini + kỹ năng đầy đủ (icon, mana, mô tả màu theo game,
- * công thức sát thương), mặt sau ảnh lớn + số liệu. Tướng nhiều dạng (Lux, Nidalee,
- * 4 tướng Thích Ứng AD/AP) có thêm rail chọn dạng nằm cạnh thẻ, không xoay theo khi lật.
- * Chuyển từ Set18/reports/set18_champion_cards.html (đã duyệt qua nhiều vòng preview). */
-function ChampionCard({ champion }: { champion: Set18Champion }) {
-  const forms = useMemo(() => championForms(champion), [champion]);
-  const [activeForm, setActiveForm] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const faceId = useId();
-  const frontFaceId = `${faceId}-front`;
-  const backFaceId = `${faceId}-back`;
-  const flipRef = useRef<HTMLElement>(null);
-  const frontIdRef = useRef<HTMLDivElement>(null);
-  const bodyRef = useRef<HTMLDivElement>(null);
-  const backRef = useRef<HTMLDivElement>(null);
-  const sizerRef = useRef<HTMLDivElement>(null);
-
-  const form = forms[Math.min(activeForm, forms.length - 1)];
-
-  // Chiều cao phải tính theo dạng DÀI NHẤT, không theo dạng đang chọn. Trước đây
-  // effect phụ thuộc vào `form` nên đổi dạng Lux là thẻ co lại — và vì lưới
-  // (ChampionCostGrid) cào bằng chiều cao mọi thẻ theo thẻ cao nhất, Lux co thì
-  // kéo tụt luôn cả lưới. Thước đo ẩn dựng sẵn mọi dạng để lấy max một lần.
-  //
-  // Chỉ CÔNG BỐ chiều cao nội dung qua data-natural-height, không tự gán style:
-  // việc chọn chiều cao chung là của lưới. Đo từ scrollHeight của phần nội dung
-  // nên không phụ thuộc chiều cao lưới đang áp — nhờ vậy con số này luôn là nhu
-  // cầu thật, giảm được chứ không chỉ tăng.
-  useLayoutEffect(() => {
-    const frontH = (frontIdRef.current?.offsetHeight ?? 0) + (bodyRef.current?.scrollHeight ?? 0);
-    const backH = backRef.current
-      ? Array.from(backRef.current.children).reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0)
-      : 0;
-    const sizerH = sizerRef.current
-      ? Array.from(sizerRef.current.children).reduce(
-          (max, child) => Math.max(max, (child as HTMLElement).offsetHeight),
-          0,
-        )
-      : 0;
-    if (flipRef.current) {
-      flipRef.current.dataset.naturalHeight = String(Math.max(MIN_CARD_HEIGHT, frontH, backH, sizerH));
-    }
-  });
-
-  const traits = resolveTraits(form.traits);
-  const traitRow = (
-    <div className={styles.traitsRow}>
-      {traits.map((trait) => (
-        <span className={styles.traitChip} key={trait.name} title={traitTitle(trait)}>
-          <TraitIcon size={22} trait={trait} />
-          {trait.vi}
-        </span>
-      ))}
-    </div>
-  );
-
-  return (
-    <article
-      className={`${styles.flip} ${flipped ? styles.flipOn : ''}`}
-      data-flip-card=""
-      ref={flipRef}
-      style={{ '--cost-color': champion.costColor } as CSSProperties}
-    >
-      {forms.length > 1 ? (
-        <div className={styles.rail}>
-          {forms.map((f, index) => {
-            const isAdAp = f.label === 'AD' || f.label === 'AP';
-            const railColor = f.label === 'AD' ? '#c97a1e' : f.label === 'AP' ? '#6e5ce0' : undefined;
-            const formTraits = isAdAp ? [] : resolveTraits(f.traits);
-            // ưu tiên tộc (Origin) làm logo dạng; nếu không có (vd Lux Mặc định chỉ
-            // mang Avatar) thì dùng trait đầu tiên đang có, thay vì hiện dấu * chung chung.
-            const railTrait = formTraits.find((trait) => trait.type === 'Origin') ?? formTraits[0];
-            return (
-              <button
-                aria-label={`Chọn dạng ${f.label} của ${champion.name}`}
-                aria-pressed={index === activeForm}
-                className={`${styles.railBtn} ${index === activeForm ? styles.railBtnOn : ''}`}
-                key={f.label}
-                onClick={() => setActiveForm(index)}
-                style={railColor ? ({ '--rail-color': railColor } as CSSProperties) : undefined}
-                title={f.label}
-                type="button"
-              >
-                {isAdAp ? (
-                  <span
-                    className={`${styles.railIcon} ${f.label === 'AD' ? styles.statIconAd : styles.statIconAp}`}
-                  />
-                ) : railTrait ? (
-                  <TraitIcon size={20} trait={railTrait} />
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-
-      {/* Thước đo ẩn: dựng mặt trước của mọi dạng để lấy chiều cao lớn nhất một
-          lần, rồi khoá thẻ ở đó. Không đọc được bởi trình đọc màn hình và không
-          nhận chuột. Chỉ dựng khi tướng có nhiều hơn 1 dạng. */}
-      {forms.length > 1 ? (
-        <div aria-hidden className={styles.sizer} ref={sizerRef}>
-          {forms.map((f) => (
-            <div className={styles.sizerFace} key={f.label}>
-              <CardFrontContent
-                champion={champion}
-                form={f}
-                traitRow={
-                  <div className={styles.traitsRow}>
-                    {resolveTraits(f.traits).map((trait) => (
-                      <span className={styles.traitChip} key={trait.name}>
-                        <TraitIcon size={22} trait={trait} />
-                        {trait.vi}
-                      </span>
-                    ))}
-                  </div>
-                }
-              />
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      <div className={styles.flipInner}>
-          <div
-            aria-controls={backFaceId}
-            aria-hidden={flipped}
-            aria-label={`Xem số liệu của ${champion.name}, dạng ${form.label}`}
-            aria-pressed={flipped}
-            className={`${styles.face} ${styles.faceClickable}`}
-            id={frontFaceId}
-            inert={flipped ? true : undefined}
-            onClick={() => setFlipped(true)}
-            onKeyDown={flipKeyDown(() => setFlipped(true))}
-            role="button"
-            tabIndex={flipped ? -1 : 0}
-          >
-            <CardFrontContent
-              bodyRef={bodyRef}
-              champion={champion}
-              form={form}
-              frontIdRef={frontIdRef}
-              traitRow={traitRow}
-            />
-          </div>
-
-          <div
-            aria-controls={frontFaceId}
-            aria-hidden={!flipped}
-            aria-label={`Xem kỹ năng của ${champion.name}, dạng ${form.label}`}
-            aria-pressed={flipped}
-            className={`${styles.face} ${styles.back} ${styles.faceClickable}`}
-            id={backFaceId}
-            inert={!flipped ? true : undefined}
-            onClick={() => setFlipped(false)}
-            onKeyDown={flipKeyDown(() => setFlipped(false))}
-            ref={backRef}
-            role="button"
-            tabIndex={flipped ? 0 : -1}
-          >
-            <div className={styles.backHead}>
-              <div className={styles.nameRow}>
-                <strong className={styles.uname}>{champion.name}</strong>
-                <span className={styles.urole}>{champion.role}</span>
-              </div>
-              <CostPill color={champion.costColor} cost={champion.cost} />
-            </div>
-            <div className={styles.thumbWrap}>
-              <Image alt={champion.name} className={styles.bigThumb} height={220} src={form.bigImage} width={340} />
-            </div>
-            {traitRow}
-            <div className={styles.stats}>
-              {statRows(form.stats).map((row) => (
-                <div className={styles.stat} key={row.key}>
-                  <div className={styles.val} title={row.label}>
-                    <span className={`${styles.statIcon} ${row.icon}`} />
-                    {row.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </article>
-  );
-}
-
 type ChampionCostGroup = Set18CostMeta & { champions: Set18Champion[] };
 
 type DragState = { startX: number; startScrollLeft: number; scrollPerPx: number };
@@ -779,7 +466,12 @@ function ChampionCostGrid({ champions }: { champions: Set18Champion[] }) {
   return (
     <div className={styles.championGrid} ref={gridRef}>
       {champions.map((champion) => (
-        <ChampionCard champion={champion} key={champion.name} />
+        <ChampionCard
+          champion={champion}
+          id={set18ChampionSlugByRef.has(champion) ? `champion-${set18ChampionSlugByRef.get(champion)}` : undefined}
+          key={champion.name}
+          traitByName={set18TraitByName}
+        />
       ))}
     </div>
   );
@@ -806,89 +498,6 @@ function ChampionDetails({ costFilter, grouped }: { costFilter: number | 'all'; 
           </div>
         ))}
     </section>
-  );
-}
-
-const BULLET_ICON_CLASS: Record<string, string> = {
-  ad: styles.statIconAd,
-  ap: styles.statIconAp,
-  armor: styles.statIconArmor,
-  as: styles.statIconAs,
-  health: styles.statIconHealth,
-  mr: styles.statIconMr,
-  mana: styles.statIconMana,
-  critchance: styles.statIconCritChance,
-  dura: styles.statIconDura,
-  manaregen: styles.statIconManaRegen,
-  omnivamp: styles.statIconOmnivamp,
-};
-
-/** Chèn chip icon+giá trị vào đúng vị trí {0}, {1}... trong câu đã dịch — vd
- * "Tinh Linh được nâng cấp, {0}" + values[0]="12%" (icon AD/AP) -> câu kèm chip màu. */
-function BulletText({ bullet }: { bullet: Set18TraitBreakpointBullet }) {
-  const parts = bullet.textVi.split(/(\{\d+\})/g);
-  return (
-    <>
-      {parts.map((part, index) => {
-        const match = /^\{(\d+)\}$/.exec(part);
-        if (!match) return <span key={index}>{part}</span>;
-        const value = bullet.values[Number(match[1])];
-        if (!value) return null;
-        return (
-          <strong className={styles.bulletValue} key={index}>
-            {value.icons.map((icon) => (
-              <span className={`${styles.statIcon} ${BULLET_ICON_CLASS[icon] ?? ''}`} key={icon} />
-            ))}
-            {value.value ?? '?'}
-          </strong>
-        );
-      })}
-    </>
-  );
-}
-
-type Set18Bounty = NonNullable<Set18Trait['bounties']>[number];
-
-const BOUNTY_POOLS = [
-  { key: 'standard' as const, label: 'Tiêu chuẩn' },
-  { key: 'hard' as const, label: 'Khó' },
-];
-
-/** Bảng nhiệm vụ của Săn Thưởng, tách theo 2 pool rút của game thay vì đổ
- * chung 11 ô như trước: người chơi chọn bounty theo việc mình gánh Draven được đến
- * đâu, nên độ khó là thứ cần đọc trước cả nội dung nhiệm vụ. Hai pool không có
- * trọng số nên xác suất trong mỗi pool bằng nhau — hiển thị luôn 1/N ở đầu nhóm.
- *
- * Bỏ tiền tố "Draven " khỏi câu nhiệm vụ khi hiển thị: cả 11 câu đều bắt đầu bằng
- * đúng chữ đó và thẻ đã mang tên trait rồi, cắt đi thì mỗi ô còn lại phần khác biệt
- * thật. Dữ liệu vẫn giữ nguyên văn bản gốc của game. */
-function BountyBoard({ bounties }: { bounties: Set18Bounty[] }) {
-  return (
-    <div className={styles.bountyBoard}>
-      {BOUNTY_POOLS.map((pool) => {
-        const items = bounties.filter((bounty) => bounty.difficulty === pool.key);
-        if (!items.length) return null;
-
-        return (
-          <div className={styles.bountyPool} data-difficulty={pool.key} key={pool.key}>
-            <div className={styles.bountyPoolHead}>
-              <span className={styles.bountyPoolName}>{pool.label}</span>
-              <span className={styles.bountyPoolMeta}>
-                {items.length} nhiệm vụ · mỗi nhiệm vụ 1/{items.length}
-              </span>
-            </div>
-            <ul className={styles.bountyList}>
-              {items.map((bounty) => (
-                <li className={styles.bountyRow} key={bounty.mission}>
-                  <span className={styles.bountyMission}>{bounty.mission.replace(/^Draven /, '')}</span>
-                  <span className={styles.bountyReward}>{bounty.reward}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
@@ -923,101 +532,17 @@ function TraitDetails({
             </h3>
             <div className={styles.traitGrid}>
               {traits.map((trait) => (
-                <article
-                  className={trait.wide ? `${styles.traitCard} ${styles.traitCardWide}` : styles.traitCard}
+                <TraitCard
+                  championNames={trait.champions}
+                  id={set18TraitSlugByRef.has(trait) ? `trait-${set18TraitSlugByRef.get(trait)}` : undefined}
                   key={trait.name}
-                  style={{ '--trait-accent': trait.accent } as CSSProperties}
-                >
-                  <header className={styles.traitHead}>
-                    <TraitIcon size={30} trait={trait} />
-                    <div>
-                      <strong>{trait.vi}</strong>
-                      <span className={styles.traitEn}>{trait.name}</span>
-                    </div>
-                  </header>
-
-                  {/* Trait ẩn (Thiên Thực) không có mốc chọn được — chip "0" và
-                      "0 tướng" chỉ gây hiểu nhầm, thay bằng điều kiện kích hoạt. */}
-                  {trait.activation ? (
-                    <p className={styles.traitActivation}>{trait.activation}</p>
-                  ) : (
-                    <div className={styles.breakpointRow}>
-                      <span className={styles.breakLabel}>Mốc</span>
-                      {trait.breakpointDetails.map((bp, index) => (
-                        <span className={styles.breakChipGroup} key={bp.threshold}>
-                          {index > 0 ? <span className={styles.breakArrow}>›</span> : null}
-                          <span className={styles.breakChip} style={{ '--break-color': bp.color } as CSSProperties} title={bp.style}>
-                            {bp.threshold}
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {trait.descriptionVi || trait.description ? (
-                    <p className={styles.traitDesc}>{trait.descriptionVi || trait.description}</p>
-                  ) : null}
-
-                  {trait.breakpointDetails.some((bp) => bp.bullet) ? (
-                    <ul className={styles.traitBulletList}>
-                      {trait.breakpointDetails.map((bp) =>
-                        bp.bullet ? (
-                          <li key={bp.threshold}>
-                            <span className={styles.bulletMark} style={{ '--break-color': bp.color } as CSSProperties}>
-                              {bp.threshold}
-                            </span>
-                            <span>
-                              <BulletText bullet={bp.bullet} />
-                            </span>
-                          </li>
-                        ) : null,
-                      )}
-                    </ul>
-                  ) : null}
-
-                  {trait.subEffects?.items.length ? (
-                    <div className={styles.traitSubEffects}>
-                      {trait.subEffects.title ? (
-                        <span className={styles.traitSubTitle}>{trait.subEffects.title}</span>
-                      ) : null}
-                      <ul className={styles.traitSubList}>
-                        {trait.subEffects.items.map((item) => (
-                          <li key={item.label}>
-                            <span className={styles.traitSubLabel}>{item.label}</span>
-                            <span>{item.text}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-
-                  {trait.infoChips?.length ? (
-                    <div className={styles.traitInfoChips}>
-                      {trait.infoChips.map((chip) => (
-                        <span className={styles.traitInfoChip} key={chip}>
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {trait.note ? <p className={styles.traitNote}>{trait.note}</p> : null}
-
-                  {trait.bounties?.length ? <BountyBoard bounties={trait.bounties} /> : null}
-
-                  {trait.champions.length ? (
-                  <div className={styles.traitMembers}>
-                    <span className={styles.breakLabel}>{trait.champions.length} tướng</span>
-                    <div className={styles.memberLogos}>
-                      {trait.champions.map((name) => {
-                        const champion = set18ChampionByName.get(name);
-                        if (!champion) return null;
-                        return <ChampionLogo champion={champion} key={name} onHide={onHide} onShow={onShow} size={30} />;
-                      })}
-                    </div>
-                  </div>
-                  ) : null}
-                </article>
+                  renderChampion={(name) => {
+                    const champion = set18ChampionByName.get(name);
+                    if (!champion) return null;
+                    return <ChampionLogo champion={champion} key={name} onHide={onHide} onShow={onShow} size={30} />;
+                  }}
+                  trait={trait}
+                />
               ))}
             </div>
           </div>
@@ -1064,7 +589,15 @@ function WispCategoryFilter({
   );
 }
 
-function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all'; groups: WispCategoryGroup[] }) {
+function WispSection({
+  categoryFilter,
+  groups,
+  focusSlug,
+}: {
+  categoryFilter: string | 'all';
+  groups: WispCategoryGroup[];
+  focusSlug: string | null;
+}) {
   const batchSize = 48;
   const [visibleCount, setVisibleCount] = useState(batchSize);
   const visible = groups.filter((group) => categoryFilter === 'all' || categoryFilter === group.category);
@@ -1075,6 +608,16 @@ function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all
     .filter((group) => group.items.length > 0);
 
   useEffect(() => setVisibleCount(batchSize), [categoryFilter]);
+
+  // Tới từ search (?focus=slug): nếu Tinh Linh đó nằm ngoài batch 48 đang hiện,
+  // hiện thêm đủ để nó lọt vào DOM — nếu không, hiệu ứng cuộn của Set18Codex tìm
+  // document.getElementById() sẽ ra null (phần tử chưa từng render), search tới
+  // đúng trang nhưng không cuộn tới thẻ.
+  useEffect(() => {
+    if (!focusSlug) return;
+    const targetIndex = visible.flatMap((group) => group.items).findIndex((wisp) => set18WispSlugByRef.get(wisp) === focusSlug);
+    if (targetIndex >= 0) setVisibleCount((count) => Math.max(count, targetIndex + 1));
+  }, [focusSlug, visible]);
 
   return (
     <section className={styles.section} id="tinh-linh">
@@ -1091,76 +634,13 @@ function WispSection({ categoryFilter, groups }: { categoryFilter: string | 'all
             <span>{visible.find((item) => item.category === group.category)?.items.length ?? group.items.length} Tinh Linh</span>
           </h3>
           <div className={styles.wispGrid}>
-            {group.items.map((wisp) => {
-              const upgrade = wisp.blossomUpgradeDescriptionVi;
-              const showCostArrow = upgrade && wisp.blossomUpgradeCost !== null && wisp.blossomUpgradeCost !== wisp.cost;
-              const showAppearsArrow = wisp.appearsEnd && wisp.appearsEnd !== wisp.appearsStart;
-              return (
-                <article className={styles.wispCard} key={wisp.name}>
-                  <div className={styles.wispBadgeRow}>
-                    <div className={styles.wispBadgeStack}>
-                      <span className={`${styles.wispBadge} ${styles.wispCostBadge}`}>
-                        <span className={`${styles.statIcon} ${styles.statIconCoin}`} />
-                        {wisp.cost !== null ? wisp.cost : 'NaN'}
-                      </span>
-                      {showCostArrow ? (
-                        <>
-                          <span className={styles.wispBadgeArrow}>↓</span>
-                          <span className={`${styles.wispBadge} ${styles.wispCostBadge} ${styles.wispBadgeUpgrade}`}>
-                            <span className={`${styles.statIcon} ${styles.statIconCoin}`} />
-                            {wisp.blossomUpgradeCost}
-                          </span>
-                        </>
-                      ) : null}
-                    </div>
-                    <span className={styles.wispCategoryBadge} title={wisp.categoryVi}>
-                      <Image alt="" height={40} src={wisp.categoryIcon} width={40} />
-                    </span>
-                    <div className={styles.wispBadgeStack}>
-                      {wisp.appearsStart ? (
-                        <>
-                          <span className={`${styles.wispBadge} ${styles.wispBadgeAppears}`}>{wisp.appearsStart}</span>
-                          {showAppearsArrow ? (
-                            <>
-                              <span className={styles.wispBadgeArrow}>↓</span>
-                              <span className={`${styles.wispBadge} ${styles.wispBadgeAppears}`}>{wisp.appearsEnd}</span>
-                            </>
-                          ) : null}
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  <div className={styles.wispNames}>
-                    <strong className={styles.wispNameVi}>{wisp.nameVi}</strong>
-                    <span className={styles.wispNameEn}>{wisp.name}</span>
-                  </div>
-
-                  <p className={styles.wispDesc}>{wisp.descriptionVi}</p>
-
-                  {upgrade ? (
-                    <div className={styles.wispSection}>
-                      <span className={styles.wispSectionLabelUpgrade}>Nâng cấp Hoa Linh</span>
-                      <p className={styles.wispSectionBox}>
-                        {upgrade}
-                        {wisp.blossomUpgradeCost !== null ? ` (${wisp.blossomUpgradeCost} vàng)` : ''}
-                      </p>
-                    </div>
-                  ) : null}
-
-                  {wisp.conditionsVi.length ? (
-                    <div className={styles.wispSection}>
-                      <span className={styles.wispSectionLabel}>Yêu cầu</span>
-                      <ul className={styles.wispConditionList}>
-                        {wisp.conditionsVi.map((condition) => (
-                          <li key={condition}>{condition}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
+            {group.items.map((wisp) => (
+              <WispCard
+                id={set18WispSlugByRef.has(wisp) ? `wisp-${set18WispSlugByRef.get(wisp)}` : undefined}
+                key={wisp.name}
+                wisp={wisp}
+              />
+            ))}
           </div>
         </div>
       ))}
@@ -1254,89 +734,14 @@ function AugmentFilterRow({
   );
 }
 
-type AugmentCategoryKey = 'combat' | 'items' | 'econ' | 'traits' | 'strategic';
-
-const AUGMENT_CATEGORY_COLOR: Record<AugmentCategoryKey, string> = {
-  combat: '#a8332a',
-  items: '#28568f',
-  econ: '#8f6710',
-  traits: '#a05a18',
-  strategic: '#227a63',
-};
-
-/** category (set18-codex.ts) -> 1 trong 5 nhóm combat/items/econ/traits/strategic,
- * tham khảo cách metatft.com/new-set#Augments phân loại augment. "Other"/"Khác"
- * (88/261 augment) cố tình KHÔNG có ở đây: theo build_augments_data.py, augment
- * rơi vào "Other" vì lookup không có tag Augment.Category.* nào cả — đây là fallback
- * rỗng, không phải một loại thật, nên card của nhóm này không hiện chip phân loại
- * thay vì gán bừa 1 trong 5 màu. Không có augment nào map sang "combat" trong data
- * hiện tại (icon/màu vẫn định nghĩa sẵn, phòng khi nguồn dữ liệu bổ sung sau này). */
-const AUGMENT_CATEGORY_CHIP: Partial<Record<string, { key: AugmentCategoryKey; label: string }>> = {
-  Economic: { key: 'econ', label: 'Econ' },
-  Items: { key: 'items', label: 'Items' },
-  Trait: { key: 'traits', label: 'Traits' },
-  Reroll: { key: 'strategic', label: 'Strategic' },
-  Random: { key: 'strategic', label: 'Strategic' },
-};
-
-function CategoryGlyph({ category }: { category: AugmentCategoryKey }) {
-  switch (category) {
-    case 'combat':
-      return (
-        <svg viewBox="0 0 24 24">
-          <path d="M5 19L19 5M19 5h-4M19 5v4" />
-          <path d="M19 19L5 5M5 5h4M5 5v4" />
-        </svg>
-      );
-    case 'items':
-      return (
-        <svg viewBox="0 0 24 24">
-          <path d="M7 9h10l-1 10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2L7 9z" />
-          <path d="M9 9V7a3 3 0 0 1 6 0v2" />
-        </svg>
-      );
-    case 'econ':
-      return (
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="8" />
-          <path d="M9 9.5c0-1 1-1.6 2.4-1.6 1.6 0 2.4.7 2.4 1.6 0 2-4.8 1-4.8 3 0 1 1 1.6 2.4 1.6 1.4 0 2.4-.6 2.4-1.6" />
-        </svg>
-      );
-    case 'traits':
-      return (
-        <svg viewBox="0 0 24 24">
-          <path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3z" />
-        </svg>
-      );
-    case 'strategic':
-      return (
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="8" />
-          <path d="M15 9l-2 5-5 2 2-5 5-2z" />
-        </svg>
-      );
-  }
-}
-
-/** Tách 1 câu đầu (nội dung chính) khỏi phần còn lại (nội dung phụ, "nếu có") —
- * cắt tại dấu câu đầu tiên theo sau bởi khoảng trắng + chữ hoa/ngoặc, để không cắt
- * nhầm số thập phân (vd "1.5 giây") hay dấu "...". */
-const AUGMENT_SENTENCE_SPLIT = /[.!?]\s+(?=[\p{Lu}(])/u;
-
-function splitAugmentContent(text: string): { main: string; secondary: string | null } {
-  const match = AUGMENT_SENTENCE_SPLIT.exec(text);
-  if (!match) return { main: text, secondary: null };
-  const main = text.slice(0, match.index + 1).trim();
-  const secondary = text.slice(match.index + match[0].length).trim();
-  return { main, secondary: secondary.length > 0 ? secondary : null };
-}
-
 function AugmentDetails({
   rarityFilter,
   categoryFilter,
+  focusSlug,
 }: {
   rarityFilter: Set18Augment['rarity'] | 'all';
   categoryFilter: string | 'all';
+  focusSlug: string | null;
 }) {
   const batchSize = 48;
   const [visibleCount, setVisibleCount] = useState(batchSize);
@@ -1347,6 +752,15 @@ function AugmentDetails({
 
   useEffect(() => setVisibleCount(batchSize), [categoryFilter, rarityFilter]);
 
+  // Tới từ search (?focus=slug): xem giải thích ở WispSection — cùng lý do,
+  // hiện thêm đủ để nâng cấp cần cuộn tới lọt vào DOM trước khi hiệu ứng cuộn
+  // của Set18Codex chạy.
+  useEffect(() => {
+    if (!focusSlug) return;
+    const targetIndex = filtered.findIndex((augment) => set18AugmentSlugByRef.get(augment) === focusSlug);
+    if (targetIndex >= 0) setVisibleCount((count) => Math.max(count, targetIndex + 1));
+  }, [focusSlug, filtered]);
+
   return (
     <section className={styles.section} id="nang-cap">
       <header className={styles.sectionHead}>
@@ -1355,57 +769,13 @@ function AugmentDetails({
       </header>
 
       <div className={styles.augmentGrid}>
-        {visible.map((augment) => {
-          const chip = AUGMENT_CATEGORY_CHIP[augment.category];
-          const { main, secondary } = splitAugmentContent(augment.descriptionVi);
-          return (
-            <article
-              className={styles.augmentCard}
-              key={augment.icon}
-              style={{ '--rarity-color': augment.rarityColor } as CSSProperties}
-            >
-              {chip || augment.rounds.length > 0 ? (
-                <div className={styles.augmentTop}>
-                  {chip ? (
-                    <span
-                      className={styles.categoryChip}
-                      style={{ '--cat-color': AUGMENT_CATEGORY_COLOR[chip.key] } as CSSProperties}
-                      title={`${chip.label} (map từ category = ${augment.categoryVi})`}
-                    >
-                      <CategoryGlyph category={chip.key} />
-                      <span>{chip.label}</span>
-                    </span>
-                  ) : (
-                    <span />
-                  )}
-                  {augment.rounds.length > 0 ? (
-                    <div className={styles.stagePills} title="Vòng có thể xuất hiện">
-                      {augment.rounds.map((round) => (
-                        <span className={styles.stagePill} key={round}>
-                          {round}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <div className={styles.augmentIconPlate}>
-                <Image alt="" height={112} src={augment.icon} width={112} />
-              </div>
-
-              <div className={styles.augmentNameBlock}>
-                <strong className={styles.augmentNameVi}>{augment.nameVi}</strong>
-                <span className={styles.augmentNameEn}>{augment.name}</span>
-              </div>
-
-              <div className={styles.augmentContent}>
-                <p className={styles.augmentContentMain}>{main}</p>
-                {secondary ? <p className={styles.augmentContentSecondary}>{secondary}</p> : null}
-              </div>
-            </article>
-          );
-        })}
+        {visible.map((augment) => (
+          <AugmentCard
+            augment={augment}
+            id={set18AugmentSlugByRef.has(augment) ? `augment-${set18AugmentSlugByRef.get(augment)}` : undefined}
+            key={augment.icon}
+          />
+        ))}
       </div>
 
       <div className={styles.batchControls}>
@@ -1634,21 +1004,9 @@ function EffectDetails({
   );
 }
 
-export function Set18Codex() {
+export function Set18Codex({ section: activeSection }: { section: SectionId }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const requestedSection = searchParams.get('section');
-  const activeSection: SectionId = SECTIONS.some((section) => section.id === requestedSection)
-    ? (requestedSection as SectionId)
-    : 'ma-tran-toc-he';
-  const sectionHref = useCallback(
-    (section: SectionId) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('section', section);
-      return `/mua-18?${params.toString()}`;
-    },
-    [searchParams],
-  );
+  const sectionHref = useCallback((section: SectionId) => `/mua-18/${section}`, []);
   const [loadedSection, setLoadedSection] = useState<SectionId | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState>(null);
@@ -1664,14 +1022,29 @@ export function Set18Codex() {
     setLoadError(false);
     setTooltip(null);
 
+    // Chỉ nạp entity-index + slugs (132KB) khi section thật sự cần gắn id DOM
+    // cho search focus (xem FOCUS_ID_PREFIX) — 2 section còn lại (ma-tran-toc-he,
+    // hieu-ung) không có card đơn lẻ theo slug nên bỏ qua, giữ payload nhỏ nhất.
+    async function loadSlugMaps() {
+      const [entityIndexModule, slugsModule] = await Promise.all([
+        import('@/content/set18/set18-entity-index'),
+        import('@/content/set18/set18-slugs.generated'),
+      ]);
+      return { entityIndex: entityIndexModule.set18EntityIndex, slugById: slugsModule.set18SlugById };
+    }
+
     async function loadSectionData() {
       try {
         if (activeSection === 'tinh-linh') {
           const wisps = await import('@/content/set18/set18-wisps');
           set18Wisps = wisps.set18Wisps;
+          const { entityIndex, slugById } = await loadSlugMaps();
+          set18WispSlugByRef = buildSlugRefMap('wisp', wisps.set18Wisps, entityIndex, slugById);
         } else if (activeSection === 'nang-cap') {
           const augments = await import('@/content/set18/set18-augments');
           set18Augments = augments.set18Augments;
+          const { entityIndex, slugById } = await loadSlugMaps();
+          set18AugmentSlugByRef = buildSlugRefMap('augment', augments.set18Augments, entityIndex, slugById);
         } else {
           const [traits, champions] = await Promise.all([
             import('@/content/set18/set18-traits'),
@@ -1681,6 +1054,12 @@ export function Set18Codex() {
           set18TraitByName = traits.set18TraitByName;
           set18Champions = champions.set18Champions;
           set18ChampionByName = champions.set18ChampionByName;
+
+          if (activeSection === 'chi-tiet-tuong' || activeSection === 'chi-tiet-toc-he') {
+            const { entityIndex, slugById } = await loadSlugMaps();
+            set18ChampionSlugByRef = buildSlugRefMap('champion', champions.set18Champions, entityIndex, slugById);
+            set18TraitSlugByRef = buildSlugRefMap('trait', traits.set18Traits, entityIndex, slugById);
+          }
 
           if (activeSection === 'hieu-ung') {
             const [wisps, effects] = await Promise.all([
@@ -1748,6 +1127,117 @@ export function Set18Codex() {
 
   const hideTooltip = useCallback(() => setTooltip(null), []);
   const isSectionReady = loadedSection === activeSection;
+
+  // Search (Ctrl+K) trỏ tới lưới tương tác này kèm ?focus=slug thay vì trang
+  // chi tiết đơn lẻ — người dùng vừa thấy đúng thẻ vừa có nguyên bối cảnh lưới
+  // xung quanh (lọc, so sánh tướng cạnh nhau) như đã dùng quen ở /mua-18. Đợi
+  // `isSectionReady` mới tìm phần tử vì dữ liệu section nạp lazy qua import().
+  //
+  // Cuộn bằng GSAP ScrollToPlugin thay vì scrollIntoView({behavior:'smooth'}):
+  // easing mặc định của trình duyệt không tuỳ chỉnh được, còn ở đây cần đúng
+  // cảm giác "nảy nhẹ rồi dừng" (back.inOut) cho thao tác "nhảy tới kết quả tìm
+  // kiếm" — khác hẳn cảm giác tuyến tính của cuộn trang thông thường.
+  const focusSlug = useSearchParams().get('focus');
+  useEffect(() => {
+    if (!isSectionReady || !focusSlug) return;
+    const prefix = FOCUS_ID_PREFIX[activeSection];
+    if (!prefix) return;
+
+    // Tinh Linh/Nâng cấp phân trang theo lô 48 — nếu thẻ cần cuộn tới nằm ngoài
+    // lô đang hiện, WispSection/AugmentDetails tự mở rộng visibleCount (effect
+    // riêng của chúng), nhưng đó là một lượt re-render KHÁC, chạy SAU lượt commit
+    // hiện tại (effect của component con chạy trước component cha trong cùng 1
+    // commit, nhưng state con vừa set chỉ áp dụng ở commit tiếp theo). Poll vài
+    // lần thay vì tìm đúng 1 lần duy nhất, để không bỏ cuộc ngay khi thẻ chưa kịp
+    // render — dừng ngay khi thấy, không đợi hết số lần thử.
+    let cancelled = false;
+    let attempt = 0;
+    const maxAttempts = 20;
+
+    function tryScroll() {
+      if (cancelled) return;
+      const target = document.getElementById(`${prefix}-${focusSlug}`);
+      if (!target) {
+        attempt += 1;
+        if (attempt < maxAttempts) setTimeout(tryScroll, 50);
+        return;
+      }
+      waitForStableLayout(target, 0, undefined, performance.now());
+    }
+
+    // Thẻ VỪA tồn tại trong DOM không có nghĩa layout đã ổn định — khi mở rộng
+    // hết batch (261 nâng cấp/176 Tinh Linh), trình duyệt còn vài khung hình để
+    // chèn xong các thẻ còn lại quanh nó, làm rect.top của thẻ đích còn xê dịch.
+    // Bắt đầu tween khi layout còn đang dồn dịch sẽ giật/lag do main thread bận
+    // — đợi vị trí đứng yên 2 khung liên tiếp rồi mới cuộn, thay vì cuộn ngay khi
+    // vừa thấy phần tử.
+    //
+    // Chặn trần theo THỜI GIAN THỰC (300ms), không đếm số khung hình: đo bằng
+    // requestAnimationFrame() dưới tab bị trình duyệt hạ ưu tiên (tab nền, cửa sổ
+    // bị che, DevTools/automation) có thể tụt xuống ~1 khung/giây — chặn theo số
+    // khung sẽ khiến việc "đợi ổn định" kéo dài hàng giây thay vì ~50ms như dự
+    // tính, làm animation trông như bị treo thay vì mượt hơn.
+    function waitForStableLayout(target: HTMLElement, streak: number, lastTop: number | undefined, startedAt: number) {
+      if (cancelled) return;
+      const top = target.getBoundingClientRect().top;
+      const isStable = lastTop !== undefined && Math.abs(top - lastTop) < 1;
+      const nextStreak = isStable ? streak + 1 : 0;
+      if (nextStreak >= 2 || performance.now() - startedAt >= 300) {
+        startScroll(target);
+        return;
+      }
+      requestAnimationFrame(() => waitForStableLayout(target, nextStreak, top, startedAt));
+    }
+
+    function startScroll(target: HTMLElement) {
+      const rect = target.getBoundingClientRect();
+      const centeredY = Math.max(0, window.scrollY + rect.top - (window.innerHeight - rect.height) / 2);
+      const distance = Math.abs(centeredY - window.scrollY);
+      // Thời lượng cố định (0.85s) làm quãng ngắn (Ahri, ~vài trăm px) thì ổn,
+      // nhưng quãng dài (Cây Tộc/Hệ nằm cuối 261 nâng cấp, có thể ~40-50 nghìn
+      // px) bị nén vào cùng 0.85s đó thì tốc độ quá nhanh để mắt kịp nhận ra là
+      // đang cuộn — trông như nhảy cóc thay vì cuộn. Cho thời lượng tỉ lệ theo
+      // quãng đường (fps tương đối ổn định), kẹp trong khoảng vẫn còn "nhanh gọn"
+      // (0.5s) tới "đủ để thấy rõ chuyển động" (1.8s) ở quãng xa nhất có thể có.
+      const duration = Math.min(1.8, Math.max(0.5, distance / 12000));
+
+      // ScrollToPlugin cuộn `window` bằng cách gọi window.scrollTo(x, y) native
+      // ở MỖI tick (xem node_modules/gsap/ScrollToPlugin.js) — lệnh này tuân theo
+      // CSS `scroll-behavior` trên <html>. globals.css đặt `scroll-behavior: smooth`
+      // toàn cục (cho anchor link nhảy mục lục), nên mỗi tick của GSAP lại kích
+      // thêm MỘT lượt smooth-scroll native của trình duyệt tới đúng điểm tick đó —
+      // hai hệ animation giẫm lên nhau suốt tween, ra kết quả chập chờn: có lúc
+      // trông mượt (hai bên tình cờ khớp nhịp), có lúc gần như không thấy chuyển
+      // động (bên native liên tục bị GSAP đặt lại đích trước khi kịp tới nơi).
+      // Tắt tạm `scroll-behavior` trong lúc GSAP tự điều khiển, trả lại sau khi
+      // xong để không ảnh hưởng anchor link nơi khác.
+      const html = document.documentElement;
+      const previousScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
+
+      gsap.to(window, {
+        duration,
+        ease: 'back.inOut(1.7)',
+        overwrite: true,
+        scrollTo: { y: centeredY },
+        onComplete: () => {
+          html.style.scrollBehavior = previousScrollBehavior;
+        },
+      });
+      target.classList.add(styles.focusPulse);
+      // Giữ vòng sáng thêm ~1.35s SAU KHI tween cuộn xong (không phải sau khi
+      // BẮT ĐẦU) — quãng dài giờ có duration tới 1.8s, nếu vẫn trừ cứng theo mốc
+      // cũ (2.2s tính từ lúc bắt đầu) thì vòng sáng tắt gần như ngay khi vừa
+      // dừng cuộn, không kịp cho người dùng nhìn thấy.
+      setTimeout(() => target.classList.remove(styles.focusPulse), duration * 1000 + 1350);
+    }
+
+    const frame = requestAnimationFrame(tryScroll);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [activeSection, focusSlug, isSectionReady]);
 
   return (
     <div className={styles.shell}>
@@ -1833,9 +1323,11 @@ export function Set18Codex() {
         {isSectionReady && activeSection === 'chi-tiet-toc-he' ? (
           <TraitDetails onHide={hideTooltip} onShow={showTooltip} typeFilter={traitTypeFilter} />
         ) : null}
-        {isSectionReady && activeSection === 'tinh-linh' ? <WispSection categoryFilter={wispCategoryFilter} groups={wispGroups} /> : null}
+        {isSectionReady && activeSection === 'tinh-linh' ? (
+          <WispSection categoryFilter={wispCategoryFilter} focusSlug={focusSlug} groups={wispGroups} />
+        ) : null}
         {isSectionReady && activeSection === 'nang-cap' ? (
-          <AugmentDetails categoryFilter={augmentCategoryFilter} rarityFilter={augmentRarityFilter} />
+          <AugmentDetails categoryFilter={augmentCategoryFilter} focusSlug={focusSlug} rarityFilter={augmentRarityFilter} />
         ) : null}
         {isSectionReady && activeSection === 'hieu-ung' ? <EffectDetails onHide={hideTooltip} onShow={showTooltip} /> : null}
       </div>

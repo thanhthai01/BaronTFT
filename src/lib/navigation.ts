@@ -11,7 +11,11 @@ export function isNavigationRouteActive(pathname: string, href: string) {
   const targetPath = normalizePathname(href);
 
   if (targetPath === '/kien-thuc-nen-tang') {
-    return currentPath === targetPath || currentPath.startsWith('/bai-hoc/');
+    return currentPath === targetPath || currentPath.startsWith('/kien-thuc-nen-tang/');
+  }
+
+  if (targetPath === '/mua-18') {
+    return currentPath === targetPath || currentPath.startsWith('/mua-18/');
   }
 
   return currentPath === targetPath;

@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['cmdk'],
   },
+  async redirects() {
+    return [
+      // /mua-18?section=x -> /mua-18/x — URL cũ (còn trong search-actions.ts,
+      // link chia sẻ trước đây) trỏ về path route mới, tránh 2 URL cùng nội dung.
+      {
+        source: '/mua-18',
+        has: [{ type: 'query', key: 'section', value: '(?<section>.*)' }],
+        destination: '/mua-18/:section',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 const withMDX = createMDX({});

@@ -1,26 +1,9 @@
-import type { Metadata } from 'next';
-import { KnowledgeReader } from '@/components/features/knowledge-reader/KnowledgeReader';
-import styles from './page.module.css';
+import { redirect } from 'next/navigation';
+import { lessons } from '@/content/lessons';
 
-export const metadata: Metadata = {
-  title: 'Kiến thức nền tảng',
-};
-
+// Trang không-slug redirect sang bài đầu tiên thay vì tự render lesson[0]:
+// tránh 2 URL (/kien-thuc-nen-tang và /kien-thuc-nen-tang/[slug đầu]) cùng
+// serve một nội dung, vốn bị Google coi là duplicate content.
 export default function FoundationalKnowledgePage() {
-  return (
-    <>
-      <header className={styles.header}>
-        <div className="wide-container">
-          <span className="kicker">Kiến thức nền tảng</span>
-          <h1>Đọc đúng kỹ năng, áp dụng ngay trong trận</h1>
-          <p>Gộp lộ trình và bài học thành một phòng đọc: chọn chủ đề bên trái, nội dung ở giữa đổi theo bài, panel bên phải nhắc cách áp dụng.</p>
-        </div>
-      </header>
-      <section className={styles.readerSection} aria-label="Nội dung kiến thức nền tảng">
-        <div className="wide-container">
-          <KnowledgeReader />
-        </div>
-      </section>
-    </>
-  );
+  redirect(`/kien-thuc-nen-tang/${lessons[0].slug}`);
 }

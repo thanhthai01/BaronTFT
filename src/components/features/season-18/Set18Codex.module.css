@@ -611,6 +611,22 @@
   box-shadow: 2px 2px 0 rgba(27, 27, 27, 0.14), 0 0 0 2px color-mix(in srgb, var(--rail-color, var(--accent-primary)) 35%, transparent);
 }
 
+/* Vòng sáng tạm khi tới từ search (?focus=slug) — báo hiệu "đây là thẻ bạn vừa
+   tìm", tự tắt sau 2.2s (khớp setTimeout trong Set18Codex.tsx). Áp cho cả 4 loại
+   card (tướng/tộc/tinh linh/nâng cấp) nên đặt ở top-level, không gắn riêng .flip. */
+.focusPulse {
+  animation: focusPulse 2.2s ease-out;
+}
+
+@keyframes focusPulse {
+  0%, 40% {
+    box-shadow: 0 0 0 4px var(--clay, #d97757);
+  }
+  100% {
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+
 .flip {
   position: relative;
   min-height: 25rem;

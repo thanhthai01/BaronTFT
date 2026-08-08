@@ -15,8 +15,15 @@ describe('isNavigationRouteActive', () => {
 
   it('groups lesson pages under foundational knowledge', () => {
     expect(isNavigationRouteActive('/kien-thuc-nen-tang', '/kien-thuc-nen-tang')).toBe(true);
-    expect(isNavigationRouteActive('/bai-hoc/kinh-te-level-roll', '/kien-thuc-nen-tang')).toBe(true);
-    expect(isNavigationRouteActive('/bai-hoc/kinh-te-level-roll', '/checklist')).toBe(false);
+    expect(isNavigationRouteActive('/kien-thuc-nen-tang/kinh-te-level-roll', '/kien-thuc-nen-tang')).toBe(true);
+    expect(isNavigationRouteActive('/kien-thuc-nen-tang/kinh-te-level-roll', '/checklist')).toBe(false);
+  });
+
+  it('groups Mùa 18 entity/section pages under mùa 18', () => {
+    expect(isNavigationRouteActive('/mua-18', '/mua-18')).toBe(true);
+    expect(isNavigationRouteActive('/mua-18/tuong/akali', '/mua-18')).toBe(true);
+    expect(isNavigationRouteActive('/mua-18/chi-tiet-tuong', '/mua-18')).toBe(true);
+    expect(isNavigationRouteActive('/mua-18/tuong/akali', '/checklist')).toBe(false);
   });
 
   it('normalizes trailing slashes consistently', () => {

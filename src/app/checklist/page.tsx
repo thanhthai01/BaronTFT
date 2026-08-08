@@ -4,6 +4,8 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Checklist trong trận',
+  description: 'Checklist ngắn dùng ngay trong trận TFT: lobby, từng stage, late game và sau trận — câu hỏi thực chiến, không lý thuyết dài dòng.',
+  alternates: { canonical: '/checklist' },
 };
 
 export default function ChecklistPage() {
