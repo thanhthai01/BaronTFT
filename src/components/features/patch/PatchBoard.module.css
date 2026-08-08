@@ -521,6 +521,39 @@
   font-weight: var(--fw-regular);
 }
 
+/* Ghi chú dạng chữ (vd "Enhanced", "Mama Beak") — chuyển xuống hàng tag cùng
+   huy hiệu bậc/loại thay vì nằm lẫn trong tiêu đề, để đọc ra ngay đây là một
+   mẩu metadata riêng chứ không phải một phần của tên. */
+.noteBadge {
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-pill);
+  padding: 0 0.35rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+/* Huy hiệu mốc sao — asset sao vàng thật của game thay cho chữ "N sao", viền +
+   glow nhẹ màu vàng để nổi bật như một mốc kích hoạt, không lẫn với ghi chú
+   chữ thường. */
+.starBadge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(218, 195, 121, 0.6);
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, rgba(218, 195, 121, 0.24), rgba(169, 135, 59, 0.1));
+  padding: 0.1rem 0.3rem;
+  filter: drop-shadow(0 0 3px rgba(218, 165, 32, 0.55));
+}
+
+.starBadge img {
+  display: block;
+  width: 2.4rem;
+  height: auto;
+}
+
 .cardTags {
   display: flex;
   flex-wrap: wrap;
@@ -641,6 +674,77 @@
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
+}
+
+/* ─── Danh sách Cơ chế/Sửa lỗi ────────────────────────────────────────────
+   Khác với tướng/tộc hệ/trang bị (tên ngắn + vài dòng số liệu, hợp thẻ lưới
+   13rem), một mục cơ chế thường là MỘT CÂU MÔ TẢ ĐẦY ĐỦ — nhét vào thẻ hẹp
+   làm chữ bị bóp dòng và icon viết tắt 2 ký tự không nói lên được gì. Đổi
+   sang danh sách hàng full-width: chấm màu theo tăng/giảm thay icon, câu đọc
+   trọn dòng, nhãn loại neo cố định bên phải. */
+.mechanicList {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mechanicRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border: 1px solid var(--border-line);
+  border-left: 3px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  padding: 0.55rem 0.7rem;
+  scroll-margin-top: 5.5rem;
+}
+
+.mechanicRow:target {
+  border-color: var(--accent-primary);
+  animation: patch-card-flash 1.4s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mechanicRow:target {
+    animation: none;
+    background: var(--accent-primary-soft);
+  }
+}
+
+.mechanicBullet {
+  flex-shrink: 0;
+  width: 0.55rem;
+  height: 0.65rem;
+  margin-top: 0.3rem;
+  clip-path: var(--hex-clip);
+  background: var(--border-strong);
+}
+
+.bullet-nerf { background: var(--danger); }
+.bullet-buff { background: var(--success); }
+.bullet-rework { background: var(--warning); }
+.bullet-mechanic { background: var(--info); }
+
+.mechanicBody {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.mechanicText {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+}
+
+.mechanicKindTag {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
 }
 
 .analysis {

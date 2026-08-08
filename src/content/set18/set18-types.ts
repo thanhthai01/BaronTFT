@@ -123,6 +123,10 @@ export type Set18ChampionForm = {
 
 export type Set18Champion = {
   name: string;
+  /** Biệt danh/lore tiếng Việt — KHÔNG thay tên hiển thị chính (vẫn là `name`
+   * tiếng Anh theo quy ước site). Chỉ điền khi có bản dịch xác nhận, phần lớn
+   * tướng để trống. */
+  nicknameVi?: string;
   cost: number;
   costLabel: string;
   costColor: string;

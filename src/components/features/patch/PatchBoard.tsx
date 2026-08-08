@@ -200,6 +200,24 @@ function RankBadge({ entry, entitySet }: { entry: PatchEntry; entitySet: number 
   return null;
 }
 
+/** Ghi chú "N sao" (vd Malphite "3 sao" — thay đổi chỉ áp dụng ở mốc sao đó)
+ * bắt riêng ra để thay bằng asset sao vàng thật của game thay vì chữ suông —
+ * dễ nhận ra ngay là huy hiệu mốc sao, không lẫn với ghi chú chữ khác. */
+const STAR_NOTE_PATTERN = /^(\d)\s*sao$/i;
+
+function NoteBadge({ note }: { note: string }) {
+  const starMatch = note.match(STAR_NOTE_PATTERN);
+  if (starMatch) {
+    const level = starMatch[1];
+    return (
+      <span className={styles.starBadge} title={`Chỉ áp dụng ở mốc ${level} sao`}>
+        <Image alt={`${level} sao`} height={16} src={`/set18/assets/text_icons/star${level}.png`} width={48} />
+      </span>
+    );
+  }
+  return <span className={styles.noteBadge}>{note}</span>;
+}
+
 /** Nhãn phân biệt "Riot nói vậy" và "mình nghĩ vậy" — bắt buộc ở mọi khối diễn
  * giải để người đọc không tưởng nhận định cá nhân là thông báo chính thức. */
 function OriginBadge({ origin }: { origin: PatchContentOrigin }) {
@@ -416,52 +434,87 @@ export function PatchBoard() {
                 {patchCategoryMeta[group.category].label}
                 <span className={styles.groupCount}>{group.entries.length}</span>
               </h2>
-              <div className={styles.cards}>
-                {group.entries.map((entry) => {
-                  const name = resolveDisplayName(entry, entitySet);
-                  return (
-                  <article
-                    className={[styles.card, styles[`edge-${entry.kind}`]].join(' ')}
-                    id={entryAnchorId(entry.id)}
-                    key={entry.id}
-                  >
-                    <div className={styles.cardHead}>
-                      <EntryIcon entry={entry} entitySet={entitySet} />
-                      <div className={styles.cardHeadText}>
-                        <h3 className={styles.name}>
-                          {name.vi}
-                          {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
-                          {entry.note ? <span className={styles.note}> {entry.note}</span> : null}
-                        </h3>
-                        <span className={styles.cardTags}>
-                          <RankBadge entry={entry} entitySet={entitySet} />
-                          <span className={[styles.kindTag, styles[entry.kind]].join(' ')}>
-                            {patchKindMeta[entry.kind].label}
-                          </span>
-                        </span>
+              {group.category === 'mechanic' ? (
+                /* Cơ chế/sửa lỗi thường là một câu mô tả dài, không phải số
+                   liệu ngắn — nhét vào thẻ lưới 13rem như tướng/tộc hệ thì chữ
+                   bị bóp hẹp và icon viết tắt 2 chữ cái (vd "CA", "NN") không
+                   nói lên được gì. Đổi sang danh sách hàng ngang full-width:
+                   chấm màu theo tăng/giảm thay icon, câu mô tả đọc trọn dòng. */
+                <ul className={styles.mechanicList}>
+                  {group.entries.map((entry) => (
+                    <li className={[styles.mechanicRow, styles[`edge-${entry.kind}`]].join(' ')} id={entryAnchorId(entry.id)} key={entry.id}>
+                      <span aria-hidden="true" className={[styles.mechanicBullet, styles[`bullet-${entry.kind}`]].join(' ')} />
+                      <div className={styles.mechanicBody}>
+                        <p className={styles.mechanicText}>{entry.name}</p>
+                        {entry.changes?.length ? (
+                          <ul className={styles.changes}>
+                            {entry.changes.map((change, index) => (
+                              <li key={`${change.label}-${index}`}>
+                                <span className={styles.changeLabel}>{change.label}</span>
+                                <span className={styles.changeValues}>
+                                  <span className={styles.changeFrom}>{change.from}</span>
+                                  <span aria-hidden="true" className={styles.arrow}>→</span>
+                                  <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
                       </div>
-                    </div>
-
-                    {entry.changes?.length ? (
-                      <ul className={styles.changes}>
-                        {entry.changes.map((change, index) => (
-                          <li key={`${change.label}-${index}`}>
-                            <span className={styles.changeLabel}>{change.label}</span>
-                            <span className={styles.changeValues}>
-                              <span className={styles.changeFrom}>{change.from}</span>
-                              <span aria-hidden="true" className={styles.arrow}>→</span>
-                              <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
+                      <span className={[styles.kindTag, styles.mechanicKindTag, styles[entry.kind]].join(' ')}>
+                        {patchKindMeta[entry.kind].label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.cards}>
+                  {group.entries.map((entry) => {
+                    const name = resolveDisplayName(entry, entitySet);
+                    return (
+                    <article
+                      className={[styles.card, styles[`edge-${entry.kind}`]].join(' ')}
+                      id={entryAnchorId(entry.id)}
+                      key={entry.id}
+                    >
+                      <div className={styles.cardHead}>
+                        <EntryIcon entry={entry} entitySet={entitySet} />
+                        <div className={styles.cardHeadText}>
+                          <h3 className={styles.name}>
+                            {name.vi}
+                            {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
+                          </h3>
+                          <span className={styles.cardTags}>
+                            <RankBadge entry={entry} entitySet={entitySet} />
+                            {entry.note ? <NoteBadge note={entry.note} /> : null}
+                            <span className={[styles.kindTag, styles[entry.kind]].join(' ')}>
+                              {patchKindMeta[entry.kind].label}
                             </span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span className={styles.mechanicLabel}>Không có chỉ số trước/sau</span>
-                    )}
-                  </article>
-                  );
-                })}
-              </div>
+                          </span>
+                        </div>
+                      </div>
+
+                      {entry.changes?.length ? (
+                        <ul className={styles.changes}>
+                          {entry.changes.map((change, index) => (
+                            <li key={`${change.label}-${index}`}>
+                              <span className={styles.changeLabel}>{change.label}</span>
+                              <span className={styles.changeValues}>
+                                <span className={styles.changeFrom}>{change.from}</span>
+                                <span aria-hidden="true" className={styles.arrow}>→</span>
+                                <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className={styles.mechanicLabel}>Không có chỉ số trước/sau</span>
+                      )}
+                    </article>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           ))}
         </div>

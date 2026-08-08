@@ -11,6 +11,11 @@ import { pgTable, text, integer, boolean, jsonb, timestamp } from 'drizzle-orm/p
 export const set18Champions = pgTable('set18_champions', {
   id: text('id').primaryKey(), // khớp entity-index, vd "champion:tft18_akali"
   name: text('name').notNull(),
+  // Biệt danh/lore tiếng Việt, KHÔNG thay thế `name` — quy ước site vẫn giữ
+  // tên tướng tiếng Anh làm tên hiển thị chính. Field này optional, chỉ điền
+  // khi có bản dịch xác nhận (vd Raptor = "Chim Quỷ Biến Dị"); phần lớn tướng
+  // để trống cho tới khi có nhu cầu hiển thị.
+  nicknameVi: text('nickname_vi'),
   cost: integer('cost').notNull(),
   costLabel: text('cost_label').notNull(),
   costColor: text('cost_color').notNull(),
