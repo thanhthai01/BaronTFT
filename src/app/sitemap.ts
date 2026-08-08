@@ -1,17 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
+import { KIND_PREFIX } from '@/lib/set18-entity-url';
 import { set18Sections } from '@/content/set18/set18-meta';
 import { set18Slugs } from '@/content/set18/set18-slugs.generated';
 import { lessons } from '@/content/lessons';
+import { patchReports } from '@/content/patch-notes';
 
-const KIND_PREFIX: Record<string, string> = {
-  champion: '/mua-18/tuong/',
-  trait: '/mua-18/toc-he/',
-  wisp: '/mua-18/tinh-linh/',
-  augment: '/mua-18/nang-cap/',
-};
-
-const STATIC_ROUTES = ['/', '/checklist', '/cay-quyet-dinh', '/lo-trinh', '/nguon-hoc', '/patch', '/gop-y'];
+const STATIC_ROUTES = ['/', '/checklist', '/cay-quyet-dinh', '/lo-trinh', '/nguon-hoc', '/patch', '/gop-y', '/mua-18/meo'];
 
 // lastModified bị bỏ qua có chủ đích: PatchReport.dateVi là chuỗi tiếng Việt tự
 // do (vd "Bản PBE 06/08"), không parse tin cậy thành Date — thà thiếu field tuỳ
@@ -27,5 +22,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const lessonEntries = lessons.map((lesson) => ({ url: `${SITE_URL}/kien-thuc-nen-tang/${lesson.slug}` }));
 
-  return [...staticEntries, ...sectionEntries, ...entityEntries, ...lessonEntries];
+  // Bản vá mới nhất (patchReports[0]) đã có URL canonical ở /patch — trang
+  // /patch/<id> của chính nó redirect về /patch (xem app/patch/[version]/page.tsx),
+  // nên không liệt kê thêm ở đây để tránh 2 URL cùng khai báo cho 1 nội dung.
+  const patchEntries = patchReports.slice(1).map((report) => ({ url: `${SITE_URL}/patch/${report.id}` }));
+
+  return [...staticEntries, ...sectionEntries, ...entityEntries, ...lessonEntries, ...patchEntries];
 }

@@ -50,6 +50,17 @@ let set18AugmentSlugByRef = new Map<Set18Augment, string>();
 const SECTIONS = set18Sections;
 type SectionId = Set18SectionId;
 
+/** `set18Sections` là file GENERATED bởi Set18/generate_website_set18_data.py
+ * (script Python ngoài Website/, ghi đè toàn bộ nội dung mỗi lần chạy) — không
+ * thêm tay "Mẹo" vào đó vì lần chạy lại tiếp theo sẽ âm thầm xoá mất. `/mua-18/meo`
+ * là route riêng (src/app/mua-18/meo/page.tsx, không render Set18Codex), nên chỉ
+ * cần thêm 1 mục điều hướng ở đây — không phải 1 SectionId thật, không ảnh hưởng
+ * logic tải dữ liệu/lọc của các section khác. */
+const NAV_ITEMS: { id: string; label: string; hint: string }[] = [
+  ...SECTIONS,
+  { id: 'meo', label: 'Mẹo', hint: 'Dịch từ datatft' },
+];
+
 /** Tiền tố id DOM mỗi card tự gắn (xem ChampionCard/TraitCard/WispCard/AugmentCard
  * trong cards/) — dùng để tìm đúng thẻ cần cuộn tới khi tới từ search ?focus=slug.
  * Section không có ở đây (ma-tran-toc-he, hieu-ung) không phải lưới card đơn lẻ
@@ -1052,7 +1063,6 @@ function EffectDetails({
 
 export function Set18Codex({ section: activeSection }: { section: SectionId }) {
   const router = useRouter();
-  const sectionHref = useCallback((section: SectionId) => `/mua-18/${section}`, []);
   const [loadedSection, setLoadedSection] = useState<SectionId | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState>(null);
@@ -1298,13 +1308,13 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
         <aside aria-label="Mục lục Mùa 18" className={styles.toc}>
           <h2 className={styles.tocTitle}>Mục lục</h2>
           <div className={styles.tocList}>
-            {SECTIONS.map((section, index) => (
+            {NAV_ITEMS.map((section, index) => (
               <Link
                 aria-current={section.id === activeSection ? 'page' : undefined}
                 className={styles.tocItem}
-                href={sectionHref(section.id)}
+                href={`/mua-18/${section.id}`}
                 key={section.id}
-                scroll={false}
+                scroll={section.id === 'meo' ? undefined : false}
               >
                 <strong>{section.label}</strong>
                 <span>
@@ -1320,10 +1330,10 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
         <select
           aria-label="Chọn phần nội dung"
           className={styles.mobileSelect}
-          onChange={(event) => router.push(sectionHref(event.target.value as SectionId), { scroll: false })}
+          onChange={(event) => router.push(`/mua-18/${event.target.value}`, { scroll: event.target.value !== 'meo' ? false : undefined })}
           value={activeSection}
         >
-          {SECTIONS.map((section) => (
+          {NAV_ITEMS.map((section) => (
             <option key={section.id} value={section.id}>
               {section.label}
             </option>

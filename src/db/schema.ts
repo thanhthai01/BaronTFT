@@ -157,3 +157,19 @@ export const patchEntries = pgTable('patch_entries', {
   breakpointStyle: text('breakpoint_style'),
   changes: jsonb('changes'), // { label, from, to }[] | null
 });
+
+/** Mẹo Mùa 18 dịch tay từ datatft.com/tip — quy mô nhỏ, có kiểm duyệt thủ công
+ * (đọc → dịch → tự soát lại → gắn championIds/traitIds → lưu), không phải nội
+ * dung sinh hàng loạt. Xem kế hoạch mục C. */
+export const set18Tips = pgTable('set18_tips', {
+  id: text('id').primaryKey(), // vd "tip-akali-ap-carry"
+  slug: text('slug').notNull(), // anchor ổn định trên trang /mua-18/meo, KHÔNG sửa tay sau khi đã publish
+  titleVi: text('title_vi').notNull(),
+  contentVi: text('content_vi').notNull(),
+  // Gắn tay lúc soát bản dịch — champion:tft18_akali / trait:elderwood, khớp
+  // convention set18_entity_index. [] nếu mẹo không gắn với entity cụ thể nào.
+  championIds: jsonb('champion_ids').$type<string[]>().notNull(),
+  traitIds: jsonb('trait_ids').$type<string[]>().notNull(),
+  sourceUrl: text('source_url'), // link datatft gốc, để đối chiếu khi patch đổi làm mẹo lỗi thời
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

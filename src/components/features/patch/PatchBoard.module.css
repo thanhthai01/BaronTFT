@@ -365,6 +365,14 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  /* Khi entry link được ra codex, .cardHead render bằng <Link> — giữ đúng
+     hình thức cũ (không link) thay vì để trình duyệt tự gạch chân/đổi màu. */
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardHead:is(a):hover .name {
+  text-decoration: underline;
 }
 
 .cardHeadText {

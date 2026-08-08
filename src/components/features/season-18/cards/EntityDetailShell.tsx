@@ -14,6 +14,7 @@ export function EntityDetailShell({
   eyebrow,
   title,
   description,
+  patchNote,
   card,
   relatedTitle,
   related,
@@ -24,6 +25,10 @@ export function EntityDetailShell({
   eyebrow: string;
   title: string;
   description: string;
+  /** Dải "Bản vá gần nhất có thay đổi" — tuỳ chọn, chỉ tướng/tộc hệ truyền vào
+   * (xem LatestPatchNote). Nâng cấp/Tinh Linh chưa cần vì trang đó ít lượt ghé
+   * lại theo patch bằng tướng/tộc hệ. */
+  patchNote?: ReactNode;
   card: ReactNode;
   relatedTitle: string;
   related: ReactNode;
@@ -51,6 +56,7 @@ export function EntityDetailShell({
           <span className="kicker">{eyebrow}</span>
           <h1>{title}</h1>
           <p>{description}</p>
+          {patchNote}
         </div>
       </header>
       <section aria-label={title} className={styles.body}>

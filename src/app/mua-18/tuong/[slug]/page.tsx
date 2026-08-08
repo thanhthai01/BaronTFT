@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ChampionCard } from '@/components/features/season-18/cards/ChampionCard';
 import { EntityDetailShell } from '@/components/features/season-18/cards/EntityDetailShell';
+import { LatestPatchNote } from '@/components/features/season-18/cards/LatestPatchNote';
 import { RelatedEntityLink } from '@/components/features/season-18/cards/RelatedEntityLink';
 import { RelatedGrid } from '@/components/features/season-18/cards/RelatedGrid';
+import { RelatedTips } from '@/components/features/season-18/cards/RelatedTips';
 import { set18Champions } from '@/content/set18/set18-champions';
 import { set18TraitByName } from '@/content/set18/set18-traits';
 import { getChampionBySlug, getChampionSlug } from '@/content/set18/set18-lookup';
@@ -32,6 +34,8 @@ export default async function ChampionDetailPage({ params }: { params: Promise<{
   const champion = getChampionBySlug(slug);
   if (!champion) notFound();
 
+  const entityId = set18Slugs.find((entry) => entry.kind === 'champion' && entry.slug === slug)?.id;
+
   const related = set18Champions
     .filter((other) => other.name !== champion.name && other.traits.some((t) => champion.traits.includes(t)))
     .slice(0, 12);
@@ -44,6 +48,14 @@ export default async function ChampionDetailPage({ params }: { params: Promise<{
       card={<ChampionCard champion={champion} traitByName={set18TraitByName} />}
       description={`${champion.costLabel} · ${champion.role} · Kỹ năng: ${champion.abilityNameVi || champion.abilityName}`}
       eyebrow="Mùa 18 · Tướng"
+      patchNote={
+        entityId ? (
+          <>
+            <LatestPatchNote entityId={entityId} />
+            <RelatedTips entityId={entityId} />
+          </>
+        ) : null
+      }
       related={
         related.length ? (
           <RelatedGrid>

@@ -1,0 +1,250 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  background: #0b0b0a;
+}
+
+/* Overlay này luôn nằm trong DOM (portal mount không điều kiện) để nút trình
+   chiếu có thể gọi requestFullscreen() đồng bộ ngay trong lượt click — ẩn/hiện
+   hoàn toàn bằng display, không unmount/mount lại. */
+.overlayOpen {
+  display: flex;
+}
+
+.stageViewport {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stage {
+  flex-shrink: 0;
+  transform-origin: center center;
+  background: var(--surface-canvas, #f1ecdf);
+  color: var(--text-primary, #1b1b1b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slideCover,
+.slideBody {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.slideCover {
+  align-items: center;
+  text-align: center;
+}
+
+.slideCover h1 {
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+  margin: 0;
+}
+
+.coverTitle {
+  font-size: 36px;
+  color: var(--text-secondary, #29271f);
+  margin: 0;
+}
+
+.coverMeta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--text-muted, #5b564a);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-muted, #5b564a);
+}
+
+.eyebrow.dir-up { color: var(--success, #1e9e57); }
+.eyebrow.dir-down { color: var(--danger, #d23a22); }
+.eyebrow.dir-mixed { color: var(--warning, #c77a16); }
+
+.slideBody h2 {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: var(--fw-bold);
+  margin: 0;
+}
+
+.leadText {
+  font-size: 34px;
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-medium);
+  margin: 0;
+}
+
+.bodyText {
+  font-size: 28px;
+  line-height: var(--lh-relaxed);
+  color: var(--text-secondary, #29271f);
+  margin: 0;
+}
+
+.bulletList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 28px;
+  line-height: var(--lh-body);
+}
+
+.bulletList li {
+  padding-left: 36px;
+  position: relative;
+}
+
+.bulletList li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent-primary, #2a44c8);
+}
+
+.entryGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-height: 680px;
+  overflow: hidden;
+}
+
+.entryChip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface-card, #fff);
+  border: 2px solid var(--border-line, rgba(27, 27, 27, 0.22));
+}
+
+.entryChip img {
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.entryChipPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background: var(--surface-hover, #e8e1cf);
+  flex-shrink: 0;
+}
+
+.entryChipBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 22px;
+  min-width: 0;
+}
+
+.entryChipBody strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entryChipKind {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+.kind-buff { color: var(--success, #1e9e57); }
+.kind-nerf { color: var(--danger, #d23a22); }
+.kind-rework,
+.kind-mechanic { color: var(--info, var(--accent-primary)); }
+
+.controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #f1ecdf;
+}
+
+.progress {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-wide);
+}
+
+.controlButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controlButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.exitButton {
+  margin-left: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--r-sm, 8px);
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.exitButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stage {
+    transition: transform 120ms ease-out;
+  }
+}

@@ -1,0 +1,87 @@
+.page {
+  padding-block: clamp(1.5rem, 4vw, 2.5rem) clamp(3rem, 7vw, 5rem);
+}
+
+.header {
+  max-width: 760px;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.header h1 {
+  margin: 0.1rem 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.3rem);
+  font-weight: var(--fw-extra);
+  color: var(--text-primary);
+}
+
+.header p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.empty {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+}
+
+.card {
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-md);
+  background: var(--surface-card);
+  padding: 1.25rem 1.5rem;
+}
+
+.card h2 {
+  margin: 0 0 0.4rem;
+  font-size: var(--fs-lg);
+  font-family: var(--font-display);
+}
+
+.card p {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  line-height: var(--lh-body);
+}
+
+.entityChips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.entityChip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--border-line);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem 0.2rem 0.2rem;
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--fs-xs);
+}
+
+.entityChip:hover {
+  border-color: var(--accent-primary);
+}
+
+.entityChip img {
+  border-radius: 50%;
+}
+
+.source {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: var(--fs-2xs);
+  color: var(--text-subtle);
+}

@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { TraitCard } from '@/components/features/season-18/cards/TraitCard';
 import { EntityDetailShell } from '@/components/features/season-18/cards/EntityDetailShell';
+import { LatestPatchNote } from '@/components/features/season-18/cards/LatestPatchNote';
 import { RelatedEntityLink } from '@/components/features/season-18/cards/RelatedEntityLink';
 import { RelatedGrid } from '@/components/features/season-18/cards/RelatedGrid';
+import { RelatedTips } from '@/components/features/season-18/cards/RelatedTips';
 import { set18ChampionByName } from '@/content/set18/set18-champions';
 import { getChampionSlug, getTraitBySlug } from '@/content/set18/set18-lookup';
 import { set18Slugs } from '@/content/set18/set18-slugs.generated';
@@ -30,6 +32,8 @@ export default async function TraitDetailPage({ params }: { params: Promise<{ sl
   const trait = getTraitBySlug(slug);
   if (!trait) notFound();
 
+  const entityId = set18Slugs.find((entry) => entry.kind === 'trait' && entry.slug === slug)?.id;
+
   const memberChampions = trait.champions
     .map((name) => set18ChampionByName.get(name))
     .filter((champion): champion is NonNullable<typeof champion> => Boolean(champion));
@@ -48,6 +52,14 @@ export default async function TraitDetailPage({ params }: { params: Promise<{ sl
       }
       description={`${trait.typeVi} · Mốc ${trait.breaksLabel} · ${trait.champions.length} tướng`}
       eyebrow="Mùa 18 · Tộc hệ"
+      patchNote={
+        entityId ? (
+          <>
+            <LatestPatchNote entityId={entityId} />
+            <RelatedTips entityId={entityId} />
+          </>
+        ) : null
+      }
       related={
         memberChampions.length ? (
           <RelatedGrid>

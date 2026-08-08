@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/design-system/Button/Button';
 import { Callout } from '@/components/design-system/Callout/Callout';
@@ -122,10 +123,17 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 const PRACTICE_BLOCK_TYPES = new Set<LessonBlock['type']>(['pitfalls', 'checklist', 'drill']);
 
 export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
-  const initialLesson = useMemo(() => lessons.find((lesson) => lesson.slug === initialSlug) ?? lessons[0], [initialSlug]);
-  const [activeSlug, setActiveSlug] = useState(initialLesson.slug);
-  const activeLesson = lessons.find((lesson) => lesson.slug === activeSlug) ?? lessons[0];
-  const [expandedCategory, setExpandedCategory] = useState(initialLesson.module);
+  const router = useRouter();
+  // Bài đang đọc luôn bám theo URL (initialSlug đến từ route param của
+  // page.tsx) thay vì state riêng — điều hướng qua <Link> nên route đổi,
+  // Next.js re-render page.tsx với slug mới, props này đổi theo. Trước đây
+  // dùng useState(initialLesson.slug) chỉ seed giá trị lúc mount nên URL và
+  // nội dung hiển thị có thể lệch nhau khi chuyển bài.
+  const activeLesson = useMemo(
+    () => lessons.find((lesson) => lesson.slug === initialSlug) ?? lessons[0],
+    [initialSlug],
+  );
+  const [expandedCategory, setExpandedCategory] = useState(activeLesson.module);
   const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
   const applyRef = useRef<HTMLElement>(null);
 
@@ -139,6 +147,13 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
     return groups;
   }, []);
 
+  // Chiều ngược của `prerequisite`: bài nào lấy bài đang đọc làm nền, để cuối
+  // bài nền có lối đi tiếp sang bản nâng cao thay vì phải tự tìm trong Mục lục.
+  const advancedFollowUps = useMemo(
+    () => lessons.filter((lesson) => lesson.prerequisite?.href === `/kien-thuc-nen-tang/${activeLesson.slug}`),
+    [activeLesson.slug],
+  );
+
   // Bài học vừa chọn luôn kéo nhóm chứa nó ra — nhưng không đụng vào nhóm
   // người dùng đang tự mở/đóng tay nếu nó không phải nhóm vừa đổi tới.
   useEffect(() => {
@@ -149,7 +164,7 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   // tham chiếu gần đỉnh viewport — không dùng "đang intersect" vì block dài
   // phía trước vẫn còn intersect dải quan sát dù đã đọc qua, gây lệch nhịp.
   useEffect(() => {
-    const ids = activeLesson.blocks.map((_, index) => `${activeLesson.slug}-block-${index}`);
+    const ids = activeLesson.blocks.map((block) => block.anchor);
     const sections = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) {
       setActiveAnchor(null);
@@ -234,16 +249,15 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
                 {isExpanded && (
                   <div className={styles.tocList}>
                     {group.items.map((lesson) => (
-                      <button
+                      <Link
                         aria-current={lesson.slug === activeLesson.slug}
                         className={styles.tocItem}
+                        href={`/kien-thuc-nen-tang/${lesson.slug}`}
                         key={lesson.slug}
-                        type="button"
-                        onClick={() => setActiveSlug(lesson.slug)}
                       >
                         <span className={styles.tocItemIndex}>{String(lessons.indexOf(lesson) + 1).padStart(2, '0')}</span>
                         <span className={styles.tocItemTitle}>{lesson.shortTitle}</span>
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -254,7 +268,12 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
       </aside>
 
       <article className={styles.article}>
-        <select aria-label="Chọn bài học" className={styles.mobileSelect} value={activeSlug} onChange={(event) => setActiveSlug(event.target.value)}>
+        <select
+          aria-label="Chọn bài học"
+          className={styles.mobileSelect}
+          value={activeLesson.slug}
+          onChange={(event) => router.push(`/kien-thuc-nen-tang/${event.target.value}`)}
+        >
           {groupedLessons.map((group) => (
             <optgroup key={group.category} label={group.category}>
               {group.items.map((lesson) => <option key={lesson.slug} value={lesson.slug}>{lesson.title}</option>)}
@@ -264,7 +283,6 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
         <header className={styles.articleHead}>
           <span className="kicker">{activeLesson.module}</span>
-          <h2>{activeLesson.title}</h2>
           <p>{activeLesson.summary}</p>
           <div className={styles.metaRow}>
             <span className={styles.metaChip}><ClockIcon /><span>{activeLesson.duration}</span></span>
@@ -273,14 +291,25 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
           </div>
         </header>
 
+        {/* Bài nâng cao trong một chuỗi cơ bản→nâng cao (xem frontmatter
+            `prerequisite:`) nhắc rõ nên đọc bài nền nào trước — người lạc vào
+            thẳng bài nâng cao biết đường lùi thay vì đọc thiếu ngữ cảnh. */}
+        {activeLesson.prerequisite && (
+          <Callout title="Nên đọc trước" tone="tip">
+            <p>
+              Bài này giả định bạn đã nắm <Link href={activeLesson.prerequisite.href}>{activeLesson.prerequisite.label}</Link>.
+            </p>
+          </Callout>
+        )}
+
         {activeLesson.blocks.map((block, index) => (
-          <Fragment key={`${activeLesson.slug}-${block.title}`}>
+          <Fragment key={`${activeLesson.slug}-${block.anchor}`}>
             {index === practiceStartIndex && (
               <div className={styles.sectionDivider}>
                 <span>Thực hành</span>
               </div>
             )}
-            <BlockRenderer anchorId={`${activeLesson.slug}-block-${index}`} block={block} />
+            <BlockRenderer anchorId={block.anchor} block={block} />
           </Fragment>
         ))}
 
@@ -296,27 +325,37 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
             </div>
           </section>
         )}
+
+        {advancedFollowUps.length > 0 && (
+          <section className={styles.block}>
+            <h3>Đọc tiếp nâng cao</h3>
+            <div className={styles.relatedList}>
+              {advancedFollowUps.map((lesson) => (
+                <Link className={styles.relatedLink} href={`/kien-thuc-nen-tang/${lesson.slug}`} key={lesson.slug}>
+                  {lesson.title}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
 
       <aside className={styles.apply} ref={applyRef}>
         <h2 className={styles.applyTitle}>Mục lục nội dung</h2>
         <div className={styles.jumpList}>
-          {activeLesson.blocks.map((block, index) => {
-            const anchorId = `${activeLesson.slug}-block-${index}`;
-            return (
-              <a
-                aria-current={activeAnchor === anchorId ? 'true' : undefined}
-                className={styles.jumpLink}
-                href={`#${anchorId}`}
-                key={`${activeLesson.slug}-jump-${index}`}
-              >
-                <span className={styles.jumpIcon}>
-                  <BlockTypeIcon type={block.type} />
-                </span>
-                <span>{block.title}</span>
-              </a>
-            );
-          })}
+          {activeLesson.blocks.map((block) => (
+            <a
+              aria-current={activeAnchor === block.anchor ? 'true' : undefined}
+              className={styles.jumpLink}
+              href={`#${block.anchor}`}
+              key={`${activeLesson.slug}-jump-${block.anchor}`}
+            >
+              <span className={styles.jumpIcon}>
+                <BlockTypeIcon type={block.type} />
+              </span>
+              <span>{block.title}</span>
+            </a>
+          ))}
         </div>
 
         <h2 className={styles.applyTitle}>Áp dụng ngay</h2>

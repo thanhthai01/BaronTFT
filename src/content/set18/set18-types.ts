@@ -213,6 +213,18 @@ export type Set18Item = {
 
 export type Set18CostMeta = { cost: number; label: string; color: string };
 
+/** Mẹo Mùa 18 dịch tay từ datatft.com/tip, gắn với entity codex khi liên quan
+ * — nguồn dữ liệu thật ở bảng `set18_tips` (Neon), xem src/db/schema.ts. */
+export type Set18Tip = {
+  id: string;
+  slug: string;
+  titleVi: string;
+  contentVi: string;
+  championIds: string[];
+  traitIds: string[];
+  sourceUrl: string | null;
+};
+
 
 export type Set18EntityKind = 'champion' | 'trait' | 'augment' | 'wisp';
 
