@@ -1,3 +1,5 @@
+import { lessons } from './lessons';
+
 export type DecisionEdgeTone = 'good' | 'bad' | 'neutral';
 
 export type DecisionAction = {
@@ -37,8 +39,18 @@ export type DecisionTree = {
   root: DecisionQuestion;
 };
 
-const KIEN_THUC_HREF = { label: 'Mở bài học liên quan', href: '/kien-thuc-nen-tang' };
 const CHECKLIST_HREF = { label: 'Mở checklist trong trận', href: '/checklist' };
+
+const lessonBySlug = new Map(lessons.map((lesson) => [lesson.slug, lesson]));
+
+/** Trỏ tới đúng bài kiến thức nền tảng sát ngữ cảnh của node — thay cho hằng
+ * số KIEN_THUC_HREF cũ (mọi node dùng chung 1 URL trần `/kien-thuc-nen-tang`,
+ * luôn redirect sang bài đầu tiên bất kể chủ đề node là gì). */
+function lessonLink(slug: string): { label: string; href: string } {
+  const lesson = lessonBySlug.get(slug);
+  if (!lesson) throw new Error(`lessonLink: không tìm thấy slug "${slug}"`);
+  return { label: `Mở bài: ${lesson.title}`, href: `/kien-thuc-nen-tang/${slug}` };
+}
 
 // Quy ước thứ tự nhánh trong toàn bộ file này: nhánh bên TRÁI luôn là trạng
 // thái/tin yếu hơn (tone 'bad', hoặc 'neutral' khi ghép với 'good'), nhánh
@@ -254,7 +266,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Lên cấp để mở tier bài mới',
                   action: 'Lên cấp đều đặn để mở tier tiếp theo, chưa cần roll cứu gấp.',
                   detail: 'Bạn vẫn còn khoảng đệm HP để chịu vài round thua thêm. Ưu tiên lên cấp mở tier bài, tìm unit nâng board thay vì đốt vàng roll ở tier hiện tại.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('level-roll-outs-va-breakpoint'),
                 },
               },
             ],
@@ -280,7 +292,7 @@ export const decisionTrees: DecisionTree[] = [
                   action: 'Giữ vàng thêm 1–2 round rồi mới lên cấp.',
                   detail: 'Đang thắng nghĩa là bạn có quyền chờ. Chạm breakpoint trước, lên cấp sau — bạn vẫn giữ tempo tốt mà không mất lãi.',
                   watchFor: 'Đừng chờ quá 2 round: thắng streak có thể đứt bất ngờ nếu lobby đổi nhịp.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('level-roll-outs-va-breakpoint'),
                 },
               },
               {
@@ -292,7 +304,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Lên cấp ngay, đè tempo',
                   action: 'Lên cấp ngay để mở rộng bàn và giữ vị trí dẫn đầu.',
                   detail: 'Không có breakpoint gần để chờ, nên phần thưởng từ tempo lớn hơn phần vàng lãi bị mất. Lên cấp lúc đang mạnh giúp bạn nới rộng khoảng cách với lobby.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('kinh-te-mau-chuoi-va-tempo'),
                 },
               },
             ],
@@ -344,7 +356,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Chưa cần roll, giữ vàng',
                   action: 'Giữ vàng, tiếp tục lên cấp hoặc chờ shop tự nhiên đổi.',
                   detail: 'Board vẫn đủ sống được thì roll lúc này chỉ đốt lãi không cần thiết. Vàng giữ được hôm nay là tempo bạn có quyền dùng đúng lúc hơn.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('level-roll-outs-va-breakpoint'),
                 },
               },
             ],
@@ -382,7 +394,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Roll nhẹ đến điểm dừng đã đặt',
                   action: 'Roll đến khi đạt mục tiêu hoặc chạm breakpoint kế tiếp, rồi dừng.',
                   detail: 'Đây là roll thăm dò: không phá kinh tế, chỉ tận dụng xác suất dư trong khi vẫn giữ lãi. Dừng đúng lúc quan trọng hơn roll thêm vài lượt.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('level-roll-outs-va-breakpoint'),
                 },
               },
             ],
@@ -423,7 +435,7 @@ export const decisionTrees: DecisionTree[] = [
                   action: 'Chỉ đổi phần đang yếu nhất (thường là 1 tộc hệ hoặc 1 slot carry), giữ lại item và unit còn dùng chung được.',
                   detail: 'Đã lên đồ nặng thì pivot toàn bộ quá đắt. Tìm comp lân cận dùng chung được carry hoặc item chính, coi đây là điều chỉnh chứ không phải đổi hẳn.',
                   watchFor: 'Nếu không có comp lân cận nào dùng chung được đồ, chấp nhận chơi tiếp để cứu top 4 thay vì đổi trắng tay.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('flex-transition-va-pivot'),
                 },
               },
               {
@@ -435,7 +447,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Pivot ngay sang line mạnh nhất bench/shop',
                   action: 'Đổi hướng ngay sang comp mà bench và shop đang hỗ trợ tốt nhất.',
                   detail: 'Chưa mất nhiều để giữ line cũ, nên đổi sớm gần như miễn phí. Chọn line dựa trên unit đang có, không dựa trên comp đang thắng trên bảng xếp hạng.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('flex-transition-va-pivot'),
                 },
               },
             ],
@@ -460,7 +472,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Chuẩn bị line dự phòng, chưa đổi ngay',
                   action: 'Giữ line hiện tại, đồng thời lên bench 1–2 unit của line dự phòng để sẵn sàng đổi khi cần.',
                   detail: 'Chưa cần pivot ngay vì board vẫn ổn, nhưng chuẩn bị trước giúp bạn không bị động nếu contest khiến shop cạn bài trong vài round tới.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('flex-transition-va-pivot'),
                 },
               },
               {
@@ -472,7 +484,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Không pivot, đi tiếp line hiện tại',
                   action: 'Tiếp tục đầu tư vào comp hiện tại, không cần đổi hướng.',
                   detail: 'Không có tín hiệu nào đòi hỏi đổi hướng. Pivot khi không cần thiết chỉ làm chậm sức mạnh board mà không có lợi ích tương xứng.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('flex-transition-va-pivot'),
                 },
               },
             ],
@@ -512,7 +524,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Giữ nguyên liệu, chờ pivot hoặc unit mới',
                   action: 'Giữ nguyên liệu thô trên bench, chưa ghép, chờ carry phù hợp hoặc pivot.',
                   detail: 'Ghép combo sai chỉ để "dùng cho hết" là lãng phí — đồ thành phẩm khó tháo lại đúng combo khác. Giữ nguyên liệu linh hoạt hơn giữ đồ thành phẩm sai.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('trang-bi-va-phan-bo-chi-so'),
                 },
               },
               {
@@ -524,7 +536,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Gắn cho unit tuyến 2 phù hợp',
                   action: 'Gắn đồ lên tank hoặc carry phụ để tận dụng ngay, không để bench.',
                   detail: 'Tận dụng chức năng trên unit khác vẫn tốt hơn giữ đồ chết. Đồ phòng thủ trên tank thường vẫn tăng sức chịu đựng cho toàn đội.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('trang-bi-va-phan-bo-chi-so'),
                 },
               },
             ],
@@ -550,7 +562,7 @@ export const decisionTrees: DecisionTree[] = [
                   action: 'Giữ đồ trên bench thêm 1 round để chờ nguyên liệu ghép combo tối ưu hơn.',
                   detail: 'Board đã ổn nên bạn có quyền chờ ngắn hạn — nhưng đặt giới hạn thời gian rõ ràng (1 round), không để đồ nằm chết vô thời hạn.',
                   watchFor: 'Nếu quá 1–2 round vẫn chưa ghép được, slam luôn thay vì tiếp tục chờ.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('trang-bi-va-phan-bo-chi-so'),
                 },
               },
               {
@@ -562,7 +574,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Slam ngay',
                   action: 'Gắn đồ ngay lên carry hoặc tank đang thiếu hụt tương ứng.',
                   detail: 'Lợi ích tức thời (thắng round, giữ HP, giữ tempo) ở đây lớn hơn rủi ro "có thể tìm được combo tốt hơn sau". Đừng để đồ nằm bench chờ hoàn hảo.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('trang-bi-va-phan-bo-chi-so'),
                 },
               },
             ],
@@ -615,7 +627,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Losestreak có chủ đích để nuôi econ',
                   action: 'Giữ board tối giản, ưu tiên lãi vàng thay vì cố thắng round lẻ tẻ.',
                   detail: 'Nếu HP còn nhiều, losestreak có kiểm soát giúp bạn tích vàng nhanh hơn để có rolldown mạnh ở stage 3–4. Đây là lựa chọn chủ động, không phải bị động thua.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('kinh-te-mau-chuoi-va-tempo'),
                 },
               },
             ],
@@ -640,7 +652,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Sẵn sàng buông streak, ưu tiên kế hoạch econ',
                   action: 'Quay lại kế hoạch lên cấp/roll ban đầu, chấp nhận đứt streak nếu cần.',
                   detail: 'Streak chỉ đáng vài vàng mỗi round bị đứt sớm. Gồng để giữ nó thường phá vỡ breakpoint hoặc tempo, khiến bạn lỗ nhiều hơn phần thưởng nhận lại.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('kinh-te-mau-chuoi-va-tempo'),
                 },
               },
               {
@@ -652,7 +664,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Tiếp tục nuôi streak, chưa cần can thiệp',
                   action: 'Giữ nguyên nhịp chơi, để streak tự nhiên tiếp diễn.',
                   detail: 'Đây là vàng miễn phí — không cần đổi kế hoạch econ hay lên cấp chỉ để giữ nó. Cứ chơi đúng nhịp, streak sẽ tự duy trì nếu board đủ mạnh.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('kinh-te-mau-chuoi-va-tempo'),
                 },
               },
             ],
@@ -705,7 +717,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Chơi vì top 4',
                   action: 'Ổn định board đủ dùng, ưu tiên sống qua các rolldown lớn của lobby.',
                   detail: 'Mục tiêu thực tế nhất là giữ vị trí giữa bảng. Không cần mạo hiểm đổi lấy top 1 khi board chưa đủ mạnh — tập trung không chết trước các cú rolldown mạnh của đối thủ.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('doc-trang-thai-va-muc-tieu-thu-hang'),
                 },
               },
             ],
@@ -730,7 +742,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Giữ chắc top 4, hạn chế rủi ro thêm',
                   action: 'Ưu tiên phòng thủ, tránh đổi mạo hiểm chỉ để đuổi top 1.',
                   detail: 'Top 4 chắc chắn thường có giá trị kỳ vọng cao hơn một canh bạc top 1 khi HP không còn nhiều dư địa sai số.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('doc-trang-thai-va-muc-tieu-thu-hang'),
                 },
               },
               {
@@ -742,7 +754,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Chơi vì top 1',
                   action: 'Đầu tư tối đa vào board: lên sao, hoàn thiện item, greed thêm unit tối ưu.',
                   detail: 'Đây là lúc bung sức mạnh tối đa. Chấp nhận rủi ro cao hơn vì phần thưởng (top 1 thay vì top 4) đủ lớn và bạn có đệm HP để chịu sai số.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('doc-trang-thai-va-muc-tieu-thu-hang'),
                 },
               },
             ],
@@ -782,7 +794,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Scout chuẩn bị, chưa cần đổi gì ngay',
                   action: 'Ghi nhận nhanh comp mạnh nhất lobby và mối nguy tiềm tàng, chưa cần hành động.',
                   detail: 'Đây là scout phòng ngừa — thu thập thông tin để dùng cho quyết định vài round tới, không phải để đổi gì ngay bây giờ.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('scouting-contest-va-lobby-ecology'),
                 },
               },
               {
@@ -794,7 +806,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Bỏ qua, tập trung board của mình',
                   action: 'Không scout round này, dồn thời gian xử lý bench và shop của bản thân.',
                   detail: 'Scout không dẫn tới quyết định nào là thời gian lãng phí. Tốt hơn nên dùng round này để tối ưu board của chính mình.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('scouting-contest-va-lobby-ecology'),
                 },
               },
             ],
@@ -819,7 +831,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Scout nhanh toàn lobby, đổi kế hoạch roll',
                   action: 'Quét nhanh ai đang mạnh, ai contest cùng tộc hệ, để quyết định roll ngay hay chờ.',
                   detail: 'Thông tin cần là "mình đang đứng đâu trong lobby" — nếu nhiều người mạnh hơn đang contest cùng line, cân nhắc roll sớm hơn hoặc chuẩn bị pivot.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('scouting-contest-va-lobby-ecology'),
                 },
               },
               {
@@ -831,7 +843,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Scout đối thủ round tới, đổi positioning',
                   action: 'Xem trước đối thủ sắp đấu (nếu game hiển thị), xác định carry và mối nguy chính, đổi vị trí ngay.',
                   detail: 'Mục tiêu là né đúng carry hoặc hiệu ứng nguy hiểm nhất (backline access, AoE, CC diện rộng) của đối thủ sắp gặp — không cần xem toàn bộ 7 bàn còn lại.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('positioning-targeting-va-pathing'),
                 },
               },
             ],
@@ -883,7 +895,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Chưa all-in, tiếp tục chờ cơ hội',
                   action: 'Giữ vàng, chơi ổn định, chờ cơ hội rõ ràng hơn xuất hiện.',
                   detail: 'Không có cơ hội và không bị ép bởi HP thì không có lý do để all-in. Kiên nhẫn giữ vàng vẫn là lựa chọn có giá trị kỳ vọng cao hơn.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('tu-duy-tft-xuyen-mua'),
                 },
               },
             ],
@@ -908,7 +920,7 @@ export const decisionTrees: DecisionTree[] = [
                   label: 'Giảm quy mô, all-in một phần',
                   action: 'Chỉ roll một phần vàng, giữ lại đủ để không rơi vào nguy hiểm nếu thất bại.',
                   detail: 'Vẫn tận dụng được một phần cơ hội mà không đặt cược toàn bộ trận đấu vào một lần roll. Đây là phiên bản thận trọng của all-in.',
-                  related: KIEN_THUC_HREF,
+                  related: lessonLink('tu-duy-tft-xuyen-mua'),
                 },
               },
               {

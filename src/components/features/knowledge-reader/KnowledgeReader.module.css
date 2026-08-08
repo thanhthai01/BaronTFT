@@ -118,6 +118,7 @@
   color: var(--text-muted);
   padding: 0.4rem 0.55rem;
   text-align: left;
+  text-decoration: none;
   transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
 }
 

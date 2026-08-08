@@ -64,6 +64,26 @@ function toRel(evergreenDir, absPath) {
   return path.relative(evergreenDir, absPath).split(path.sep).join('/');
 }
 
+function slugifyVi(text) {
+  return text
+    .toLowerCase()
+    .replace(/đ/g, 'd')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function assignAnchors(blocks) {
+  const counts = new Map();
+  return blocks.map((block) => {
+    const base = slugifyVi(block.title) || 'muc';
+    const count = (counts.get(base) || 0) + 1;
+    counts.set(base, count);
+    return { ...block, anchor: count === 1 ? base : `${base}-${count}` };
+  });
+}
+
 function stripInlineMarkdown(text) {
   return text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
@@ -202,9 +222,21 @@ function deriveExerciseSummary(exerciseSection, warnings, relPath) {
   return '';
 }
 
-function computeDuration(content) {
-  const lineCount = content.split('\n').filter((l) => l.trim().length > 0).length;
-  const minutes = Math.max(5, Math.round(lineCount / 4 / 5) * 5);
+/** Trước đây ước lượng theo SỐ DÒNG markdown thô (kể cả dòng bảng, code fence,
+ * heading — vốn ngắn hơn nhiều so với một dòng văn xuôi thật), nên luôn báo
+ * dài gấp ~3 lần thời gian đọc thật (vd 20-30 phút cho bài chỉ mất 5-9 phút).
+ * Đổi sang đếm SỐ TỪ thật trong phần nội dung thật sự lên web (loại bỏ "Nguồn
+ * nền" — không render, và "Bài liên quan" — chỉ là danh sách link) rồi chia
+ * theo tốc độ đọc tài liệu kỹ thuật tiếng Việt (~160 từ/phút, chậm hơn văn xuôi
+ * thường vì có công thức/bảng số cần dừng lại xử lý). */
+function computeDuration(readableText) {
+  const plain = readableText
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/[#>*_`~|]/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+  const wordCount = plain.split(/\s+/).filter(Boolean).length;
+  const READING_SPEED_WPM = 160;
+  const minutes = Math.max(3, Math.round(wordCount / READING_SPEED_WPM));
   return `~${minutes} phút`;
 }
 
@@ -215,7 +247,7 @@ function computeShortTitle(title, relPath, warnings) {
   return title;
 }
 
-function buildLesson(relPath, fileMap, warnings) {
+function buildLesson(relPath, fileMap, warnings, slugTitle) {
   const { data, content } = frontMatterByPath.get(relPath);
   const body = stripLeadingH1(content);
   const { intro, sections } = splitSections(body);
@@ -225,6 +257,9 @@ function buildLesson(relPath, fileMap, warnings) {
   let checklistItems = [];
   let exerciseSection = null;
   let relatedRaw = null;
+  // Gom lại đúng phần nội dung thật sự lên web để tính thời gian đọc — không
+  // gồm "Nguồn nền" (không render) hay "Bài liên quan" (chỉ là link, không phải văn đọc).
+  const readableParts = intro ? [intro] : [];
 
   if (intro) blocks.push({ type: 'concept', title: 'Giới thiệu', html: mdToHtml(intro) });
 
@@ -233,21 +268,26 @@ function buildLesson(relPath, fileMap, warnings) {
     if (heading === 'Mục tiêu') {
       principlesItems = extractBulletItems(sectionBody);
       blocks.push({ type: 'principles', title: heading, items: principlesItems });
+      readableParts.push(sectionBody);
     } else if (heading === 'Lỗi thường gặp') {
       pitfallsItems = extractBulletItems(sectionBody);
       blocks.push({ type: 'pitfalls', title: heading, items: pitfallsItems });
+      readableParts.push(sectionBody);
     } else if (heading.startsWith('Checklist')) {
       checklistItems = extractBulletItems(sectionBody);
       blocks.push({ type: 'checklist', title: heading, items: checklistItems });
+      readableParts.push(sectionBody);
     } else if (heading === 'Bài tập') {
       exerciseSection = section;
       blocks.push(buildExerciseBlock(heading, sectionBody));
+      readableParts.push(sectionBody);
     } else if (heading === 'Bài liên quan') {
       relatedRaw = sectionBody;
     } else if (heading === 'Nguồn nền') {
       // bỏ hoàn toàn, không lên web
     } else {
       blocks.push({ type: 'concept', title: heading, html: mdToHtml(demoteHeadings(sectionBody)) });
+      readableParts.push(sectionBody);
     }
   }
 
@@ -258,6 +298,7 @@ function buildLesson(relPath, fileMap, warnings) {
   const categoryInfo = CATEGORY_LABELS[data.category];
   if (!categoryInfo) throw new Error(`Category "${data.category}" không có trong bảng tra (${relPath})`);
   if (!data.slug) throw new Error(`Thiếu slug trong front matter: ${relPath}`);
+  if (!data.level) throw new Error(`Thiếu level trong front matter: ${relPath}`);
 
   const related = relatedRaw
     ? extractLinks(relatedRaw).map(({ label, target }) => ({
@@ -266,19 +307,28 @@ function buildLesson(relPath, fileMap, warnings) {
       }))
     : [];
 
+  let prerequisite = null;
+  if (data.prerequisite) {
+    const title = slugTitle.get(data.prerequisite);
+    if (!title) throw new Error(`prerequisite "${data.prerequisite}" không khớp slug nào (${relPath})`);
+    prerequisite = { label: title, href: `/kien-thuc-nen-tang/${data.prerequisite}` };
+  }
+
   return {
     slug: data.slug,
     title: data.title,
     module: categoryInfo.module,
+    level: data.level,
     shortTitle: computeShortTitle(data.title, relPath, warnings),
-    summary: principlesItems[0] || (intro ? firstSentenceOf(intro) : data.title),
+    summary: data.summary || principlesItems[0] || (intro ? firstSentenceOf(intro) : data.title),
     skill: categoryInfo.skill,
-    duration: computeDuration(content),
+    duration: computeDuration(readableParts.join('\n')),
     exercise: exerciseSummary,
     commonMistake: pitfallsItems[0] || '',
     applyQuestions: checklistItems.slice(0, 3),
     related,
-    blocks,
+    prerequisite,
+    blocks: assignAnchors(blocks),
   };
 }
 
@@ -393,12 +443,16 @@ async function main() {
 
   const fileMap = new Map();
   for (const rel of lessonFiles) {
-    fileMap.set(rel, '/kien-thuc-nen-tang');
+    fileMap.set(rel, `/kien-thuc-nen-tang/${frontMatterByPath.get(rel).data.slug}`);
   }
   for (const rel of ROADMAP_FILES) fileMap.set(rel, '/lo-trinh');
   fileMap.set(GLOSSARY_FILE, '/nguon-hoc#thuat-ngu');
 
-  const lessons = lessonFiles.map((rel) => buildLesson(rel, fileMap, warnings));
+  const slugTitle = new Map(
+    lessonFiles.map((rel) => [frontMatterByPath.get(rel).data.slug, frontMatterByPath.get(rel).data.title]),
+  );
+
+  const lessons = lessonFiles.map((rel) => buildLesson(rel, fileMap, warnings, slugTitle));
   const roadmap = buildRoadmap(fileMap);
   const glossary = buildGlossary();
 

@@ -41,52 +41,52 @@ export const roadmapSymptoms: RoadmapSymptom[] = [
   {
     "symptom": "Ép bài từ Stage 2",
     "label": "Strongest board và opener",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/strongest-board-va-opener"
   },
   {
     "symptom": "Luôn có 50 vàng nhưng chết sớm",
     "label": "Kinh tế, máu, chuỗi và tempo",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/kinh-te-mau-chuoi-va-tempo"
   },
   {
     "symptom": "Roll nhiều nhưng board ít đổi",
     "label": "Level, roll, outs và breakpoint",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/level-roll-outs-va-breakpoint"
   },
   {
     "symptom": "Chờ BIS, mất quá nhiều máu",
     "label": "Trang bị và phân bổ chỉ số",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/trang-bi-va-phan-bo-chi-so"
   },
   {
     "symptom": "Nhiều tộc hệ nhưng board yếu",
     "label": "Vai trò, tộc hệ và board cap",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/vai-tro-toc-he-va-board-cap"
   },
   {
     "symptom": "Không biết khi nào đổi bài",
     "label": "Flex, transition và pivot",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/flex-transition-va-pivot"
   },
   {
     "symptom": "Bị tranh nhưng phát hiện quá muộn",
     "label": "Scouting, contest và lobby ecology",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/scouting-contest-va-lobby-ecology"
   },
   {
     "symptom": "Board đủ quân vẫn thua kèo",
     "label": "Positioning, targeting và pathing",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/positioning-targeting-va-pathing"
   },
   {
     "symptom": "Copy data nhưng kết quả không giống",
     "label": "Đọc dữ liệu không bị đánh lừa",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/doc-du-lieu-tft-khong-bi-danh-lua"
   },
   {
     "symptom": "Review chỉ thấy “không ra tướng”",
     "label": "VOD review và phân loại lỗi",
-    "href": "/kien-thuc-nen-tang"
+    "href": "/kien-thuc-nen-tang/vod-review-va-phan-loai-loi"
   }
 ];
 
@@ -106,7 +106,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Strongest board và opener",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/strongest-board-va-opener"
       }
     ],
     "exercises": [
@@ -121,7 +121,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Kinh tế, máu, chuỗi và tempo",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/kinh-te-mau-chuoi-va-tempo"
       }
     ],
     "exercises": [
@@ -136,7 +136,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Trang bị và phân bổ chỉ số",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/trang-bi-va-phan-bo-chi-so"
       }
     ],
     "exercises": [
@@ -151,7 +151,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Level, roll, outs và breakpoint",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/level-roll-outs-va-breakpoint"
       }
     ],
     "exercises": [
@@ -166,7 +166,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Flex, transition và pivot",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/flex-transition-va-pivot"
       }
     ],
     "exercises": [
@@ -181,7 +181,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Scouting, contest và lobby ecology",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/scouting-contest-va-lobby-ecology"
       }
     ],
     "exercises": [
@@ -196,7 +196,7 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "Positioning, targeting và pathing",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/positioning-targeting-va-pathing"
       }
     ],
     "exercises": [
@@ -211,11 +211,11 @@ export const roadmapWeeks: RoadmapWeek[] = [
     "read": [
       {
         "label": "VOD review và phân loại lỗi",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/vod-review-va-phan-loai-loi"
       },
       {
         "label": "Đọc trạng thái và mục tiêu thứ hạng",
-        "href": "/kien-thuc-nen-tang"
+        "href": "/kien-thuc-nen-tang/doc-trang-thai-va-muc-tieu-thu-hang"
       }
     ],
     "exercises": [

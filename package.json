@@ -21,6 +21,7 @@
     "db:seed": "dotenv -e .env.local -- tsx scripts/db/seed-set18.ts",
     "db:pull": "dotenv -e .env.local -- tsx scripts/db/pull-set18.ts",
     "db:apply-patch": "dotenv -e .env.local -- tsx scripts/db/apply-patch-draft.ts",
+    "db:apply-tip": "dotenv -e .env.local -- tsx scripts/db/apply-tip-draft.ts",
     "db:verify": "dotenv -e .env.local -- tsx scripts/db/verify.ts",
     "db:studio": "dotenv -e .env.local -- drizzle-kit studio"
   },
