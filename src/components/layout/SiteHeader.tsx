@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { isNavigationRouteActive } from '@/lib/navigation';
+import { isNavigationRouteActive, primaryNavigationLinks } from '@/lib/navigation';
 import { useCommandPalette } from '../features/command-palette/CommandPaletteProvider';
 import { Button } from '../design-system/Button/Button';
 import styles from './SiteHeader.module.css';
@@ -77,16 +77,6 @@ function ReadingProgressBar() {
   );
 }
 
-const links = [
-  { href: '/kien-thuc-nen-tang', label: 'Kiến thức nền tảng' },
-  { href: '/cay-quyet-dinh', label: 'Cây quyết định' },
-  { href: '/lo-trinh', label: 'Lộ trình' },
-  { href: '/mua-18', label: 'Mùa 18' },
-  { href: '/checklist', label: 'Checklist' },
-  { href: '/patch', label: 'Patch' },
-  { href: '/nguon-hoc', label: 'Nguồn học' },
-];
-
 export function SiteHeader() {
   const pathname = usePathname();
   const { openPalette } = useCommandPalette();
@@ -99,7 +89,7 @@ export function SiteHeader() {
           BARON <em>TFT</em>
         </Link>
         <nav aria-label="Điều hướng chính" className={styles.nav}>
-          {links.map((link) => {
+          {primaryNavigationLinks.map((link) => {
             const isActive = isNavigationRouteActive(pathname, link.href);
 
             return (
