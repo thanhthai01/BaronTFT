@@ -23,7 +23,6 @@ import {
   BOTTOM_SAFE,
   BUBBLE_SIZE,
   COLLAPSED_SIZE,
-  COLLAPSED_VISIBLE,
   TOP_SAFE,
   restingRect,
   useBubbleDrag,

@@ -2,6 +2,7 @@ export const storageKeys = {
   theme: 'baron-tft:v1:theme',
   checklist: 'baron-tft:v1:checklist',
   reviewDraft: 'baron-tft:v1:review-draft',
+  postGameDebriefs: 'baron-tft:v1:post-game-debriefs',
   curriculumProgress: 'baron-tft:v1:curriculum-progress',
   navBubble: 'baron-tft:v1:nav-bubble',
 } as const;

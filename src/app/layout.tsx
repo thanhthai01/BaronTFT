@@ -15,8 +15,8 @@ const epilogue = Epilogue({ subsets: ['latin', 'latin-ext'], variable: '--font-e
 const libreFranklin = Libre_Franklin({ subsets: ['latin', 'latin-ext'], variable: '--font-libre-franklin', display: 'swap' });
 const jetBrainsMono = JetBrains_Mono({ subsets: ['latin', 'latin-ext'], variable: '--font-jetbrains-mono', display: 'swap' });
 
-const SITE_TITLE = 'Baron TFT — Evergreen Rank Manual';
-const SITE_DESCRIPTION = 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.';
+const SITE_TITLE = 'Baron TFT — Phòng huấn luyện quyết định TFT';
+const SITE_DESCRIPTION = 'Giáo trình TFT tiếng Việt giúp người chơi luyện kỹ năng xuyên mùa: chọn đúng bài cần học, đọc tín hiệu trong trận và sửa một hành vi sau trận.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

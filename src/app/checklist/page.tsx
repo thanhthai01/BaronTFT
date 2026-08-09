@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ChecklistApp } from '@/components/features/checklist/ChecklistApp';
 import styles from './page.module.css';
 
@@ -19,7 +20,9 @@ export default function ChecklistPage() {
           </div>
           <p>Font lớn, câu hỏi ngắn, local state. Mở trên điện thoại hoặc màn hình phụ và chỉ tick những quyết định thật sự đổi trận.</p>
         </header>
-        <ChecklistApp />
+        <Suspense fallback={null}>
+          <ChecklistApp />
+        </Suspense>
       </div>
     </section>
   );

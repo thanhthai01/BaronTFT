@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('home decision board updates the diagnostic panel', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /kiến thức cơ bản/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Học cách thắng lobby/i })).toBeVisible();
   await page.getByRole('button', { name: 'ITEM' }).click();
   const selectedPanel = page.getByRole('complementary').filter({ has: page.getByRole('heading', { name: 'Items' }) });
   await expect(selectedPanel.getByText(/chờ bài hoàn hảo/i)).toBeVisible();
@@ -32,13 +32,30 @@ test('checklist persists a checked item after reload', async ({ page }) => {
   await expect(page.getByLabel(/Lõi\/portal đang khuyến khích tempo/i)).toBeChecked();
 });
 
-test.skip('review lab generates markdown summary — /review is disabled, kept for re-enable', async ({ page }) => {
+test('review route redirects to post-game debrief', async ({ page }) => {
   await page.goto('/review');
-  await page.getByLabel('Placement').fill('6th');
-  await page.getByLabel('Comp / line').fill('AD tempo');
-  await page.getByLabel('Lỗi đầu tiên có thể sửa').fill('Rolled without target');
-  await expect(page.getByText('- Placement: 6th')).toBeVisible();
-  await expect(page.getByText('- Comp/line: AD tempo')).toBeVisible();
+  await expect(page).toHaveURL(/\/checklist\?stage=post$/);
+  await expect(page.getByRole('heading', { name: 'Debrief 30–60 giây' })).toBeVisible();
+});
+
+test('post-game debrief requires one label, saves history, and seeds next-game focus', async ({ page }) => {
+  await page.goto('/checklist?stage=post');
+  await expect(page.getByRole('tab', { name: 'Sau trận' })).toHaveAttribute('aria-selected', 'true');
+
+  await page.getByRole('button', { name: 'Lưu debrief' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'Chưa lưu được' })).toContainText('Chọn đúng một nhãn lỗi chính');
+
+  await page.getByRole('textbox', { name: 'Lỗi đầu tiên có thể sửa' }).fill('Rolled before naming outs');
+  await page.getByLabel('ROLL', { exact: true }).check();
+  await page.getByRole('textbox', { name: 'Hành vi quan sát được cho trận sau' }).fill('Name three outs before pressing D');
+  await page.getByRole('button', { name: 'Lưu debrief' }).click();
+
+  await expect(page.getByText('ROLL · Stage 3')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('ROLL · Stage 3')).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Lobby' }).click();
+  await expect(page.getByLabel('Trọng tâm trận này')).toContainText('Name three outs before pressing D');
 });
 
 test('command palette opens from the visible search control', async ({ page }) => {
