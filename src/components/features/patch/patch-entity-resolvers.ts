@@ -53,8 +53,20 @@ export function resolveDisplayName(entry: PatchEntry, entitySet: number): { vi: 
 export function wispFacetsFromIcon(icon: string | undefined) {
   const match = icon?.match(/shopcardsicon\d*_([a-z]+)_tier(\d+)/i);
   if (!match) return {};
-  return { wispCategory: match[1], wispTier: Number(match[2]) };
+  return { wispCategory: match[1].toLowerCase(), wispTier: Number(match[2]) };
 }
+
+/** Nhãn tiếng Việt cho `wispCategory` — đối chiếu tay với `category`/`categoryVi`
+ * thật trong set18-wisps.ts (7 giá trị cố định, không đổi giữa các bản vá). */
+export const WISP_CATEGORY_LABEL: Record<string, string> = {
+  shop: 'Cửa Hàng',
+  combat: 'Giao Tranh',
+  goldxp: 'Vàng/XP',
+  misc: 'Hỗn Hợp',
+  risky: 'Rủi Ro',
+  champion: 'Tướng',
+  item: 'Trang Bị',
+};
 
 export function resolveIcon(entry: PatchEntry, entitySet: number): ResolvedIcon {
   const entity = resolveEntity(entry, entitySet);

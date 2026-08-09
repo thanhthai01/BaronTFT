@@ -393,6 +393,10 @@
   place-items: center;
   width: var(--patch-icon-size);
   height: var(--patch-icon-size);
+  /* Khoá vuông ở tầng CSS engine (không chỉ dựa vào width=height bằng nhau) —
+     phòng trường hợp ảnh nguồn (vd chân dung tướng) khiến khung bị kéo cao
+     bất thường trước khi object-fit kịp áp dụng. */
+  aspect-ratio: 1 / 1;
   border-radius: var(--r-xs);
   overflow: hidden;
 }
@@ -722,11 +726,14 @@
   }
 }
 
+/* Đây chỉ là dấu chấm đầu dòng (bullet marker), không phải icon cần nhận diện
+   như EntryIcon — cỡ trước đó (0.55×0.65rem) to gần bằng icon thật, lấn át
+   dòng chữ ngắn đi kèm. Thu nhỏ về đúng vai trò một dấu chấm phân cách. */
 .mechanicBullet {
   flex-shrink: 0;
-  width: 0.55rem;
-  height: 0.65rem;
-  margin-top: 0.3rem;
+  width: 0.4rem;
+  height: 0.46rem;
+  margin-top: 0.35rem;
   clip-path: var(--hex-clip);
   background: var(--border-strong);
 }

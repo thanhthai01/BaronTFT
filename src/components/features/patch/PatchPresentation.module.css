@@ -23,20 +23,47 @@
 }
 
 .stage {
+  position: relative;
   flex-shrink: 0;
   transform-origin: center center;
-  background: var(--surface-canvas, #f1ecdf);
-  color: var(--text-primary, #1b1b1b);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  font-family: var(--font-body);
 }
 
+/* Logo/tên site neo cố định một góc trên mọi slide (trừ cover/outro — đã có
+   wordmark cỡ lớn riêng) — quay video cắt vào giữa vẫn biết ngay đây là clip
+   của Baron TFT. */
+.stageWordmark {
+  position: absolute;
+  top: 32px;
+  right: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stageWordmarkLogo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+/* ─── Cover / outro — cùng bố cục căn giữa, chỉ khác nội dung ────────────── */
 .slideCover,
 .slideBody {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1560px;
   padding: 0 120px;
   display: flex;
   flex-direction: column;
@@ -50,15 +77,17 @@
 
 .slideCover h1 {
   font-family: var(--font-display);
-  font-size: 96px;
-  font-weight: var(--fw-bold);
+  font-size: 108px;
+  font-weight: var(--fw-extra);
   letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
   margin: 0;
+  color: var(--accent-primary);
 }
 
 .coverTitle {
-  font-size: 36px;
-  color: var(--text-secondary, #29271f);
+  font-size: 34px;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -67,40 +96,71 @@
   gap: 16px;
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 22px;
-  color: var(--text-muted, #5b564a);
+  font-size: 20px;
+  color: var(--text-muted);
 }
 
+.statRow {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  margin-top: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-line);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+}
+
+.stat strong {
+  font-size: 32px;
+  font-weight: var(--fw-extra);
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
+.statBuff strong { color: var(--success); }
+.statNerf strong { color: var(--danger); }
+
+/* ─── Eyebrow / heading chung ─────────────────────────────────────────── */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 20px;
   letter-spacing: var(--ls-caps);
   text-transform: uppercase;
-  color: var(--text-muted, #5b564a);
+  color: var(--text-muted);
 }
 
-.eyebrow.dir-up { color: var(--success, #1e9e57); }
-.eyebrow.dir-down { color: var(--danger, #d23a22); }
-.eyebrow.dir-mixed { color: var(--warning, #c77a16); }
+.eyebrow.dir-up { color: var(--success); }
+.eyebrow.dir-down { color: var(--danger); }
+.eyebrow.dir-mixed { color: var(--warning); }
 
 .slideBody h2 {
   font-family: var(--font-display);
-  font-size: 64px;
-  font-weight: var(--fw-bold);
+  font-size: 60px;
+  font-weight: var(--fw-extra);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-tight);
   margin: 0;
 }
 
+.headingBadge {
+  color: var(--accent-primary);
+}
+
 .leadText {
-  font-size: 34px;
+  font-size: 32px;
   line-height: var(--lh-snug);
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-semibold);
   margin: 0;
 }
 
 .bodyText {
-  font-size: 28px;
+  font-size: 26px;
   line-height: var(--lh-relaxed);
-  color: var(--text-secondary, #29271f);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -111,12 +171,12 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  font-size: 28px;
+  font-size: 26px;
   line-height: var(--lh-body);
 }
 
 .bulletList li {
-  padding-left: 36px;
+  padding-left: 34px;
   position: relative;
 }
 
@@ -124,69 +184,590 @@
   content: '—';
   position: absolute;
   left: 0;
-  color: var(--accent-primary, #2a44c8);
+  color: var(--accent-primary);
 }
 
-.entryGrid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-height: 680px;
+/* ─── Tổng quan — hàng ngang, dải nhãn màu chạy hết chiều cao bên trái, lưới
+   icon lớn bên phải (tham khảo infographic coachingtft.vn) ─────────────── */
+.overviewStack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: 970px;
   overflow: hidden;
 }
 
-.entryChip {
+/* flex-shrink: 0 là mấu chốt — mặc định flex item co lại để vừa container
+   cha (.overviewStack) nếu tổng 3 hàng vượt max-height, ép cả icon lẫn chữ
+   bên trong co theo tỉ lệ (rỗng tuếch dù chính hàng này có max-height riêng,
+   vì max-height chỉ giới hạn TRÊN chứ không chặn flex-shrink kéo xuống thấp
+   hơn). Khoá flex-shrink để mỗi hàng giữ đúng chiều cao tự nhiên; nếu tổng
+   vẫn vượt 800px, overflow:hidden ở .overviewStack cắt sạch từ hàng cuối
+   xuống — không bao giờ bóp méo nội dung bên trong một hàng. */
+.overviewRowBlock {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 16px;
-  background: var(--surface-card, #fff);
-  border: 2px solid var(--border-line, rgba(27, 27, 27, 0.22));
-}
-
-.entryChip img {
-  border-radius: 10px;
   flex-shrink: 0;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-offset-ink);
 }
 
-.entryChipPlaceholder {
-  width: 64px;
-  height: 64px;
-  border-radius: 10px;
-  background: var(--surface-hover, #e8e1cf);
-  flex-shrink: 0;
-}
-
-.entryChipBody {
+.overviewRowLabel {
+  flex: 0 0 140px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  font-size: 22px;
+  padding: 16px 8px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--fw-extra);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-tight);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.overviewRowLabel-buff { background: color-mix(in srgb, var(--success) 30%, white); }
+.overviewRowLabel-nerf { background: color-mix(in srgb, var(--danger) 26%, white); }
+.overviewRowLabel-other { background: color-mix(in srgb, var(--warning) 26%, white); }
+
+.overviewRowCount {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: var(--fw-bold);
+  opacity: 0.7;
+}
+
+.overviewRowContent {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── Lưới icon lớn (Tổng quan) ─────────────────────────────────────────────
+   Số ô mỗi hàng giới hạn CHÍNH XÁC bằng JS (ICON_GRID_COLS × rows — khung
+   slide cố định 1920×1080 nên tính trước được, xem PatchPresentation.tsx),
+   nên max-height ở đây chỉ là lưới an toàn cuối, canh RỘNG RÃI hơn mức cần —
+   hẹp sát mức tính toán từng gây cắt lỡ ngang icon hàng cuối do chiều cao chữ
+   trình duyệt dựng thật lệch vài pixel so với số ước tính. */
+.iconGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+  max-height: 300px;
+  overflow: hidden;
+}
+
+/* Hàng "Cơ chế & Chỉnh" còn phải chừa chỗ cho danh sách không-icon bên dưới
+   → lưới icon chỉ chừa đúng 1 hàng thay vì 2. */
+.overviewRowContentOther .iconGrid {
+  max-height: 170px;
+}
+
+.overviewRowContentOther .overviewListRows {
+  max-height: 170px;
+  overflow: hidden;
+}
+
+.iconGridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 96px;
+  text-align: center;
+}
+
+.iconGridItem span {
+  font-size: 14px;
+  font-weight: var(--fw-medium);
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.overviewMore {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--text-subtle);
+  padding: 6px 10px;
+}
+
+/* Cột "chỉnh & cơ chế" — nội dung là cả câu mô tả nên xuống danh sách một cột,
+   mỗi dòng cắt còn một dòng (không wrap) thay vì chip cuộn dòng như buff/nerf. */
+.overviewListRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  overflow: hidden;
+}
+
+.overviewRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
 }
 
-.entryChipBody strong {
+.overviewRowText {
+  font-size: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* ─── Icon dùng chung (thẻ tướng/tộc hệ + chip tổng quan) ─────────────────
+   Mỗi loại icon cần "khung tự nhiên" khác nhau — cùng logic với .iconWrap ở
+   PatchBoard.module.css (trang /patch), chỉ đổi kích thước cho khung slide. */
+.iconWrap {
+  --patch-icon-size: 64px;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: var(--patch-icon-size);
+  height: var(--patch-icon-size);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.iconSm {
+  --patch-icon-size: 28px;
+}
+
+.iconLg {
+  --patch-icon-size: 76px;
+}
+
+.iconWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Ảnh tướng là art vuông có sẵn nền → cover đầy khung, viền lấy màu giá tiền. */
+.variant-champion {
+  border: 2px solid var(--icon-accent, var(--border-line));
+}
+
+.variant-champion img {
+  object-fit: cover;
+}
+
+/* Silhouette trắng: không có plate màu hệ thì gần như tàng hình trên nền ivory. */
+.variant-trait {
+  border: 1.5px solid color-mix(in srgb, var(--icon-accent, var(--border-line)) 65%, black);
+  background: var(--icon-accent, var(--surface-raised));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.variant-trait img {
+  width: 84%;
+  height: 84%;
+}
+
+/* Plate radial nhuộm theo độ hiếm, cùng ngôn ngữ với augment card ở /mua-18. */
+.variant-augment {
+  border: 1.5px solid color-mix(in srgb, var(--icon-accent, var(--accent-primary)) 60%, black);
+  background: radial-gradient(
+    circle at 50% 34%,
+    color-mix(in srgb, var(--icon-accent, var(--accent-primary)) 55%, #1b1b1b) 0%,
+    color-mix(in srgb, var(--icon-accent, var(--accent-primary)) 25%, #14120c) 78%
+  );
+}
+
+.variant-item img {
+  object-fit: cover;
+}
+
+/* Tinh Linh: PNG nền trong suốt, màu đậm, tự đứng được → bỏ khung/nền. */
+.variant-wisp {
+  border: 0;
+  background: none;
+}
+
+/* Icon cơ chế là silhouette gần trắng vẽ cho nền tối trong game → cần plate mực. */
+.variant-mechanic {
+  border: 1.5px solid rgba(27, 27, 27, 0.5);
+  background: linear-gradient(180deg, #2e2a26 0%, #1b1b1b 100%);
+}
+
+.variant-mechanic img {
+  width: 76%;
+  height: 76%;
+}
+
+/* Chưa có ảnh (bản vá mùa cũ, trang bị/cơ chế chưa gắn icon) — đặt SAU các
+   .variant-* để ghi đè nền/gradient của chúng bằng viền đứt trung tính. */
+.iconPlaceholder {
+  border: 1.5px dashed var(--border-line);
+  background: var(--surface-raised);
+  background-image: none;
+  box-shadow: none;
+}
+
+.variant-champion.iconPlaceholder {
+  border: 2px dashed var(--icon-accent, var(--border-line));
+}
+
+.iconPlaceholderText {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  font-size: 14px;
+  color: var(--text-subtle);
+}
+
+/* ─── Nhãn tăng/giảm — chữ màu trơn, không nền, đúng kiểu .kindTag đang dùng
+   ở trang /patch (PatchBoard.module.css) — cùng một ngôn ngữ màu xuyên suốt
+   web và slide: xanh lá = tăng, đỏ = giảm, cam = chỉnh, xanh dương = cơ chế. */
+.kindTag {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.kind-buff { color: var(--success); }
+.kind-nerf { color: var(--danger); }
+.kind-rework { color: var(--warning); }
+.kind-mechanic { color: var(--info); }
+
+/* Chấm tròn ở hàng cơ chế — cùng bảng màu nhưng tô nền thay vì chữ. */
+.bulletBuff { background: var(--success); }
+.bulletNerf { background: var(--danger); }
+.bulletRework { background: var(--warning); }
+.bulletMechanic { background: var(--info); }
+
+/* ─── Số liệu trước/sau — dùng chung cho card, cột, hàng cơ chế ───────── */
+.changes {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changes li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  border-radius: var(--r-xs);
+  background: var(--surface-raised);
+  padding: 6px 10px;
+}
+
+.changeLabel {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.changeValues {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.changeFrom {
+  color: var(--text-disabled);
+  text-decoration: line-through;
+}
+
+.arrow {
+  color: var(--text-subtle);
+}
+
+.changeTo {
+  font-size: 18px;
+  font-weight: var(--fw-extra);
+}
+
+.to-buff { color: var(--success); }
+.to-nerf { color: var(--danger); }
+.to-rework { color: var(--warning); }
+.to-mechanic { color: var(--info); }
+
+/* ─── Lưới thẻ tướng/tộc hệ/trang bị ─────────────────────────────────────
+   flex-wrap thay vì CSS Grid: Grid kéo mọi thẻ trong cùng hàng cao bằng thẻ
+   cao nhất (lãng phí khoảng trắng nếu một thẻ chỉ có 1 dòng số liệu cạnh thẻ
+   có 5 dòng) — flex + align-items:flex-start để mỗi thẻ tự cao theo đúng nội
+   dung của nó. */
+.cardGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px;
+  max-height: 900px;
+  overflow: hidden;
+}
+
+/* flex-grow: 0 là mấu chốt — chỉ 1 thẻ trên cả trang (vd một mốc giá chỉ có
+   đúng 1 tướng đổi) mà để grow:1 (mặc định của flex-basis rút gọn) thì thẻ đó
+   giãn hết chiều rộng còn lại, nhìn dài quá khổ so với 5-6 thẻ khác cùng bộ
+   slide. Không grow — 2 thẻ vẫn xếp cạnh nhau nhờ flex-wrap, chỉ 1 thẻ thì
+   đứng đúng khổ 50% thay vì kéo dài hết hàng. */
+.card {
+  flex: 0 1 calc(50% - 9px);
+  min-width: 320px;
+  background: var(--surface-card);
+  border: 1.5px solid var(--border-line);
+  border-left: 5px solid var(--border-strong);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-offset-ink);
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.cardHeadText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cardHeadText h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--fw-bold);
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.entryChipKind {
-  font-family: var(--font-mono);
+.nameEn {
+  font-family: var(--font-body);
   font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: var(--ls-wide);
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
 }
 
-.kind-buff { color: var(--success, #1e9e57); }
-.kind-nerf { color: var(--danger, #d23a22); }
-.kind-rework,
-.kind-mechanic { color: var(--info, var(--accent-primary)); }
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
 
+.costBadge,
+.noteBadge {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--text-subtle);
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+/* Thẻ cỡ nhỏ dùng cho Tinh Linh — cùng bố cục với
+   thẻ tướng/tộc hệ, chỉ thu gọn khoảng đệm/cỡ chữ và cơ số nhỏ hơn để nhiều
+   thẻ vừa một hàng. */
+.cardSm {
+  flex-basis: 280px;
+  min-width: 240px;
+  padding: 10px 12px;
+}
+
+.cardSm .cardHead {
+  gap: 10px;
+}
+
+/* Icon Tinh Linh phóng to hơn cỡ chip gọn mặc định (28px) — đủ lớn để tự
+   nhận ra loại qua icon, không cần chip chữ "Giao Tranh"/"Hỗn Hợp" lặp lại nữa. */
+.cardSm .iconSm {
+  --patch-icon-size: 40px;
+}
+
+.cardSm .cardHeadText h3 {
+  font-size: 18px;
+}
+
+.cardSm .nameEn {
+  font-size: 13px;
+}
+
+.cardSm .changeLabel,
+.cardSm .changeValues {
+  font-size: 13px;
+}
+
+.cardSm .changeTo {
+  font-size: 15px;
+}
+
+.cardSm .kindTag {
+  font-size: 12px;
+}
+
+/* ─── Danh sách cơ chế / sửa lỗi ───────────────────────────────────────── */
+.mechanicList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 760px;
+  overflow: hidden;
+}
+
+.mechanicRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-card);
+  padding: 14px 18px;
+}
+
+.mechanicBullet {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.mechanicBody {
+  min-width: 0;
+}
+
+.mechanicBody p {
+  margin: 0;
+  font-size: 22px;
+  line-height: var(--lh-snug);
+}
+
+/* ─── Tóm tắt — full-bleed cobalt, chữ trắng ─────────────────────────────
+   Trước đây căn giữa cả khối, dồn hết vào 1 câu trích dẫn dài — đẹp nhưng
+   phải đọc hết mới nắm ý. Đổi sang căn trái: 1 dòng chốt ý cỡ lớn (lead) +
+   danh sách gạch đầu dòng cho phần còn lại — vẫn giữ nền full-bleed màu
+   accent nổi bật, chỉ đổi cách chia chữ để quét nhanh được. */
+.slideQuote {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+  padding: 0 200px;
+  background: var(--grad-accent);
+  color: #fff;
+}
+
+.quoteEyebrow {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.quoteLead {
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  margin: 0;
+  max-width: 1300px;
+}
+
+.quoteList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 26px;
+  line-height: var(--lh-body);
+  max-width: 1200px;
+}
+
+.quoteList li {
+  padding-left: 34px;
+  position: relative;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.quoteList li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.quoteFooter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ─── Outro — wordmark kiểu chữ, không phải logo ───────────────────────── */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+}
+
+.wordmarkAccent {
+  color: var(--accent-primary);
+}
+
+.wordmarkLogo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.outroUrl {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  color: var(--accent-primary);
+  font-weight: var(--fw-bold);
+  margin: 0;
+}
+
+.outroFooter {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+/* ─── Thanh điều khiển ──────────────────────────────────────────────────── */
 .controls {
   position: absolute;
   bottom: 0;
@@ -230,7 +811,7 @@
 .exitButton {
   margin-left: 12px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--r-sm, 8px);
+  border-radius: var(--r-sm);
   background: transparent;
   color: inherit;
   font-family: var(--font-mono);

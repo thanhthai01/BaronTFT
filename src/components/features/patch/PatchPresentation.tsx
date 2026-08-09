@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/design-system/Button/Button';
-import { patchCategoryMeta, patchImpactMeta, patchKindMeta, patchOriginMeta, type PatchReport } from '@/content/patch-notes';
-import { resolveDisplayName, resolveIcon } from './patch-entity-resolvers';
-import { buildPatchSlides, type PatchSlide } from './patch-presentation-slides';
+import { patchImpactMeta, patchKindMeta, patchOriginMeta, type PatchEntry, type PatchReport } from '@/content/patch-notes';
+import { initialsOf, resolveDisplayName, resolveIcon } from './patch-entity-resolvers';
+import { buildPatchSlides, type PatchSlide, type PatchStatCounts } from './patch-presentation-slides';
 import styles from './PatchPresentation.module.css';
 
 // Khung logic cố định — mọi slide dựng ở đúng kích thước này rồi cả khối được
@@ -22,27 +22,178 @@ function readSlideIndexFromHash(max: number): number {
   return Math.min(Math.max(Number(match[1]), 0), max);
 }
 
+/** Mỗi loại icon cần khung khác nhau (xem patch-entity-resolvers.ts::IconVariant) —
+ * tướng viền màu giá, tộc hệ/nâng cấp/cơ chế là silhouette cần plate màu mới
+ * nhìn ra trên nền ivory, giống hệt cách PatchBoard.tsx (trang /patch) đang làm,
+ * chỉ đổi kích thước cho khung slide 1920×1080. */
+function EntryIcon({ entry, entitySet, size = 'md' }: { entry: PatchEntry; entitySet: number; size?: 'md' | 'sm' | 'lg' }) {
+  const icon = resolveIcon(entry, entitySet);
+  const sizeClass = size === 'sm' ? styles.iconSm : size === 'lg' ? styles.iconLg : null;
+  const className = [styles.iconWrap, styles[`variant-${icon.variant}`], icon.src ? null : styles.iconPlaceholder, sizeClass]
+    .filter(Boolean)
+    .join(' ');
+  return (
+    <span className={className} style={icon.accent ? ({ '--icon-accent': icon.accent } as CSSProperties) : undefined}>
+      {icon.src ? (
+        // eslint-disable-next-line @next/next/no-img-element -- render trong stage được scale(); next/image tính layout theo viewport thật nên sẽ sai tỉ lệ ở đây.
+        <img alt="" src={icon.src} />
+      ) : (
+        <span aria-hidden="true" className={styles.iconPlaceholderText}>{initialsOf(entry.name)}</span>
+      )}
+    </span>
+  );
+}
+
+function EntryChanges({ entry }: { entry: PatchEntry }) {
+  if (!entry.changes?.length) return null;
+  return (
+    <ul className={styles.changes}>
+      {entry.changes.map((change, index) => (
+        <li key={`${change.label}-${index}`}>
+          <span className={styles.changeLabel}>{change.label}</span>
+          <span className={styles.changeValues}>
+            <span className={styles.changeFrom}>{change.from}</span>
+            <span aria-hidden="true" className={styles.arrow}>→</span>
+            <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Chữ màu trơn, không nền — đúng kiểu .kindTag đang dùng ở trang /patch, và
+ * dùng nhãn đầy đủ ("Tăng sức mạnh") thay vì rút gọn ("tăng") để rõ nghĩa khi
+ * đứng một mình trên thẻ lớn. */
+function KindPill({ entry }: { entry: PatchEntry }) {
+  return <span className={[styles.kindTag, styles[`kind-${entry.kind}`]].join(' ')}>{patchKindMeta[entry.kind].label}</span>;
+}
+
 function SlideCover({ slide }: { slide: Extract<PatchSlide, { kind: 'cover' }> }) {
   return (
     <div className={styles.slideCover}>
-      <span className={styles.eyebrow}>Bản vá TFT</span>
+      <span className={styles.eyebrow}>Bản vá Set 18</span>
       <h1>{slide.version}</h1>
       <p className={styles.coverTitle}>{slide.title}</p>
       <div className={styles.coverMeta}>
         <span>{slide.dateVi}</span>
-        <span aria-hidden="true">•</span>
+        <span aria-hidden="true">·</span>
         <span>{slide.source?.label ?? `Biên soạn: ${slide.author}`}</span>
+      </div>
+      <StatRow stats={slide.stats} />
+    </div>
+  );
+}
+
+function StatRow({ stats }: { stats: PatchStatCounts }) {
+  return (
+    <div className={styles.statRow}>
+      <span className={styles.stat}><strong>{stats.total}</strong> thay đổi</span>
+      <span className={[styles.stat, styles.statBuff].join(' ')}><strong>{stats.buff}</strong> tăng</span>
+      <span className={[styles.stat, styles.statNerf].join(' ')}><strong>{stats.nerf}</strong> giảm</span>
+      <span className={styles.stat}><strong>{stats.rework}</strong> chỉnh</span>
+      <span className={styles.stat}><strong>{stats.mechanic}</strong> cơ chế</span>
+    </div>
+  );
+}
+
+/** Danh sách một cột, mỗi dòng cắt còn một dòng — dùng cho nội dung không có
+ * icon thật (chỉ có placeholder) hoặc tên/mô tả quá dài để làm chip gọn. */
+function TextRowList({ entries, entitySet, max }: { entries: PatchEntry[]; entitySet: number; max: number }) {
+  if (!entries.length) return null;
+  const visible = entries.slice(0, max);
+  const hidden = entries.length - visible.length;
+  return (
+    <div className={styles.overviewListRows}>
+      {visible.map((entry) => {
+        const name = resolveDisplayName(entry, entitySet);
+        return (
+          <span className={styles.overviewRow} key={entry.id}>
+            <EntryIcon entitySet={entitySet} entry={entry} size="sm" />
+            <span className={styles.overviewRowText}>{name.vi}</span>
+          </span>
+        );
+      })}
+      {hidden > 0 ? <span className={styles.overviewMore}>+{hidden} khác</span> : null}
+    </div>
+  );
+}
+
+// Khung slide LUÔN đúng 1920×1080 logic px (xem STAGE_WIDTH/HEIGHT) — không
+// phải trang web responsive — nên số ô icon vừa một hàng tính được chính xác
+// một lần, không cần đoán hay đo DOM: content width của khối "other"/buff/nerf
+// = 1560 (slideBody max-width) − 240 (padding) − 140 (overviewRowLabel) − 40
+// (overviewRowContent padding) = 1140px; mỗi ô rộng 96px + gap 18px = 114px/ô
+// → floor(1140 / 114) = 10 ô/hàng đúng khít. Giới hạn cứng bằng số lượng thay
+// vì chỉ dựa CSS overflow:hidden — overflow từng cắt lỡ ngang icon dòng cuối
+// vì chiều cao ước tính lệch vài pixel so với chiều cao chữ trình duyệt dựng
+// thật; giới hạn theo số lượng (biết chắc đúng 10 ô/hàng) mới cắt sạch ở ranh
+// giới hàng trong mọi trường hợp.
+const ICON_GRID_COLS = 10;
+
+/** Icon lớn + tên bên dưới, xếp lưới cuộn dòng — kiểu "infographic tóm tắt"
+ * (tham khảo coachingtft.vn): ưu tiên nhận diện nhanh qua ảnh tướng/tộc hệ
+ * hơn là đọc chữ, khác với ChipList (icon nhỏ + tên cạnh, dùng ở các slide
+ * cần liệt kê nhiều mục hơn là "nhìn phát biết ngay"). */
+function IconGrid({ entries, entitySet, rows }: { entries: PatchEntry[]; entitySet: number; rows: number }) {
+  if (!entries.length) return null;
+  const visible = entries.slice(0, ICON_GRID_COLS * rows);
+  return (
+    <div className={styles.iconGrid}>
+      {visible.map((entry) => {
+        const name = resolveDisplayName(entry, entitySet);
+        return (
+          <div className={styles.iconGridItem} key={entry.id}>
+            <EntryIcon entitySet={entitySet} entry={entry} size="lg" />
+            <span>{name.vi}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Một hàng của slide Tổng quan — dải nhãn màu chạy hết chiều cao hàng ở bên
+ * trái (Buff/Nerf/Cơ chế & Chỉnh), lưới icon lớn bên phải. Mục không có icon
+ * thật (chủ yếu cơ chế/sửa lỗi) rơi xuống danh sách cắt dòng ngay dưới lưới,
+ * không trộn lẫn vào lưới làm ô trống xen kẽ ô có ảnh. */
+function OverviewRow({
+  tone,
+  label,
+  entries,
+  entitySet,
+}: {
+  tone: 'buff' | 'nerf' | 'other';
+  label: string;
+  entries: PatchEntry[];
+  entitySet: number;
+}) {
+  if (!entries.length) return null;
+  const withIcon = entries.filter((entry) => resolveIcon(entry, entitySet).src);
+  const withoutIcon = entries.filter((entry) => !resolveIcon(entry, entitySet).src);
+  return (
+    <div className={styles.overviewRowBlock}>
+      <div className={[styles.overviewRowLabel, styles[`overviewRowLabel-${tone}`]].join(' ')}>
+        <span>{label}</span>
+        <span className={styles.overviewRowCount}>{entries.length}</span>
+      </div>
+      <div className={[styles.overviewRowContent, tone === 'other' ? styles.overviewRowContentOther : null].filter(Boolean).join(' ')}>
+        <IconGrid entitySet={entitySet} entries={withIcon} rows={tone === 'other' ? 1 : 2} />
+        {withoutIcon.length > 0 ? <TextRowList entitySet={entitySet} entries={withoutIcon} max={4} /> : null}
       </div>
     </div>
   );
 }
 
-function SlideSummary({ slide }: { slide: Extract<PatchSlide, { kind: 'summary' }> }) {
+function SlideOverview({ slide, entitySet }: { slide: Extract<PatchSlide, { kind: 'overview' }>; entitySet: number }) {
   return (
     <div className={styles.slideBody}>
-      <span className={styles.eyebrow}>{patchOriginMeta[slide.summaryOrigin].label}</span>
-      <h2>Tóm tắt phiên bản</h2>
-      <p className={styles.leadText}>{slide.summaryVi}</p>
+      <span className={styles.eyebrow}>Tổng quan · {slide.stats.total} thay đổi</span>
+      <div className={styles.overviewStack}>
+        <OverviewRow entitySet={entitySet} entries={slide.buffs} label="Buff" tone="buff" />
+        <OverviewRow entitySet={entitySet} entries={slide.nerfs} label="Nerf" tone="nerf" />
+        <OverviewRow entitySet={entitySet} entries={slide.others} label="Cơ chế & Chỉnh" tone="other" />
+      </div>
     </div>
   );
 }
@@ -59,35 +210,90 @@ function SlideRhythm({ slide }: { slide: Extract<PatchSlide, { kind: 'rhythm' }>
   );
 }
 
-function SlideCategory({ slide, entitySet }: { slide: Extract<PatchSlide, { kind: 'category' }>; entitySet: number }) {
+/** Một thẻ thay đổi đầy đủ — icon, tên (+ tên gốc), huy hiệu, nhãn tăng/giảm,
+ * số liệu trước/sau. Dùng chung cho lưới tướng/tộc hệ/trang bị (SlideGrid) VÀ
+ * cột nâng cấp/Tinh Linh (SlideColumns) — cùng một ngôn ngữ hình ảnh xuyên
+ * suốt bộ slide thay vì đổi kiểu nửa chừng. */
+function EntryCard({
+  entry,
+  entitySet,
+  size = 'md',
+}: {
+  entry: PatchEntry;
+  entitySet: number;
+  size?: 'md' | 'sm';
+}) {
+  const name = resolveDisplayName(entry, entitySet);
+  const icon = resolveIcon(entry, entitySet);
+  return (
+    <article className={[styles.card, size === 'sm' ? styles.cardSm : null].filter(Boolean).join(' ')} style={{ borderLeftColor: icon.accent }}>
+      <div className={styles.cardHead}>
+        <EntryIcon entitySet={entitySet} entry={entry} size={size === 'sm' ? 'sm' : 'md'} />
+        <div className={styles.cardHeadText}>
+          <h3>
+            {name.vi}
+            {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
+          </h3>
+          <div className={styles.cardTags}>
+            {entry.cost ? (
+              // Chỉ tô màu giá cho tướng — icon.accent của Tinh Linh là màu
+              // loại (Giao Tranh/Cửa Hàng...), không phải màu giá, tô nhầm sẽ
+              // sai nghĩa hoàn toàn.
+              <span
+                className={styles.costBadge}
+                style={entry.category === 'champion' ? { color: icon.accent, borderColor: icon.accent } : undefined}
+              >
+                {entry.cost} vàng
+              </span>
+            ) : null}
+            {entry.breakpoint ? <span className={styles.costBadge}>Mốc {entry.breakpoint}</span> : null}
+            {entry.note ? <span className={styles.noteBadge}>{entry.note}</span> : null}
+            <KindPill entry={entry} />
+          </div>
+        </div>
+      </div>
+      <EntryChanges entry={entry} />
+    </article>
+  );
+}
+
+function SlideGrid({ slide, entitySet }: { slide: Extract<PatchSlide, { kind: 'grid' }>; entitySet: number }) {
   return (
     <div className={styles.slideBody}>
-      <span className={styles.eyebrow}>Thay đổi trong bản vá</span>
-      <h2>{patchCategoryMeta[slide.category].label}</h2>
-      <ul className={styles.entryGrid}>
-        {slide.entries.map((entry) => {
-          const name = resolveDisplayName(entry, entitySet);
-          const icon = resolveIcon(entry, entitySet);
-          return (
-            <li className={styles.entryChip} key={entry.id}>
-              {icon.src ? (
-                // eslint-disable-next-line @next/next/no-img-element -- render trong stage được scale(); next/image tính layout theo viewport thật nên sẽ sai tỉ lệ ở đây.
-                <img alt="" height={64} src={icon.src} width={64} />
-              ) : (
-                <span className={styles.entryChipPlaceholder} aria-hidden="true" />
-              )}
-              <span className={styles.entryChipBody}>
-                <strong>
-                  {name.vi}
-                  {entry.note ? ` ${entry.note}` : ''}
-                </strong>
-                <span className={[styles.entryChipKind, styles[`kind-${entry.kind}`]].join(' ')}>
-                  {patchKindMeta[entry.kind].label}
-                </span>
-              </span>
-            </li>
-          );
-        })}
+      <span className={styles.eyebrow}>{slide.eyebrow}</span>
+      <h2>
+        {slide.heading}
+        {slide.badge ? <span className={styles.headingBadge}> · {slide.badge}</span> : null}
+      </h2>
+      <div className={styles.cardGrid}>
+        {slide.entries.map((entry) => <EntryCard entitySet={entitySet} entry={entry} key={entry.id} size={slide.cardSize} />)}
+      </div>
+    </div>
+  );
+}
+
+const BULLET_CLASS_BY_KIND: Record<PatchEntry['kind'], string> = {
+  buff: 'bulletBuff',
+  nerf: 'bulletNerf',
+  rework: 'bulletRework',
+  mechanic: 'bulletMechanic',
+};
+
+function SlideMechanic({ slide }: { slide: Extract<PatchSlide, { kind: 'mechanic' }> }) {
+  return (
+    <div className={styles.slideBody}>
+      <span className={styles.eyebrow}>{slide.eyebrow}</span>
+      <h2>Cơ chế</h2>
+      <ul className={styles.mechanicList}>
+        {slide.entries.map((entry) => (
+          <li className={styles.mechanicRow} key={entry.id}>
+            <span aria-hidden="true" className={[styles.mechanicBullet, styles[BULLET_CLASS_BY_KIND[entry.kind]]].join(' ')} />
+            <div className={styles.mechanicBody}>
+              <p>{entry.name}</p>
+              <EntryChanges entry={entry} />
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -112,12 +318,43 @@ function SlideImpact({ slide }: { slide: Extract<PatchSlide, { kind: 'impact' }>
   );
 }
 
+/** Trước đây dồn cả `summaryVi` vào một câu trích dẫn khổng lồ căn giữa —
+ * đẹp nhưng phải đọc hết câu mới nắm được ý, không quét nhanh được. Slide
+ * builder đã tách sẵn thành `summaryLines` theo dấu phẩy cấp ngoài cùng: dòng
+ * đầu làm tiêu đề chốt ý, các dòng còn lại xuống danh sách gạch đầu dòng căn
+ * trái — vẫn giữ nền full-bleed màu accent (đẹp), chỉ đổi cách chia chữ để
+ * đọc lướt được (hiệu quả). */
+function SlideQuote({ slide }: { slide: Extract<PatchSlide, { kind: 'quote' }> }) {
+  const [lead, ...rest] = slide.summaryLines.length ? slide.summaryLines : [slide.summaryVi];
+  return (
+    <div className={styles.slideQuote}>
+      <span className={styles.quoteEyebrow}>{patchOriginMeta[slide.summaryOrigin].label}</span>
+      <p className={styles.quoteLead}>{lead}</p>
+      {rest.length ? (
+        <ul className={styles.quoteList}>
+          {rest.map((line) => <li key={line}>{line}</li>)}
+        </ul>
+      ) : null}
+      <div className={styles.quoteFooter}>
+        <span>{slide.dateVi}</span>
+        <span aria-hidden="true">·</span>
+        <span>{slide.stats.total} thay đổi</span>
+      </div>
+    </div>
+  );
+}
+
 function SlideOutro({ slide }: { slide: Extract<PatchSlide, { kind: 'outro' }> }) {
   return (
     <div className={styles.slideCover}>
-      <span className={styles.eyebrow}>Baron TFT</span>
-      <h1>Đọc đầy đủ bản vá</h1>
-      <p className={styles.coverTitle}>barontft.vercel.app{slide.url}</p>
+      <span className={styles.wordmark}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- render trong stage được scale(); next/image tính layout theo viewport thật nên sẽ sai tỉ lệ ở đây. */}
+        <img alt="" className={styles.wordmarkLogo} src="/logo/logo-main.png" />
+        BARON<span className={styles.wordmarkAccent}>TFT</span>
+      </span>
+      <p className={styles.coverTitle}>Đọc đầy đủ bản và phần diễn giải tại</p>
+      <p className={styles.outroUrl}>barontft.vercel.app{slide.url}</p>
+      <span className={styles.outroFooter}>Fan project độc lập · không liên kết với Riot Games</span>
     </div>
   );
 }
@@ -126,14 +363,18 @@ function SlideRenderer({ slide, entitySet }: { slide: PatchSlide; entitySet: num
   switch (slide.kind) {
     case 'cover':
       return <SlideCover slide={slide} />;
-    case 'summary':
-      return <SlideSummary slide={slide} />;
+    case 'overview':
+      return <SlideOverview entitySet={entitySet} slide={slide} />;
     case 'rhythm':
       return <SlideRhythm slide={slide} />;
-    case 'category':
-      return <SlideCategory entitySet={entitySet} slide={slide} />;
+    case 'grid':
+      return <SlideGrid entitySet={entitySet} slide={slide} />;
+    case 'mechanic':
+      return <SlideMechanic slide={slide} />;
     case 'impact':
       return <SlideImpact slide={slide} />;
+    case 'quote':
+      return <SlideQuote slide={slide} />;
     case 'outro':
       return <SlideOutro slide={slide} />;
   }
@@ -181,6 +422,16 @@ export function PatchPresentation({ report, url }: { report: PatchReport; url: s
     if (!isOpen) return;
     history.replaceState(null, '', `#slide-${index}`);
   }, [isOpen, index]);
+
+  // Command palette (Ctrl/Cmd+K) và trình chiếu cùng nghe keydown trên window,
+  // độc lập với nhau — không có cách nào chặn trực tiếp từ đây. Đánh dấu bằng
+  // thuộc tính trên <html> để CommandPaletteProvider tự bỏ qua phím tắt của nó
+  // trong lúc đang trình chiếu (bấm Ctrl+K khi đang quay/chiếu mà bật popup tìm
+  // kiếm đè lên khung 1920×1080 thì hỏng cả video).
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-presenting', isOpen);
+    return () => document.documentElement.removeAttribute('data-presenting');
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -253,6 +504,13 @@ export function PatchPresentation({ report, url }: { report: PatchReport; url: s
                 style={{ width: STAGE_WIDTH, height: STAGE_HEIGHT, transform: `scale(${scale})` }}
               >
                 {slides[index] ? <SlideRenderer entitySet={entitySet} slide={slides[index]} /> : null}
+                {slides[index] && slides[index].kind !== 'cover' && slides[index].kind !== 'outro' ? (
+                  <span aria-hidden="true" className={styles.stageWordmark}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- render trong stage được scale(); next/image tính layout theo viewport thật nên sẽ sai tỉ lệ ở đây. */}
+                    <img alt="" className={styles.stageWordmarkLogo} src="/logo/logo-main.png" />
+                    BARON<span className={styles.wordmarkAccent}>TFT</span>
+                  </span>
+                ) : null}
               </div>
             </div>
 
