@@ -77,6 +77,35 @@ test('command palette opens from the visible search control', async ({ page }) =
   await expect(actions.getByText('Ghi debrief sau trận')).toBeVisible();
 });
 
+test('mobile decision tree completes by guided taps', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only guided decision tree flow');
+
+  await page.goto('/cay-quyet-dinh');
+  await expect(page.getByRole('heading', { name: 'Tổng hợp theo giai đoạn trận đấu' })).toBeVisible();
+  await expect(page.locator('svg[aria-label^="Mindmap cây quyết định"]')).toBeHidden();
+
+  await page.getByRole('button', { name: /Stage 2/ }).click();
+  await expect(page.getByRole('heading', { name: /bench và shop/i })).toBeVisible();
+  await page.getByRole('button', { name: /Mạnh bất ngờ/ }).click();
+  await expect(page.getByRole('heading', { name: /Tối ưu board mạnh nhất hiện có/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Đào sâu: Khi nào chơi winstreak\/losestreak/i })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Câu trước' }).click();
+  await expect(page.getByRole('heading', { name: /bench và shop/i })).toBeVisible();
+  await page.getByRole('button', { name: 'Bắt đầu lại' }).click();
+  await expect(page.getByRole('heading', { name: /Trận đấu hiện tại đang ở giai đoạn nào/i })).toBeVisible();
+});
+
+test('desktop decision tree keeps interactive map', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only decision map flow');
+
+  await page.goto('/cay-quyet-dinh');
+  const map = page.locator('svg[aria-label^="Mindmap cây quyết định"]');
+  await expect(map).toBeVisible();
+  await expect(map).toHaveAttribute('role', 'group');
+  await expect(page.getByText(/Cuộn để zoom/)).toBeVisible();
+});
+
 test('visible navigation marks the current route', async ({ page }) => {
   await page.goto('/checklist');
   const isDesktop = (page.viewportSize()?.width ?? 0) > 980;
