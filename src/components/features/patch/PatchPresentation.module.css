@@ -59,7 +59,7 @@
   object-fit: contain;
 }
 
-/* ─── Cover / outro — cùng bố cục căn giữa, chỉ khác nội dung ────────────── */
+/* ─── Outro — bố cục căn giữa (khác cover, xem .coverPage bên dưới) ──────── */
 .slideCover,
 .slideBody {
   width: 100%;
@@ -75,38 +75,88 @@
   text-align: center;
 }
 
-.slideCover h1 {
-  font-family: var(--font-display);
-  font-size: 108px;
-  font-weight: var(--fw-extra);
-  letter-spacing: var(--ls-tight);
-  text-transform: uppercase;
-  margin: 0;
-  color: var(--accent-primary);
-}
-
 .coverTitle {
   font-size: 34px;
   color: var(--text-secondary);
   margin: 0;
 }
 
-.coverMeta {
+/* ─── Slide bìa — logo + eyebrow góc trên, tiêu đề 2 tông màu căn trái, dải
+   số liệu neo đáy (đúng bố cục bản tham khảo: không còn căn giữa như trước). */
+.coverPage {
+  width: 100%;
+  max-width: 1560px;
+  height: 100%;
+  padding: 64px 120px 72px;
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.coverTopRow {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.coverBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coverBrandLogo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.coverBrandText {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.coverHeadline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.coverSource {
   font-family: var(--font-mono);
-  font-size: 20px;
-  color: var(--text-muted);
+  font-size: 18px;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--accent-secondary-text);
+}
+
+.coverHeadline h1 {
+  font-family: var(--font-display);
+  font-size: 92px;
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.coverDate {
+  color: var(--accent-primary);
+}
+
+.coverRule {
+  height: 3px;
+  background: var(--text-primary);
 }
 
 .statRow {
   display: flex;
   align-items: baseline;
   gap: 28px;
-  margin-top: 12px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border-line);
   font-family: var(--font-mono);
   font-size: 18px;
   color: var(--text-muted);
@@ -121,8 +171,8 @@
   margin-right: 6px;
 }
 
-.statBuff strong { color: var(--success); }
-.statNerf strong { color: var(--danger); }
+.statBuff strong { color: var(--accent-primary); }
+.statNerf strong { color: var(--accent-secondary); }
 
 /* ─── Eyebrow / heading chung ─────────────────────────────────────────── */
 .eyebrow {
@@ -133,9 +183,9 @@
   color: var(--text-muted);
 }
 
-.eyebrow.dir-up { color: var(--success); }
-.eyebrow.dir-down { color: var(--danger); }
-.eyebrow.dir-mixed { color: var(--warning); }
+.eyebrow.dir-up { color: var(--accent-primary); }
+.eyebrow.dir-down { color: var(--accent-secondary); }
+.eyebrow.dir-mixed { color: var(--text-primary); }
 
 .slideBody h2 {
   font-family: var(--font-display);
@@ -207,11 +257,10 @@
 .overviewRowBlock {
   display: flex;
   flex-shrink: 0;
-  border: 1.5px solid var(--border-line);
+  border: 2px solid var(--text-primary);
   border-radius: var(--r-md);
   overflow: hidden;
   background: var(--surface-card);
-  box-shadow: var(--shadow-offset-ink);
 }
 
 .overviewRowLabel {
@@ -227,19 +276,21 @@
   font-weight: var(--fw-extra);
   text-transform: uppercase;
   letter-spacing: var(--ls-tight);
-  color: var(--text-primary);
   text-align: center;
+  color: #fff;
 }
 
-.overviewRowLabel-buff { background: color-mix(in srgb, var(--success) 30%, white); }
-.overviewRowLabel-nerf { background: color-mix(in srgb, var(--danger) 26%, white); }
-.overviewRowLabel-other { background: color-mix(in srgb, var(--warning) 26%, white); }
+/* Dải nhãn tô ĐẶC màu (không còn nền pastel nhạt) — đúng kiểu banner
+   infographic của bản tham khảo, đọc được ngay cả từ xa lúc quay video. */
+.overviewRowLabel-buff { background: var(--accent-primary); }
+.overviewRowLabel-nerf { background: var(--accent-secondary); }
+.overviewRowLabel-other { background: var(--text-primary); }
 
 .overviewRowCount {
   font-family: var(--font-mono);
   font-size: 16px;
   font-weight: var(--fw-bold);
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .overviewRowContent {
@@ -427,47 +478,57 @@
   color: var(--text-subtle);
 }
 
-/* ─── Nhãn tăng/giảm — chữ màu trơn, không nền, đúng kiểu .kindTag đang dùng
-   ở trang /patch (PatchBoard.module.css) — cùng một ngôn ngữ màu xuyên suốt
-   web và slide: xanh lá = tăng, đỏ = giảm, cam = chỉnh, xanh dương = cơ chế. */
+/* ─── Nhãn tăng/giảm — huy hiệu tô nền đặc + chữ trắng, đọc được từ xa lúc
+   quay video (chữ màu trơn không nền quá mờ ở khung hình nhỏ). Bảng màu
+   riêng cho slide, tách khỏi .kindTag ở /patch: xanh dương = tăng, cam =
+   giảm, đen = chỉnh/cơ chế (hai loại "không rõ hướng buff/nerf" gộp chung
+   một tông trung tính thay vì vàng/xanh dương như trang thường). */
 .kindTag {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: var(--fw-bold);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   white-space: nowrap;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+  flex-shrink: 0;
 }
 
-.kind-buff { color: var(--success); }
-.kind-nerf { color: var(--danger); }
-.kind-rework { color: var(--warning); }
-.kind-mechanic { color: var(--info); }
+.kind-buff { background: var(--accent-primary); }
+.kind-nerf { background: var(--accent-secondary); }
+.kind-rework { background: var(--text-primary); }
+.kind-mechanic { background: var(--text-primary); }
 
-/* Chấm tròn ở hàng cơ chế — cùng bảng màu nhưng tô nền thay vì chữ. */
-.bulletBuff { background: var(--success); }
-.bulletNerf { background: var(--danger); }
-.bulletRework { background: var(--warning); }
-.bulletMechanic { background: var(--info); }
+/* Chấm hình thoi ở hàng cơ chế — cùng bảng màu tăng/giảm nhưng riêng mục
+   cơ chế/chỉnh luôn đứng một mình trên slide này (không trộn với tăng/giảm)
+   nên dùng xanh dương làm điểm nhấn trực quan, không cần phân biệt hướng. */
+.bulletBuff,
+.bulletNerf,
+.bulletRework,
+.bulletMechanic {
+  background: var(--accent-primary);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
 
 /* ─── Số liệu trước/sau — dùng chung cho card, cột, hàng cơ chế ───────── */
 .changes {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }
 
+/* Không còn nền ô xám cho từng dòng — chữ đứng trần trên nền thẻ, đúng kiểu
+   tối giản/in-ấn của bản tham khảo, chỉ ngăn cách bằng khoảng gap. */
 .changes li {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: 4px 12px;
-  border-radius: var(--r-xs);
-  background: var(--surface-raised);
-  padding: 6px 10px;
 }
 
 .changeLabel {
@@ -497,10 +558,10 @@
   font-weight: var(--fw-extra);
 }
 
-.to-buff { color: var(--success); }
-.to-nerf { color: var(--danger); }
-.to-rework { color: var(--warning); }
-.to-mechanic { color: var(--info); }
+.to-buff { color: var(--accent-primary); }
+.to-nerf { color: var(--accent-secondary); }
+.to-rework { color: var(--text-primary); }
+.to-mechanic { color: var(--text-primary); }
 
 /* ─── Lưới thẻ tướng/tộc hệ/trang bị ─────────────────────────────────────
    flex-wrap thay vì CSS Grid: Grid kéo mọi thẻ trong cùng hàng cao bằng thẻ
@@ -521,15 +582,17 @@
    giãn hết chiều rộng còn lại, nhìn dài quá khổ so với 5-6 thẻ khác cùng bộ
    slide. Không grow — 2 thẻ vẫn xếp cạnh nhau nhờ flex-wrap, chỉ 1 thẻ thì
    đứng đúng khổ 50% thay vì kéo dài hết hàng. */
+/* Viền đều 4 cạnh lấy màu giá/độ hiếm (--icon-accent do EntryCard set qua
+   inline style) — trước đây chỉ tô cạnh trái + viền xám mờ + đổ bóng lệch,
+   giờ đổi sang viền liền khối đậm hơn, phẳng (không bóng), đúng kiểu thẻ
+   "print/newsletter" của bản tham khảo. */
 .card {
   flex: 0 1 calc(50% - 9px);
   min-width: 320px;
   background: var(--surface-card);
-  border: 1.5px solid var(--border-line);
-  border-left: 5px solid var(--border-strong);
+  border: 2px solid var(--icon-accent, var(--text-primary));
   border-radius: var(--r-md);
   padding: 16px 18px;
-  box-shadow: var(--shadow-offset-ink);
 }
 
 .cardHead {
@@ -540,6 +603,7 @@
 
 .cardHeadText {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 6px;
   min-width: 0;
@@ -621,29 +685,28 @@
   font-size: 12px;
 }
 
-/* ─── Danh sách cơ chế / sửa lỗi ───────────────────────────────────────── */
+/* ─── Danh sách cơ chế / sửa lỗi ─────────────────────────────────────────
+   2 cột, không còn khung thẻ riêng từng dòng — danh sách phẳng kiểu bản in,
+   đúng bản tham khảo (khác hẳn lưới thẻ có viền của tướng/tộc hệ/nâng cấp,
+   vì mục cơ chế là câu mô tả dài, đóng khung nhỏ sẽ ngộp chữ). */
 .mechanicList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 48px;
   max-height: 760px;
   overflow: hidden;
+  align-content: start;
 }
 
 .mechanicRow {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  border: 1px solid var(--border-line);
-  border-radius: var(--r-sm);
-  background: var(--surface-card);
-  padding: 14px 18px;
 }
 
 .mechanicBullet {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
   margin-top: 6px;
   flex-shrink: 0;
 }

@@ -62,23 +62,42 @@ function EntryChanges({ entry }: { entry: PatchEntry }) {
   );
 }
 
-/** Chữ màu trơn, không nền — đúng kiểu .kindTag đang dùng ở trang /patch, và
- * dùng nhãn đầy đủ ("Tăng sức mạnh") thay vì rút gọn ("tăng") để rõ nghĩa khi
- * đứng một mình trên thẻ lớn. */
+/** Huy hiệu tô nền đặc + chữ trắng — dùng nhãn rút gọn ("giảm"/"tăng") vì giờ
+ * đứng gọn trong một pill nhỏ ở góc thẻ, không cần câu đầy đủ như trước. */
 function KindPill({ entry }: { entry: PatchEntry }) {
-  return <span className={[styles.kindTag, styles[`kind-${entry.kind}`]].join(' ')}>{patchKindMeta[entry.kind].label}</span>;
+  return <span className={[styles.kindTag, styles[`kind-${entry.kind}`]].join(' ')}>{patchKindMeta[entry.kind].short}</span>;
 }
 
+/** `version` luôn có dạng "<NHÃN> DD/MM/YYYY (<id>)" (vd "PBE 06/08/2026
+ * (18.1z)") — tách lấy nhãn nguồn (PBE/Live...) làm tiền tố tiêu đề, còn ngày
+ * tháng rút gọn DD/MM làm phần số lớn tô màu, đúng bố cục "PATCH PBE 03/08"
+ * của bản tham khảo — không hard-code "PBE" vì bản vá Live sẽ có nhãn khác. */
 function SlideCover({ slide }: { slide: Extract<PatchSlide, { kind: 'cover' }> }) {
+  const label = slide.version.split(' ')[0] || 'Patch';
+  const shortDate = slide.dateVi.slice(0, 5);
+  // `source.label` thường đã tự có tiền tố "<NHÃN> — ..." (vd "PBE — TheTruexy
+  // ..."), trùng với `label` vừa tách — bỏ phần trùng để khỏi lặp "PBE" 2 lần.
+  const rawSource = slide.source?.label;
+  const sourceSuffix = rawSource?.startsWith(`${label} — `) ? rawSource.slice(label.length + 3) : rawSource;
+  const sourceLine = sourceSuffix ? `${label} · Nguồn: ${sourceSuffix}` : `${label} · Biên soạn: ${slide.author}`;
   return (
-    <div className={styles.slideCover}>
-      <span className={styles.eyebrow}>Bản vá Set 18</span>
-      <h1>{slide.version}</h1>
-      <p className={styles.coverTitle}>{slide.title}</p>
-      <div className={styles.coverMeta}>
-        <span>{slide.dateVi}</span>
-        <span aria-hidden="true">·</span>
-        <span>{slide.source?.label ?? `Biên soạn: ${slide.author}`}</span>
+    <div className={styles.coverPage}>
+      <div className={styles.coverTopRow}>
+        <span className={styles.coverBrand}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- render trong stage được scale(); next/image tính layout theo viewport thật nên sẽ sai tỉ lệ ở đây. */}
+          <img alt="" className={styles.coverBrandLogo} src="/logo/logo-main.png" />
+          <span className={styles.coverBrandText}>
+            BARON<span className={styles.wordmarkAccent}>TFT</span>
+          </span>
+        </span>
+        <span className={styles.eyebrow}>Bản vá Set 18</span>
+      </div>
+      <div className={styles.coverHeadline}>
+        <span className={styles.coverSource}>{sourceLine}</span>
+        <h1>
+          PATCH {label} <span className={styles.coverDate}>{shortDate}</span>
+        </h1>
+        <div aria-hidden="true" className={styles.coverRule} />
       </div>
       <StatRow stats={slide.stats} />
     </div>
@@ -226,7 +245,7 @@ function EntryCard({
   const name = resolveDisplayName(entry, entitySet);
   const icon = resolveIcon(entry, entitySet);
   return (
-    <article className={[styles.card, size === 'sm' ? styles.cardSm : null].filter(Boolean).join(' ')} style={{ borderLeftColor: icon.accent }}>
+    <article className={[styles.card, size === 'sm' ? styles.cardSm : null].filter(Boolean).join(' ')} style={{ borderColor: icon.accent }}>
       <div className={styles.cardHead}>
         <EntryIcon entitySet={entitySet} entry={entry} size={size === 'sm' ? 'sm' : 'md'} />
         <div className={styles.cardHeadText}>
@@ -248,9 +267,11 @@ function EntryCard({
             ) : null}
             {entry.breakpoint ? <span className={styles.costBadge}>Mốc {entry.breakpoint}</span> : null}
             {entry.note ? <span className={styles.noteBadge}>{entry.note}</span> : null}
-            <KindPill entry={entry} />
           </div>
         </div>
+        {/* Huy hiệu tăng/giảm neo góc phải thẻ — tách khỏi cardTags (tên/giá/mốc)
+            để luôn dễ thấy dù thẻ dài ngắn khác nhau, đúng bố cục bản tham khảo. */}
+        <KindPill entry={entry} />
       </div>
       <EntryChanges entry={entry} />
     </article>

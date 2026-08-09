@@ -299,7 +299,10 @@ export function buildPatchSlides(report: PatchReport, url: string): PatchSlide[]
   const mechanicEntries = byCategory('mechanic');
   if (mechanicEntries.length) {
     const eyebrow = `Cơ chế · ${mechanicEntries.length} thay đổi`;
-    for (const page of chunk(mechanicEntries, 10)) slides.push({ kind: 'mechanic', eyebrow, entries: page });
+    // Danh sách 2 cột không còn khung thẻ riêng (xem PatchPresentation.module.css
+    // .mechanicList) nên chứa được nhiều hơn hẳn kiểu 1 cột cũ — 10/trang từng để
+    // thừa gần nửa khung trống. 16 vẫn còn dư địa an toàn dưới max-height 760px.
+    for (const page of chunk(mechanicEntries, 16)) slides.push({ kind: 'mechanic', eyebrow, entries: page });
   }
 
   for (const impact of report.impacts ?? []) slides.push({ kind: 'impact', impact });
