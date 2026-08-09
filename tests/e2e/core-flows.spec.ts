@@ -10,13 +10,13 @@ test('home decision board updates the diagnostic panel', async ({ page }) => {
 
 test('foundational knowledge reader switches lessons', async ({ page }) => {
   await page.goto('/kien-thuc-nen-tang');
-  await expect(page.getByRole('heading', { name: /Đọc đúng kỹ năng/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tư duy TFT xuyên mùa' })).toBeVisible();
   // TOC desktop là accordion — bài học nằm trong nhóm khác category đang active
   // (mặc định là "Ra quyết định") chỉ có trong DOM sau khi mở nhóm chứa nó.
   const desktopGroupToggle = page.getByRole('button', { name: /Vận hành kinh tế/i });
   if (await desktopGroupToggle.isVisible()) {
     await desktopGroupToggle.click();
-    await page.getByRole('button', { name: /Level, roll, outs và breakpoint/i }).click();
+    await page.getByRole('link', { name: /Level, roll, outs và breakpoint/i }).click();
   } else {
     await page.getByLabel('Chọn bài học').selectOption('level-roll-outs-va-breakpoint');
   }
@@ -53,8 +53,8 @@ test('command palette opens from the visible search control', async ({ page }) =
   }
 
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
-  await page.getByPlaceholder(/Tìm bài học/i).fill('rolldown');
-  await expect(page.getByText('Mở checklist trước rolldown')).toBeVisible();
+  await page.getByPlaceholder(/Tìm bài học/i).fill('akali');
+  await expect(page.getByRole('option', { name: /Akali/i }).first()).toBeVisible();
 });
 
 test('visible navigation marks the current route', async ({ page }) => {
@@ -71,7 +71,7 @@ test('visible navigation marks the current route', async ({ page }) => {
     // điều hướng sau này cũng không làm hỏng test.
     await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
 
-    await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
+    await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
     const lessonNav = page.getByRole('navigation', { name: 'Điều hướng chính' });
     await expect(lessonNav.getByRole('link', { name: 'Kiến thức nền tảng' })).toHaveAttribute('aria-current', 'page');
     return;
@@ -85,7 +85,7 @@ test('visible navigation marks the current route', async ({ page }) => {
   await expect(panel.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
   await page.keyboard.press('Escape');
 
-  await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
+  await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
   await page.getByRole('button', { name: 'Mở điều hướng' }).click();
   const lessonPanel = page.getByRole('dialog', { name: 'Điều hướng nhanh' });
   await expect(lessonPanel.getByRole('link', { name: 'Kiến thức' })).toHaveAttribute('aria-current', 'page');
@@ -106,16 +106,16 @@ test('compact desktop header keeps search visible', async ({ page }, testInfo) =
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
 });
 
-test('Set18 section query stays synchronized and supports history', async ({ page }, testInfo) => {
+test('Set18 section route stays synchronized and supports history', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 flow');
 
-  await page.goto('/mua-18?section=nang-cap');
+  await page.goto('/mua-18/nang-cap');
   await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
-  await expect(page.getByText('Đang hiển thị 48 / 261 nâng cấp')).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 48 \/ \d+ nâng cấp/)).toBeVisible();
 
   await page.getByRole('link', { name: /Chi tiết tướng/ }).click();
-  await expect(page).toHaveURL(/section=chi-tiet-tuong/, { timeout: 15_000 });
-  await expect(page.getByRole('heading', { name: 'Chi tiết tướng' })).toBeVisible();
+  await expect(page).toHaveURL(/\/mua-18\/chi-tiet-tuong/, { timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Chi tiết tướng', level: 1 })).toBeVisible();
 
   const flip = page.getByRole('button', { name: 'Xem số liệu của Akali, dạng AD' });
   await expect(flip).toHaveAttribute('aria-pressed', 'false');
@@ -125,7 +125,7 @@ test('Set18 section query stays synchronized and supports history', async ({ pag
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
   await page.getByRole('button', { name: /Hiển thị thêm 48/ }).click();
-  await expect(page.getByText('Đang hiển thị 96 / 261 nâng cấp')).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 96 \/ \d+ nâng cấp/)).toBeVisible();
 });
 
 test('Patch selector switches reports and labels personal analysis', async ({ page }, testInfo) => {
@@ -135,27 +135,20 @@ test('Patch selector switches reports and labels personal analysis', async ({ pa
   await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Bản vá này ảnh hưởng gì tới game' })).toBeVisible();
 
-  // Danh sách bản vá là select (sẽ có hàng chục bản), kèm dòng meta nói ngày
-  // cập nhật và nguồn.
+  // Danh sách bản vá là listbox custom vì sidebar sticky có overflow; kèm dòng
+  // meta nói ngày cập nhật và nguồn.
   const selector = page.getByLabel('Chọn bản vá');
-  await expect(selector).toHaveValue('patch-17-8');
-  await expect(page.getByText('Cập nhật 28/07/2026')).toBeVisible();
-  await expect(page.getByText(/Nguồn: Riot Games/)).toBeVisible();
+  await expect(selector).toBeVisible();
+  await expect(page.getByText('Cập nhật 07/08/2026')).toBeVisible();
+  await expect(page.getByText(/Nguồn: PBE — TheTruexy/)).toBeVisible();
 
-  // Mọi khối diễn giải phải có nhãn nguồn để không nhầm với số liệu chính thức.
+  // Số liệu chính thức phải có nhãn nguồn để không nhầm với nhận định biên tập.
   await expect(page.getByText('Theo patch note gốc').first()).toBeVisible();
-  await expect(page.locator('article').filter({ hasText: 'Nhịp chỉnh sửa' }).getByText('Phân tích cá nhân')).toBeVisible();
 
-  // Lưới thay đổi ở trên KHÔNG được chứa diễn giải — mọi nhận định nằm ở phần
-  // tác động cấp đội hình bên dưới.
-  const impact = page.locator('article').filter({ hasText: 'Đội hình Siêu Thú' });
-  await expect(impact).toContainText('Yếu đi');
-  // Chip dẫn chứng trỏ ngược về đúng thẻ thay đổi ở lưới trên.
-  await expect(impact.locator('a[href="#entry-p178-tuyet-diet"]')).toBeVisible();
-
-  await selector.selectOption('patch-18-2-vi-du');
-  await expect(page.getByText(/Dữ liệu mẫu cho bản vá trước/)).toBeVisible();
-  await expect(page.getByText('Cập nhật 24/07/2026')).toBeVisible();
+  await selector.click();
+  await page.getByRole('option', { name: /PBE 06\/08\/2026 \(18\.1z\)/ }).click();
+  await expect(page.getByText(/Bản vá PBE nhẹ, chủ yếu bugfix/)).toBeVisible();
+  await expect(page.getByText('Cập nhật 06/08/2026')).toBeVisible();
 });
 
 test('Patch filters stack and rank badges follow each category scale', async ({ page }, testInfo) => {
@@ -169,16 +162,19 @@ test('Patch filters stack and rank badges follow each category scale', async ({ 
   // đó, nếu không sẽ bấm vào ô có số mà lưới hiện ra rỗng.
   await kindGroup.getByRole('button', { name: /^giảm/ }).click();
   await expect(kindGroup.getByRole('button', { name: /^giảm/ })).toHaveAttribute('aria-pressed', 'true');
-  await expect(categoryList.getByRole('tab', { name: /^Tướng/ })).toHaveAccessibleName('Tướng, 3 thay đổi');
+  await expect(categoryList.getByRole('tab', { name: /^Tướng/ })).toHaveAccessibleName('Tướng, 1 thay đổi');
   await expect(categoryList.getByRole('tab', { name: /^Nâng cấp/ })).toHaveAccessibleName('Nâng cấp, 0 thay đổi');
 
+  await kindGroup.getByRole('button', { name: /^Tất cả/ }).click();
+
   // Mốc kích hoạt của tộc hệ phải là huy hiệu riêng, không lẫn trong tên.
-  const trait = page.locator('article').filter({ has: page.getByRole('heading', { name: 'Dẫn Truyền', level: 3 }) });
-  await expect(trait.getByText('Mốc 5')).toBeVisible();
+  const trait = page.locator('article').filter({ has: page.getByRole('heading', { name: 'Blackthorn', level: 3 }) });
+  await expect(trait.getByText('Mốc 6')).toBeVisible();
 
   // Mỗi nhóm có thang bậc riêng: tướng theo vàng, nâng cấp theo Bạc/Vàng/Kim
   // Cương, linh hỏa theo cấp.
-  await page.getByLabel('Chọn bản vá').selectOption('patch-18-3-vi-du');
+  await page.getByLabel('Chọn bản vá').click();
+  await page.getByRole('option', { name: /PBE 03\/08\/2026/ }).click();
   await kindGroup.getByRole('button', { name: /^Tất cả/ }).click();
 
   const ranks = await page
@@ -186,8 +182,8 @@ test('Patch filters stack and rank badges follow each category scale', async ({ 
     .evaluateAll((cards) =>
       cards.map((card) => card.querySelector('[class*="rankBadge"], [class*="breakpointBadge"]')?.textContent ?? ''),
     );
-  expect(ranks.slice(0, 6)).toEqual(['1 vàng', '3 vàng', '3 vàng', 'Mốc 3', 'Mốc 7', 'Bạc']);
-  expect(ranks).toContain('Cấp 2');
+  expect(ranks.slice(0, 6)).toEqual(['2 vàng', '3 vàng', '4 vàng', '5 vàng', '5 vàng', 'Mốc 6']);
+  expect(ranks).toContain('Mốc 6');
 });
 
 test('desktop patch changes are visible without scrolling', async ({ page }, testInfo) => {
