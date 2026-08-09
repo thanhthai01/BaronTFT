@@ -120,7 +120,7 @@ export function AugmentCard({
       ) : null}
 
       <div className={styles.augmentIconPlate}>
-        <Image alt="" height={112} src={augment.icon} width={112} />
+        <Image alt="" height={112} sizes="112px" src={augment.icon} width={112} />
       </div>
 
       <div className={styles.augmentNameBlock}>

@@ -17,6 +17,13 @@ const nextConfig: NextConfig = {
         destination: '/mua-18/:section',
         permanent: true,
       },
+      // Route bài học cũ đã đổi sang /kien-thuc-nen-tang; giữ redirect để
+      // bookmark/backlink không 404 và không làm nhiễu Speed Insights bởi URL cũ.
+      {
+        source: '/bai-hoc/:slug*',
+        destination: '/kien-thuc-nen-tang/:slug*',
+        permanent: true,
+      },
     ];
   },
 };

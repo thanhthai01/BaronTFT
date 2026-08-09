@@ -12,13 +12,20 @@ export function traitTitle(trait: Set18Trait) {
  * Set18/normalize_trait_icons.py), nên chỉ cần một kiểu nền duy nhất — màu
  * nền lấy từ `trait.accent` trong dữ liệu, không suy đoán trong component.
  */
-export function TraitIcon({ trait, size = 26 }: { trait: Set18Trait; size?: number }) {
+export function TraitIcon({ trait, size = 26, priority }: { trait: Set18Trait; size?: number; priority?: boolean }) {
   return (
     <span
       className={styles.iconWrap}
       style={{ background: trait.accent, width: size, height: size } as CSSProperties}
     >
-      <Image alt="" height={Math.round(size * 0.68)} src={trait.icon} width={Math.round(size * 0.68)} />
+      <Image
+        alt=""
+        height={Math.round(size * 0.68)}
+        priority={priority}
+        sizes={`${Math.round(size * 0.68)}px`}
+        src={trait.icon}
+        width={Math.round(size * 0.68)}
+      />
     </span>
   );
 }

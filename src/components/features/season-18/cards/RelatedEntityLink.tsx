@@ -15,7 +15,7 @@ export function RelatedEntityLink({
 }) {
   return (
     <Link className={styles.relatedItem} href={href}>
-      <Image alt="" className={styles.relatedItemLogo} height={40} src={image} width={40} />
+      <Image alt="" className={styles.relatedItemLogo} height={40} sizes="40px" src={image} width={40} />
       <span className={styles.relatedItemBody}>
         <span className={styles.relatedItemName}>{name}</span>
         {meta ? <span className={styles.relatedItemMeta}>{meta}</span> : null}

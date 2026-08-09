@@ -1,8 +1,6 @@
 'use client';
 
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/design-system/Button/Button';
 import { decisionSkills } from '@/content/decision-skills';
 import { motion, prefersReducedMotion } from '@/lib/motion';
@@ -14,29 +12,36 @@ const rows = [
   decisionSkills.slice(7, 10),
 ];
 
-gsap.registerPlugin(useGSAP);
-
 export function DecisionBoard() {
   const [selectedId, setSelectedId] = useState(decisionSkills[0].id);
   const wrapRef = useRef<HTMLDivElement>(null);
   const selected = decisionSkills.find((skill) => skill.id === selectedId) ?? decisionSkills[0];
 
-  useGSAP(
-    () => {
-      if (prefersReducedMotion()) return;
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+
+    let killed = false;
+    async function animateHexes() {
+      const { default: gsap } = await import('gsap');
+      if (killed) return;
       // Không dùng scale ở đây: các ô stagger vào không cùng lúc, nếu scale
       // từ 0.92 lên 1 thì trong lúc đang vào, ô đã xong trông to hơn hẳn ô
-      // chưa xong — nhìn như các ô không cùng kích thước.
-      gsap.from('[data-hex]', {
+      // chưa xong — nhìn như các ô không cùng kích thước. Nội dung vẫn hiện
+      // ngay từ HTML/CSS; GSAP chỉ thêm hiệu ứng sau khi hero đã render.
+      gsap.from(wrapRef.current?.querySelectorAll('[data-hex]') ?? [], {
         autoAlpha: 0,
         y: 18,
         duration: motion.base,
         ease: motion.easeOut,
         stagger: 0.045,
       });
-    },
-    { scope: wrapRef },
-  );
+    }
+
+    void animateHexes();
+    return () => {
+      killed = true;
+    };
+  }, []);
 
   function selectSkill(id: string) {
     setSelectedId(id);

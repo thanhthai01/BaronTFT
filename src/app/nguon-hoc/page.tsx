@@ -42,6 +42,7 @@ export default function ResourcesPage() {
                         className={styles.logo}
                         data-on-dark={source.logoOnDark ? '' : undefined}
                         height={28}
+                        sizes="28px"
                         src={`/sources/${source.logo}.png`}
                         width={28}
                       />

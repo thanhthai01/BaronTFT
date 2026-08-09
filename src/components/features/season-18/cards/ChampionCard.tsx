@@ -90,7 +90,7 @@ export function CardFrontContent({
     <>
       <div className={styles.frontId} ref={frontIdRef}>
         <div className={styles.miniHead}>
-          <Image alt={champion.name} className={styles.miniLogo} height={56} src={form.image} width={56} />
+          <Image alt={champion.name} className={styles.miniLogo} height={56} sizes="56px" src={form.image} width={56} />
           <div className={styles.nameCol}>
             <strong className={styles.uname}>{champion.name}</strong>
             <span className={styles.urole}>{champion.role}</span>
@@ -102,7 +102,7 @@ export function CardFrontContent({
       <div className={styles.body} ref={bodyRef}>
         <div className={styles.abhead}>
           {form.abilityIcon ? (
-            <Image alt="" className={styles.abilityIcon} height={28} src={form.abilityIcon} width={28} />
+            <Image alt="" className={styles.abilityIcon} height={28} sizes="28px" src={form.abilityIcon} width={28} />
           ) : null}
           <strong className={styles.abname}>{form.abilityNameVi || form.abilityName}</strong>
           <span className={styles.manaTag}>
@@ -310,7 +310,14 @@ export function ChampionCard({
               <CostPill color={champion.costColor} cost={champion.cost} />
             </div>
             <div className={styles.thumbWrap}>
-              <Image alt={champion.name} className={styles.bigThumb} height={220} src={form.bigImage} width={340} />
+              <Image
+                alt={champion.name}
+                className={styles.bigThumb}
+                height={220}
+                sizes="(min-width: 1280px) 340px, (min-width: 768px) 28vw, 90vw"
+                src={form.bigImage}
+                width={340}
+              />
             </div>
             {traitRow}
             <div className={styles.stats}>

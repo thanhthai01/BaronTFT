@@ -1,12 +1,12 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useMemo, useState, type CSSProperties } from 'react';
 import { Tabs, tabElementId, tabPanelId } from '@/components/design-system/Tabs/Tabs';
 import { PatchVersionSelect } from './PatchVersionSelect';
-import { PatchPresentation } from './PatchPresentation';
 import { set18EntityUrl } from '@/lib/set18-entity-url';
 import {
   initialsOf,
@@ -33,6 +33,10 @@ import {
   type PatchEntry,
 } from '@/content/patch-notes';
 import styles from './PatchBoard.module.css';
+
+const PatchPresentation = dynamic(() => import('./PatchPresentation').then((mod) => mod.PatchPresentation), {
+  ssr: false,
+});
 
 const CATEGORY_PREFIX = 'patch-category-';
 
@@ -77,7 +81,7 @@ function EntryIcon({
       title={icon.src ? label : `${label} — chưa có ảnh trong dữ liệu`}
     >
       {icon.src ? (
-        <Image alt="" height={96} src={icon.src} width={96} />
+        <Image alt="" height={96} sizes="96px" src={icon.src} width={96} />
       ) : (
         <span aria-hidden="true" className={styles.placeholderText}>
           {initialsOf(entry.name)}
@@ -150,7 +154,7 @@ function NoteBadge({ note }: { note: string }) {
     const level = starMatch[1];
     return (
       <span className={styles.starBadge} title={`Chỉ áp dụng ở mốc ${level} sao`}>
-        <Image alt={`${level} sao`} height={16} src={`/set18/assets/text_icons/star${level}.png`} width={48} />
+        <Image alt={`${level} sao`} height={16} sizes="48px" src={`/set18/assets/text_icons/star${level}.png`} width={48} />
       </span>
     );
   }

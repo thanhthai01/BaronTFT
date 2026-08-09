@@ -116,6 +116,8 @@ function ChampionLogo({
   champion,
   size,
   image,
+  sizes,
+  priority,
   onShow,
   onHide,
 }: {
@@ -123,6 +125,10 @@ function ChampionLogo({
   size: number;
   /** Ghi đè ảnh hiển thị (vd icon riêng của 1 dạng Lux) — tooltip vẫn dùng dữ liệu kỹ năng gốc của champion. */
   image?: string;
+  /** Kích thước ảnh thật trong layout, để next/image không chọn source quá lớn cho icon nhỏ. */
+  sizes?: string;
+  /** Chỉ dùng cho vài logo đầu trong viewport đầu tiên của ma trận. */
+  priority?: boolean;
   onShow: (champion: Set18Champion, x: number, y: number) => void;
   onHide: () => void;
 }) {
@@ -143,7 +149,15 @@ function ChampionLogo({
       title={`${champion.name} — ${champion.costLabel}`}
       type="button"
     >
-      <Image alt="" className={styles.champLogoImage} height={size} src={image ?? champion.image} width={size} />
+      <Image
+        alt=""
+        className={styles.champLogoImage}
+        height={size}
+        priority={priority}
+        sizes={sizes ?? `${size}px`}
+        src={image ?? champion.image}
+        width={size}
+      />
     </button>
   );
 }
@@ -211,7 +225,7 @@ function SynergyMatrix({
                   scope="col"
                   title={traitTitle(trait)}
                 >
-                  <TraitIcon trait={trait} />
+                  <TraitIcon priority={colIndex < 6} trait={trait} />
                   <span className={styles.headLabel}>{trait.vi}</span>
                 </th>
               ))}
@@ -226,7 +240,7 @@ function SynergyMatrix({
                   title={traitTitle(originTrait)}
                 >
                   <span className={styles.rowHeadInner}>
-                    <TraitIcon size={20} trait={originTrait} />
+                    <TraitIcon priority={rowIndex < 2} size={20} trait={originTrait} />
                     <span className={styles.headLabel}>{originTrait.vi}</span>
                   </span>
                 </th>
@@ -244,8 +258,16 @@ function SynergyMatrix({
                     >
                       {cellChampions.length ? (
                         <div className={styles.cellChamps}>
-                          {cellChampions.map((champion) => (
-                            <ChampionLogo champion={champion} key={champion.name} onHide={onHide} onShow={onShow} size={42} />
+                          {cellChampions.map((champion, championIndex) => (
+                            <ChampionLogo
+                              champion={champion}
+                              key={champion.name}
+                              onHide={onHide}
+                              onShow={onShow}
+                              priority={rowIndex < 2 && championIndex === 0}
+                              sizes="42px"
+                              size={42}
+                            />
                           ))}
                         </div>
                       ) : null}
@@ -878,7 +900,7 @@ function EffectSourceIcon({
   if (!wisp) return null;
   return (
     <span className={styles.effectWispIcon}>
-      <Image alt={wisp.categoryVi} height={40} src={wisp.categoryIcon} width={40} />
+      <Image alt={wisp.categoryVi} height={40} sizes="40px" src={wisp.categoryIcon} width={40} />
     </span>
   );
 }
@@ -1038,7 +1060,7 @@ function EffectDetails({
                             <tr key={row.form}>
                               <td>
                                 <div className={styles.effectLuxFormCell}>
-                                  {image ? <Image alt={row.form} height={28} src={image} width={28} /> : null}
+                                  {image ? <Image alt={row.form} height={28} sizes="28px" src={image} width={28} /> : null}
                                   <span>{row.form}</span>
                                 </div>
                               </td>

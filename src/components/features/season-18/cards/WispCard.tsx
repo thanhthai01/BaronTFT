@@ -33,7 +33,7 @@ export function WispCard({
           ) : null}
         </div>
         <span className={styles.wispCategoryBadge} title={wisp.categoryVi}>
-          <Image alt="" height={40} src={wisp.categoryIcon} width={40} />
+          <Image alt="" height={40} sizes="40px" src={wisp.categoryIcon} width={40} />
         </span>
         <div className={styles.wispBadgeStack}>
           {wisp.appearsStart ? (
