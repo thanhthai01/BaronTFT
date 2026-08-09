@@ -533,7 +533,8 @@
 
 .changeLabel {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 17px;
+  font-weight: var(--fw-semibold);
 }
 
 .changeValues {
@@ -674,7 +675,7 @@
 
 .cardSm .changeLabel,
 .cardSm .changeValues {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .cardSm .changeTo {
