@@ -3,41 +3,13 @@
 import { Command } from 'cmdk';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { toSlug } from '@/lib/slug';
-import { searchActions } from '@/content/search-actions';
+import { searchActions, type SearchAction } from '@/content/search-actions';
 import { searchIndex, type SearchIndexEntry, type SearchIndexKind } from '@/content/search-index.generated';
+import { foldSearch, KIND_GROUP_LABEL, KIND_ORDER, rankActionMatches, rankIndexMatches } from './search';
 import styles from './CommandPalette.module.css';
 
-const KIND_GROUP_LABEL: Record<SearchIndexKind, string> = {
-  champion: 'Tướng',
-  trait: 'Tộc hệ',
-  wisp: 'Tinh Linh',
-  augment: 'Nâng cấp',
-  lesson: 'Bài học',
-};
-
-const KIND_ORDER: SearchIndexKind[] = ['champion', 'trait', 'wisp', 'augment', 'lesson'];
 const MAX_RESULTS_PER_KIND = 8;
-
-function fold(value: string): string {
-  return toSlug(value).replace(/-/g, ' ');
-}
-
-/** Xếp hạng theo mức khớp: khớp đầu chuỗi (prefix) trước, khớp chứa chuỗi con sau
- * — gõ "aka" nên đưa "Akali" lên trước 1 augment nào đó tình cờ chứa "aka" giữa câu. */
-function rankMatches(entries: SearchIndexEntry[], foldedQuery: string): SearchIndexEntry[] {
-  const scored = entries
-    .map((entryItem) => {
-      const foldedLabel = fold(entryItem.label);
-      if (foldedLabel.startsWith(foldedQuery)) return { entryItem, score: 0 };
-      if (entryItem.folded.startsWith(foldedQuery)) return { entryItem, score: 1 };
-      if (entryItem.folded.includes(foldedQuery)) return { entryItem, score: 2 };
-      return null;
-    })
-    .filter((row): row is { entryItem: SearchIndexEntry; score: number } => row !== null);
-  scored.sort((a, b) => a.score - b.score);
-  return scored.map((row) => row.entryItem);
-}
+const MAX_ACTION_RESULTS = 6;
 
 export default function CommandPaletteDialog({
   open,
@@ -50,19 +22,22 @@ export default function CommandPaletteDialog({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const foldedQuery = fold(query.trim());
+  const foldedQuery = foldSearch(query.trim());
 
-  const resultsByKind = useMemo(() => {
+  const queryResults = useMemo((): { actions: SearchAction[]; byKind: Map<SearchIndexKind, SearchIndexEntry[]> } | null => {
     if (!foldedQuery) return null;
-    const grouped = new Map<SearchIndexKind, SearchIndexEntry[]>();
+    const byKind = new Map<SearchIndexKind, SearchIndexEntry[]>();
     for (const kind of KIND_ORDER) {
-      const matches = rankMatches(
+      const matches = rankIndexMatches(
         searchIndex.filter((entryItem) => entryItem.kind === kind),
         foldedQuery,
       ).slice(0, MAX_RESULTS_PER_KIND);
-      if (matches.length) grouped.set(kind, matches);
+      if (matches.length) byKind.set(kind, matches);
     }
-    return grouped;
+    return {
+      actions: rankActionMatches(searchActions, foldedQuery).slice(0, MAX_ACTION_RESULTS),
+      byKind,
+    };
   }, [foldedQuery]);
 
   function go(href: string) {
@@ -88,7 +63,7 @@ export default function CommandPaletteDialog({
       <Command.List className={styles.list}>
         <Command.Empty className={styles.empty}>Không tìm thấy hành động phù hợp.</Command.Empty>
 
-        {resultsByKind === null
+        {queryResults === null
           ? groups.map((group) => (
               <Command.Group heading={group} key={group} className={styles.groupHeading}>
                 {searchActions
@@ -106,21 +81,40 @@ export default function CommandPaletteDialog({
                   ))}
               </Command.Group>
             ))
-          : KIND_ORDER.filter((kind) => resultsByKind.has(kind)).map((kind) => (
-              <Command.Group heading={KIND_GROUP_LABEL[kind]} key={kind} className={styles.groupHeading}>
-                {resultsByKind.get(kind)!.map((entryItem) => (
-                  <Command.Item
-                    className={styles.item}
-                    key={entryItem.id}
-                    onSelect={() => go(entryItem.href)}
-                    value={entryItem.id}
-                  >
-                    <strong>{entryItem.label}</strong>
-                    <span>{entryItem.sublabel}</span>
-                  </Command.Item>
+          : (
+              <>
+                {queryResults.actions.length ? (
+                  <Command.Group heading="Hành động" className={styles.groupHeading}>
+                    {queryResults.actions.map((action) => (
+                      <Command.Item
+                        className={styles.item}
+                        key={action.id}
+                        onSelect={() => go(action.href)}
+                        value={action.id}
+                      >
+                        <strong>{action.label}</strong>
+                        <span>{action.description}</span>
+                      </Command.Item>
+                    ))}
+                  </Command.Group>
+                ) : null}
+                {KIND_ORDER.filter((kind) => queryResults.byKind.has(kind)).map((kind) => (
+                  <Command.Group heading={KIND_GROUP_LABEL[kind]} key={kind} className={styles.groupHeading}>
+                    {queryResults.byKind.get(kind)!.map((entryItem) => (
+                      <Command.Item
+                        className={styles.item}
+                        key={entryItem.id}
+                        onSelect={() => go(entryItem.href)}
+                        value={entryItem.id}
+                      >
+                        <strong>{entryItem.label}</strong>
+                        <span>{entryItem.sublabel}</span>
+                      </Command.Item>
+                    ))}
+                  </Command.Group>
                 ))}
-              </Command.Group>
-            ))}
+              </>
+            )}
       </Command.List>
     </Command.Dialog>
   );

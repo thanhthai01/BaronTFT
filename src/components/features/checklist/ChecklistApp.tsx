@@ -101,7 +101,13 @@ export function ChecklistApp() {
               <input
                 checked={isChecked}
                 type="checkbox"
-                onChange={(event) => setChecked((state) => ({ ...state, [item.id]: event.target.checked }))}
+                onChange={(event) => {
+                  setChecked((state) => {
+                    const next = { ...state, [item.id]: event.target.checked };
+                    writeJson(storageKeys.checklist, next);
+                    return next;
+                  });
+                }}
               />
               <span>{item.text}</span>
             </label>

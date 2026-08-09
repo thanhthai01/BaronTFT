@@ -88,6 +88,9 @@
 }
 
 .input {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   width: 100%;
   border: 0;
   border-bottom: 1px solid var(--border-line);
@@ -142,4 +145,21 @@
   color: var(--text-muted);
   padding: 2rem;
   text-align: center;
+}
+
+@media (max-width: 640px) {
+  .dialog {
+    top: max(env(safe-area-inset-top), 0.75rem);
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - max(env(safe-area-inset-top), 0.75rem) - max(env(safe-area-inset-bottom), 0.75rem));
+    border-radius: var(--r-md);
+  }
+
+  .list {
+    max-height: calc(100dvh - 7rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+
+  .item {
+    min-height: 3rem;
+  }
 }

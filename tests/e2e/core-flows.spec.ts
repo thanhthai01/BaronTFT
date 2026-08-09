@@ -70,8 +70,11 @@ test('command palette opens from the visible search control', async ({ page }) =
   }
 
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
-  await page.getByPlaceholder(/Tìm bài học/i).fill('akali');
-  await expect(page.getByRole('option', { name: /Akali/i }).first()).toBeVisible();
+  await page.getByPlaceholder(/Tìm bài học/i).fill('rolldown');
+  const actions = page.getByLabel('Hành động');
+  await expect(actions.getByText('Mở checklist trước rolldown')).toBeVisible();
+  await page.getByPlaceholder(/Tìm bài học/i).fill('sau tran');
+  await expect(actions.getByText('Ghi debrief sau trận')).toBeVisible();
 });
 
 test('visible navigation marks the current route', async ({ page }) => {
