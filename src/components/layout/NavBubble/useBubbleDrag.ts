@@ -3,7 +3,7 @@
 import gsap from 'gsap';
 import { useCallback, useEffect, useRef, type RefObject } from 'react';
 import { motion } from '@/lib/motion';
-import { clampOffsetY, computeVelocity, resolveSnapSide, type BubbleSide, type PointerSample } from './bubbleMath';
+import { clampOffsetY, computeVelocity, edgePeekLeft, resolveSnapSide, type BubbleSide, type PointerSample } from './bubbleMath';
 
 export type BubblePosition = {
   side: BubbleSide;
@@ -13,7 +13,8 @@ export type BubblePosition = {
 
 const EDGE_GAP = 16;
 const BUBBLE_SIZE = 56;
-const COLLAPSED_SIZE = 36;
+const COLLAPSED_SIZE = 44;
+const COLLAPSED_VISIBLE = 18;
 const TOP_SAFE = 16;
 const BOTTOM_SAFE = 16;
 const DRAG_THRESHOLD = 6;
@@ -21,7 +22,11 @@ const MAX_SAMPLES = 8;
 
 function restingRect(position: BubblePosition, viewportWidth: number) {
   const size = position.collapsed ? COLLAPSED_SIZE : BUBBLE_SIZE;
-  const left = position.side === 'left' ? EDGE_GAP : viewportWidth - EDGE_GAP - size;
+  const left = position.collapsed
+    ? edgePeekLeft({ side: position.side, viewportWidth, size, visibleSize: COLLAPSED_VISIBLE })
+    : position.side === 'left'
+      ? EDGE_GAP
+      : viewportWidth - EDGE_GAP - size;
   return { left, top: position.offsetY, size };
 }
 
@@ -49,7 +54,9 @@ export function useBubbleDrag(
 
       gsap.killTweensOf(el);
       gsap.set(el, { x: 0, y: 0 });
-      el.setPointerCapture(event.pointerId);
+      if (typeof el.setPointerCapture === 'function') {
+        el.setPointerCapture(event.pointerId);
+      }
 
       const rect = el.getBoundingClientRect();
       dragState.current = {
@@ -95,7 +102,9 @@ export function useBubbleDrag(
       const state = dragState.current;
       if (!el || !state || state.pointerId !== event.pointerId) return;
 
-      el.releasePointerCapture(event.pointerId);
+      if (typeof el.hasPointerCapture !== 'function' || el.hasPointerCapture(event.pointerId)) {
+        el.releasePointerCapture(event.pointerId);
+      }
       dragState.current = null;
 
       if (!state.dragging) {
@@ -137,6 +146,21 @@ export function useBubbleDrag(
     [bubbleRef, onTap, position.collapsed, reducedMotion, setPosition],
   );
 
+  const onPointerCancel = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      const el = bubbleRef.current;
+      const state = dragState.current;
+      if (!el || !state || state.pointerId !== event.pointerId) return;
+
+      if (typeof el.releasePointerCapture === 'function' && (!el.hasPointerCapture || el.hasPointerCapture(event.pointerId))) {
+        el.releasePointerCapture(event.pointerId);
+      }
+      dragState.current = null;
+      gsap.set(el, { x: 0, y: 0 });
+    },
+    [bubbleRef],
+  );
+
   useEffect(() => {
     const el = bubbleRef.current;
     return () => {
@@ -144,7 +168,7 @@ export function useBubbleDrag(
     };
   }, [bubbleRef]);
 
-  return { onPointerDown, onPointerMove, onPointerUp };
+  return { onPointerDown, onPointerMove, onPointerUp, onPointerCancel };
 }
 
-export { BUBBLE_SIZE, COLLAPSED_SIZE, EDGE_GAP, TOP_SAFE, BOTTOM_SAFE, restingRect };
+export { BUBBLE_SIZE, COLLAPSED_SIZE, COLLAPSED_VISIBLE, EDGE_GAP, TOP_SAFE, BOTTOM_SAFE, restingRect };

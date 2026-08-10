@@ -4,17 +4,26 @@ import type { NavBubbleItem } from './navBubbleItems';
  * — không cài package, giữ đúng convention SVG inline sẵn có ở BlockIcons.tsx. */
 export function NavBubbleIcon({ icon }: { icon: NavBubbleItem['icon'] }) {
   switch (icon) {
-    case 'house':
+    case 'clipboard-list':
       return (
         <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M3 11.5 12 4l9 7.5" />
-          <path d="M5.5 10v9.5a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1V15a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4.5a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1V10" />
+          <path d="M9 4.5h6l.7 2H18a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 18 20.5H6A1.5 1.5 0 0 1 4.5 19V8A1.5 1.5 0 0 1 6 6.5h2.3L9 4.5Z" />
+          <path d="M9 4.5h6" />
+          <path d="M8 11h8" />
+          <path d="M8 15h5" />
         </svg>
       );
     case 'book-open':
       return (
         <svg aria-hidden="true" viewBox="0 0 24 24">
           <path d="M12 6.5c-1.6-1.3-3.7-2-6.5-2A1.5 1.5 0 0 0 4 6v11c2.8 0 4.9.7 6.5 2 1.6-1.3 3.7-2 6.5-2s3.7.7 6.5.7V6a1.5 1.5 0 0 0-1.5-1.5c-2.8 0-4.9.7-6.5 2v13" />
+        </svg>
+      );
+    case 'flag':
+      return (
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M5.5 21V4.5" />
+          <path d="M5.5 5.5h9.2l-.8 3 3.1 2.3H5.5" />
         </svg>
       );
     case 'layout-grid':
@@ -24,6 +33,14 @@ export function NavBubbleIcon({ icon }: { icon: NavBubbleItem['icon'] }) {
           <rect height="7" rx="1.4" width="7" x="13.5" y="3.5" />
           <rect height="7" rx="1.4" width="7" x="3.5" y="13.5" />
           <rect height="7" rx="1.4" width="7" x="13.5" y="13.5" />
+        </svg>
+      );
+    case 'map':
+      return (
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="m8 5-4 2v12l4-2 8 2 4-2V5l-4 2-8-2Z" />
+          <path d="M8 5v12" />
+          <path d="M16 7v12" />
         </svg>
       );
     case 'list-checks':

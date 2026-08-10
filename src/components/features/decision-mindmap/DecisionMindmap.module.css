@@ -36,6 +36,10 @@
   color: var(--text-on-accent);
 }
 
+.guided {
+  display: none;
+}
+
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
@@ -400,6 +404,138 @@
 
   .mapPanel {
     order: 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .layout {
+    display: none;
+  }
+
+  .treeSwitcher {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.15rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .treeTab {
+    min-height: 2.75rem;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+
+  .guided {
+    display: grid;
+    gap: 0.85rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--r-xl);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-offset-ink);
+    padding: 1rem;
+  }
+
+  .guidedHead {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .guidedHead h2,
+  .guidedCard h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-weight: var(--fw-extra);
+    line-height: var(--lh-snug);
+  }
+
+  .guidedHead h2 {
+    font-size: clamp(1.45rem, 8vw, 2.15rem);
+    text-transform: uppercase;
+  }
+
+  .guidedHead p,
+  .guidedCard p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: var(--lh-body);
+  }
+
+  .guidedPath {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+
+  .guidedPath span {
+    display: inline-flex;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .guidedCard {
+    display: grid;
+    gap: 0.75rem;
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-lg);
+    background: var(--surface-raised);
+    padding: 1rem;
+  }
+
+  .guidedType {
+    width: fit-content;
+    border-radius: var(--r-pill);
+    background: var(--accent-primary-soft);
+    color: var(--accent-primary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps);
+    padding: 0.2rem 0.6rem;
+    text-transform: uppercase;
+  }
+
+  .guidedAnswers {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .guidedAnswer {
+    display: grid;
+    gap: 0.4rem;
+    min-height: 3.25rem;
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-md);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    padding: 0.75rem;
+    text-align: left;
+  }
+
+  .guidedControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .guidedControl {
+    min-height: 2.75rem;
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-sm);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    font-weight: var(--fw-bold);
+  }
+
+  .guidedControl:disabled {
+    color: var(--text-disabled);
+    cursor: not-allowed;
   }
 }
 

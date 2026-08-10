@@ -29,15 +29,15 @@ export default function HomePage() {
       <section className={styles.hero}>
         <div className={[styles.heroGrid, 'wide-container'].join(' ')}>
           <div>
-            <span className="kicker">Blog TFT cá nhân</span>
+            <span className="kicker">Phòng huấn luyện TFT xuyên mùa</span>
             <h1>
-              Ghi lại <em>kiến thức cơ bản</em> mình học được khi chơi TFT.
+              Học cách thắng lobby, <em>không học thuộc đội hình.</em>
             </h1>
             <p className={styles.lead}>
-              Nơi mình lưu kiến thức nền tảng, dữ liệu Mùa 18, checklist trong trận và các bản patch — viết đơn giản, dùng lại được ngay.
+              Baron TFT giúp bạn chọn đúng kỹ năng cần luyện, đọc đúng tín hiệu trong trận và sửa một hành vi sau trận — dùng được qua nhiều mùa, không phụ thuộc tier list hôm nay.
             </p>
             <div className={styles.ctaRow}>
-              <Button href="/kien-thuc-nen-tang" size="lg">Đọc kiến thức nền tảng</Button>
+              <Button href="/lo-trinh" size="lg">Bắt đầu lộ trình</Button>
               <Button href="/checklist" size="lg" variant="secondary">Mở checklist trong trận</Button>
             </div>
           </div>

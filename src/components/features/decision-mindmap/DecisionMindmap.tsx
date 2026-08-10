@@ -54,6 +54,95 @@ function zoomViewportAt(viewport: Viewport, anchor: { x: number; y: number }, fa
   };
 }
 
+function GuidedDecisionTree({
+  tree,
+  currentEntry,
+  breadcrumb,
+  onBack,
+  onReset,
+  onSelect,
+  onSelectTree,
+}: {
+  tree: (typeof decisionTrees)[number];
+  currentEntry: LaidOutNode;
+  breadcrumb: LaidOutNode[];
+  onBack: () => void;
+  onReset: () => void;
+  onSelect: (id: string) => void;
+  onSelectTree: (treeId: string) => void;
+}) {
+  const node = currentEntry.node;
+  const hasPrevious = breadcrumb.length > 1;
+
+  return (
+    <section className={styles.guided} aria-labelledby="guided-decision-title">
+      <div className={styles.guidedHead}>
+        <span className="kicker">Guided flow</span>
+        <h2 id="guided-decision-title">{tree.title}</h2>
+        <p>{tree.summary}</p>
+      </div>
+
+      <div className={styles.guidedPath} aria-label="Đường đi hiện tại">
+        {breadcrumb.map((entry, index) => (
+          <span key={entry.node.id}>
+            {index > 0 ? <span aria-hidden="true">→</span> : null}
+            {entry.node.label}
+          </span>
+        ))}
+      </div>
+
+      {node.kind === 'question' ? (
+        <div className={styles.guidedCard}>
+          <span className={styles.guidedType}>Câu hỏi</span>
+          <h3>{node.question}</h3>
+          <p>{node.detail}</p>
+          <div className={styles.guidedAnswers}>
+            {node.branches.map((branch) => (
+              <button className={styles.guidedAnswer} key={branch.node.id} type="button" onClick={() => onSelect(branch.node.id)}>
+                <span className={[styles.branchTag, styles[`tone-${branch.tone}`]].join(' ')}>{branch.edgeLabel}</span>
+                <strong>{branch.node.label}</strong>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className={styles.guidedCard}>
+          <span className={styles.guidedType}>Hành động</span>
+          <h3>{node.action}</h3>
+          <p>{node.detail}</p>
+          {node.watchFor ? (
+            <div className={styles.watchFor}>
+              <strong>Lưu ý</strong>
+              <p>{node.watchFor}</p>
+            </div>
+          ) : null}
+          <div className={styles.actionLinks}>
+            {node.relatedTree ? (
+              <Button variant="primary" onClick={() => onSelectTree(node.relatedTree!.treeId)}>
+                {node.relatedTree.label}
+              </Button>
+            ) : null}
+            {node.related ? (
+              <Button href={node.related.href} variant="secondary">
+                {node.related.label}
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      )}
+
+      <div className={styles.guidedControls}>
+        <button className={styles.guidedControl} disabled={!hasPrevious} type="button" onClick={onBack}>
+          Câu trước
+        </button>
+        <button className={styles.guidedControl} type="button" onClick={onReset}>
+          Bắt đầu lại
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function ContentPanel({
   tree,
   focusEntry,
@@ -166,7 +255,8 @@ export function DecisionMindmap() {
     [layout, validSelectedId, tree.root.id],
   );
   const focusEntry = validSelectedId ? (layout.byId.get(validSelectedId) ?? null) : null;
-  const breadcrumb = validSelectedId ? pathToNode(layout, validSelectedId).map((id) => layout.byId.get(id)!) : [];
+  const currentEntry = focusEntry ?? layout.byId.get(tree.root.id)!;
+  const breadcrumb = pathToNode(layout, currentEntry.node.id).map((id) => layout.byId.get(id)!);
 
   layoutRef.current = layout;
 
@@ -206,6 +296,12 @@ export function DecisionMindmap() {
 
   function selectTree(id: string) {
     setTreeId(id);
+  }
+
+  function goBack() {
+    if (breadcrumb.length <= 1) return;
+    const previous = breadcrumb[breadcrumb.length - 2];
+    setSelectedId(previous.node.id === tree.root.id ? null : previous.node.id);
   }
 
   function handlePointerDown(event: ReactPointerEvent<SVGSVGElement>) {
@@ -273,6 +369,16 @@ export function DecisionMindmap() {
         ))}
       </div>
 
+      <GuidedDecisionTree
+        breadcrumb={breadcrumb}
+        currentEntry={currentEntry}
+        tree={tree}
+        onBack={goBack}
+        onReset={() => setSelectedId(null)}
+        onSelect={selectNode}
+        onSelectTree={selectTree}
+      />
+
       <div className={styles.layout}>
         <aside aria-live="polite" className={styles.contentPanel}>
           <ContentPanel focusEntry={focusEntry} tree={tree} onSelect={selectNode} onSelectTree={selectTree} />
@@ -324,7 +430,7 @@ export function DecisionMindmap() {
             aria-label={`Mindmap cây quyết định: ${tree.title}. Cuộn chuột để zoom, kéo để di chuyển.`}
             className={styles.svg}
             ref={svgRef}
-            role="img"
+            role="group"
             viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
             onPointerDown={handlePointerDown}
             onPointerLeave={handlePointerUp}

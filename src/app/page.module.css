@@ -91,6 +91,37 @@
   display: inline-block;
 }
 
+.lookupStrip {
+  border-top: 1px solid var(--border-line);
+  background: var(--surface-board);
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+.lookupInner {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lookupInner h2 {
+  max-width: 52rem;
+  margin: 0.45rem 0 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: var(--fw-extra);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+}
+
+.lookupLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
 @media (max-width: 1000px) {
   .heroGrid {
     grid-template-columns: 1fr;
@@ -98,6 +129,15 @@
 
   .entryGrid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .lookupInner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lookupLinks {
+    justify-content: flex-start;
   }
 }
 

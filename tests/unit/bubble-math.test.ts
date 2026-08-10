@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { clampOffsetY, computeVelocity, resolveSnapSide } from '../../src/components/layout/NavBubble/bubbleMath';
+import {
+  choosePanelPlacement,
+  clampOffsetY,
+  computeVelocity,
+  edgePeekLeft,
+  normalizeBubblePosition,
+  resolveSnapSide,
+} from '../../src/components/layout/NavBubble/bubbleMath';
 
 describe('resolveSnapSide', () => {
   it('snaps to the near side when velocity is near zero', () => {
@@ -58,5 +65,44 @@ describe('clampOffsetY', () => {
 
   it('never returns a value below the top safe area even if the viewport is tiny', () => {
     expect(clampOffsetY(500, 100, 56, 40, 40)).toBe(40);
+  });
+});
+
+describe('normalizeBubblePosition', () => {
+  const fallback = { side: 'right' as const, offsetY: 300, collapsed: false };
+
+  it('falls back for invalid storage payloads', () => {
+    expect(normalizeBubblePosition(null, fallback, 800, 56, 44, 16, 16)).toEqual(fallback);
+    expect(normalizeBubblePosition('bad', fallback, 800, 56, 44, 16, 16)).toEqual(fallback);
+  });
+
+  it('validates individual fields and clamps offset for the active size', () => {
+    expect(normalizeBubblePosition({ side: 'top', offsetY: Infinity, collapsed: 'yes' }, fallback, 800, 56, 44, 16, 16)).toEqual(fallback);
+    expect(normalizeBubblePosition({ side: 'left', offsetY: 900, collapsed: true }, fallback, 800, 56, 44, 16, 16)).toEqual({
+      side: 'left',
+      collapsed: true,
+      offsetY: 740,
+    });
+  });
+});
+
+describe('edgePeekLeft', () => {
+  it('keeps a small visible strip while preserving the hit target size', () => {
+    expect(edgePeekLeft({ side: 'left', viewportWidth: 360, size: 44, visibleSize: 18 })).toBe(-26);
+    expect(edgePeekLeft({ side: 'right', viewportWidth: 360, size: 44, visibleSize: 18 })).toBe(342);
+  });
+});
+
+describe('choosePanelPlacement', () => {
+  it('uses below when above would collide with the header clearance', () => {
+    expect(
+      choosePanelPlacement({ bubbleTop: 16, bubbleSize: 56, panelHeight: 240, viewportHeight: 800, topClearance: 84, bottomClearance: 16, gap: 12 }),
+    ).toMatchObject({ placement: 'below' });
+  });
+
+  it('chooses the larger side and constrains max height when neither side fits', () => {
+    expect(
+      choosePanelPlacement({ bubbleTop: 250, bubbleSize: 56, panelHeight: 500, viewportHeight: 520, topClearance: 84, bottomClearance: 16, gap: 12 }),
+    ).toEqual({ placement: 'below', maxHeight: 186 });
   });
 });

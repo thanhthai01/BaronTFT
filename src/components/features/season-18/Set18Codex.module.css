@@ -2247,7 +2247,17 @@
     display: block;
   }
 
+  .matrixWrap,
   .tooltip {
-    width: min(21rem, calc(100vw - 2rem));
+    display: none;
+  }
+
+  .specialBox {
+    border-left-width: 3px;
+  }
+
+  .specialList {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

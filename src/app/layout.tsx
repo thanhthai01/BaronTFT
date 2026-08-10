@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Epilogue, JetBrains_Mono, Libre_Franklin } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { CommandPaletteProvider } from '@/components/features/command-palette/CommandPaletteProvider';
+import { BackToTop } from '@/components/layout/BackToTop';
 import { NavBubbleLoader } from '@/components/layout/NavBubble';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
@@ -15,8 +16,8 @@ const epilogue = Epilogue({ subsets: ['latin', 'latin-ext'], variable: '--font-e
 const libreFranklin = Libre_Franklin({ subsets: ['latin', 'latin-ext'], variable: '--font-libre-franklin', display: 'swap' });
 const jetBrainsMono = JetBrains_Mono({ subsets: ['latin', 'latin-ext'], variable: '--font-jetbrains-mono', display: 'swap' });
 
-const SITE_TITLE = 'Baron TFT — Evergreen Rank Manual';
-const SITE_DESCRIPTION = 'Blog cá nhân bằng tiếng Việt ghi lại kiến thức cơ bản về Teamfight Tactics: kiến thức nền tảng, checklist trong trận, dữ liệu Mùa 18 và patch note.';
+const SITE_TITLE = 'Baron TFT — Phòng huấn luyện quyết định TFT';
+const SITE_DESCRIPTION = 'Giáo trình TFT tiếng Việt giúp người chơi luyện kỹ năng xuyên mùa: chọn đúng bài cần học, đọc tín hiệu trong trận và sửa một hành vi sau trận.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             {children}
           </main>
           <SiteFooter />
+          <BackToTop />
           <NavBubbleLoader />
         </CommandPaletteProvider>
         <Analytics />

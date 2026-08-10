@@ -65,6 +65,14 @@ export const searchActions: SearchAction[] = [
     keywords: ['roll', 'rolldown', 'vàng', 'gold'],
   },
   {
+    id: 'vod-review',
+    group: 'Bài học',
+    label: 'Review VOD sâu',
+    description: 'Tách lỗi sớm nhất, bias kết quả và bài học cần luyện tiếp.',
+    href: '/kien-thuc-nen-tang/vod-review-va-phan-loai-loi',
+    keywords: ['vod', 'review', 'xem lại', 'xem lai', 'phân loại lỗi', 'phan loai loi'],
+  },
+  {
     id: 'decision-roll',
     group: 'Cây quyết định',
     label: 'Xem cây quyết định khi nào roll',

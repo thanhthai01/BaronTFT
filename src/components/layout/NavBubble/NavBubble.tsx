@@ -15,8 +15,8 @@ import { isNavigationRouteActive } from '@/lib/navigation';
 import { prefersReducedMotion } from '@/lib/motion';
 import { readJson, storageKeys, writeJson } from '@/lib/storage';
 import { useCommandPalette } from '../../features/command-palette/CommandPaletteProvider';
-import { clampOffsetY } from './bubbleMath';
-import { navBubbleItems } from './navBubbleItems';
+import { choosePanelPlacement, clampOffsetY, normalizeBubblePosition } from './bubbleMath';
+import { navBubbleSections, type NavBubbleItem } from './navBubbleItems';
 import { NavBubbleIcon, NavBubbleStateIcon } from './NavIcons';
 import styles from './NavBubble.module.css';
 import {
@@ -35,8 +35,7 @@ const PANEL_GAP = 12;
 // trên" bubble mà tràn lên vùng này thì coi như quá cao, phải lật xuống dưới.
 const HEADER_CLEARANCE = 84;
 
-function getDefaultPosition(): BubblePosition {
-  const viewportHeight = window.innerHeight;
+function getDefaultPosition(viewportHeight = window.innerHeight): BubblePosition {
   return {
     side: 'right',
     offsetY: clampOffsetY(viewportHeight * 0.62, viewportHeight, BUBBLE_SIZE, TOP_SAFE, BOTTOM_SAFE),
@@ -52,11 +51,14 @@ export default function NavBubble() {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const [position, setPositionState] = useState<BubblePosition>(() => {
-    const stored = readJson<BubblePosition | null>(storageKeys.navBubble, null);
-    return stored ?? getDefaultPosition();
+    const viewportHeight = window.innerHeight;
+    const fallback = getDefaultPosition(viewportHeight);
+    const stored = readJson<unknown>(storageKeys.navBubble, null);
+    return normalizeBubblePosition(stored, fallback, viewportHeight, BUBBLE_SIZE, COLLAPSED_SIZE, TOP_SAFE, BOTTOM_SAFE);
   });
   const [open, setOpen] = useState(false);
   const [panelPlacement, setPanelPlacement] = useState<'above' | 'below'>('above');
+  const [panelMaxHeight, setPanelMaxHeight] = useState<number | null>(null);
   const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
   const [reducedMotion, setReducedMotion] = useState(() => prefersReducedMotion());
   const [announcement, setAnnouncement] = useState('');
@@ -78,16 +80,31 @@ export default function NavBubble() {
 
   useEffect(() => {
     function onResize() {
-      setViewportWidth(window.innerWidth);
+      const viewport = window.visualViewport;
+      const nextWidth = Math.round(viewport?.width ?? window.innerWidth);
+      const nextHeight = Math.round(viewport?.height ?? window.innerHeight);
+      setViewportWidth(nextWidth);
       applyPosition((prev) => ({
         ...prev,
-        offsetY: clampOffsetY(prev.offsetY, window.innerHeight, prev.collapsed ? COLLAPSED_SIZE : BUBBLE_SIZE, TOP_SAFE, BOTTOM_SAFE),
+        offsetY: clampOffsetY(prev.offsetY, nextHeight, prev.collapsed ? COLLAPSED_SIZE : BUBBLE_SIZE, TOP_SAFE, BOTTOM_SAFE),
       }));
     }
 
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    window.visualViewport?.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('scroll', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+      window.visualViewport?.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('scroll', onResize);
+    };
   }, [applyPosition]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -108,12 +125,12 @@ export default function NavBubble() {
     first?.focus();
   }, [open]);
 
-  // Panel mặc định mở phía trên bubble. Nếu bubble đang ở gần đỉnh màn hình
-  // (vd. kéo lên cao), mở phía trên sẽ tràn lên header/ra ngoài viewport —
-  // lúc đó lật panel xuống dưới bubble thay vì giữ nguyên "quá cao".
+  // Chọn above/below theo không gian thật quanh bubble; nếu cả hai phía đều thiếu
+  // chỗ, panel chọn phía rộng hơn và tự cuộn nội bộ thay vì tràn khỏi viewport.
   useLayoutEffect(() => {
     if (!open) {
       setPanelPlacement('above');
+      setPanelMaxHeight(null);
       return;
     }
 
@@ -121,10 +138,20 @@ export default function NavBubble() {
     if (!panelEl) return;
 
     const rect = panelEl.getBoundingClientRect();
-    if (panelPlacement === 'above' && rect.top < HEADER_CLEARANCE) {
-      setPanelPlacement('below');
-    }
-  }, [open, panelPlacement]);
+    const viewportHeight = Math.round(window.visualViewport?.height ?? window.innerHeight);
+    const bubbleRect = restingRect(position, viewportWidth);
+    const next = choosePanelPlacement({
+      bubbleTop: bubbleRect.top,
+      bubbleSize: bubbleRect.size,
+      panelHeight: rect.height,
+      viewportHeight,
+      topClearance: HEADER_CLEARANCE,
+      bottomClearance: BOTTOM_SAFE,
+      gap: PANEL_GAP,
+    });
+    setPanelPlacement(next.placement);
+    setPanelMaxHeight(next.maxHeight);
+  }, [open, position, viewportWidth]);
 
   const handleTap = useCallback(() => {
     if (position.collapsed) {
@@ -137,7 +164,7 @@ export default function NavBubble() {
 
   const handleDragStart = useCallback(() => setOpen(false), []);
 
-  const { onPointerDown, onPointerMove, onPointerUp } = useBubbleDrag(bubbleRef, position, applyPosition, {
+  const { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } = useBubbleDrag(bubbleRef, position, applyPosition, {
     reducedMotion,
     onTap: handleTap,
     onDragStart: handleDragStart,
@@ -149,7 +176,7 @@ export default function NavBubble() {
   }, []);
 
   const handleSelect = useCallback(
-    (item: (typeof navBubbleItems)[number]) => {
+    (item: NavBubbleItem) => {
       if (item.action.kind === 'search') {
         setOpen(false);
         openPalette();
@@ -256,10 +283,13 @@ export default function NavBubble() {
   const rect = restingRect(position, viewportWidth);
   const bubbleStyle: CSSProperties = { left: rect.left, top: rect.top };
   const sideStyle: CSSProperties = position.side === 'left' ? { left: 16 } : { right: 16 };
-  const panelStyle: CSSProperties =
-    panelPlacement === 'above'
-      ? { ...sideStyle, bottom: Math.max(8, window.innerHeight - rect.top + PANEL_GAP) }
-      : { ...sideStyle, top: rect.top + rect.size + PANEL_GAP };
+  const panelStyle: CSSProperties = {
+    ...sideStyle,
+    ...(panelPlacement === 'above'
+      ? { bottom: Math.max(8, (window.visualViewport?.height ?? window.innerHeight) - rect.top + PANEL_GAP) }
+      : { top: rect.top + rect.size + PANEL_GAP }),
+    ...(panelMaxHeight === null ? {} : { maxHeight: panelMaxHeight }),
+  };
 
   const bubbleState = open ? 'open' : position.collapsed ? 'collapsed' : 'idle';
 
@@ -279,14 +309,16 @@ export default function NavBubble() {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
+        onPointerCancel={onPointerCancel}
       >
         <NavBubbleStateIcon side={position.side} state={bubbleState} />
       </button>
 
       {open ? (
         <div
+          aria-describedby="nav-bubble-instructions"
           aria-label="Điều hướng nhanh"
+          aria-modal="true"
           className={styles.panel}
           data-placement={panelPlacement}
           ref={panelRef}
@@ -294,31 +326,49 @@ export default function NavBubble() {
           style={panelStyle}
           onKeyDown={handlePanelKeyDown}
         >
-          {navBubbleItems.map((item) => {
-            if (item.action.kind === 'search') {
-              return (
-                <button className={styles.panelItem} key={item.id} type="button" onClick={() => handleSelect(item)}>
-                  <NavBubbleIcon icon={item.icon} />
-                  {item.label}
-                </button>
-              );
-            }
+          <p className="visually-hidden" id="nav-bubble-instructions">
+            Dùng Tab để đi qua các mục, Escape để đóng. Có thể kéo nút nổi sang cạnh màn hình hoặc bấm Delete khi focus nút để thu gọn vào mép.
+          </p>
+          <nav aria-label="Điều hướng nhanh trên điện thoại" className={styles.panelNav}>
+            {navBubbleSections.map((section) => (
+              <section className={styles.panelSection} data-section={section.id} key={section.id}>
+                {section.label ? <h2 className={styles.sectionTitle}>{section.label}</h2> : null}
+                <div className={styles.sectionGrid}>
+                  {section.items.map((item) => {
+                    const itemClassName = [styles.panelItem, item.emphasis === 'primary' ? styles.primaryItem : null]
+                      .filter(Boolean)
+                      .join(' ');
 
-            const isActive = isNavigationRouteActive(pathname, item.action.href);
+                    if (item.action.kind === 'search') {
+                      return (
+                        <button className={itemClassName} key={item.id} type="button" onClick={() => handleSelect(item)}>
+                          <NavBubbleIcon icon={item.icon} />
+                          <span>{item.label}</span>
+                          {item.description ? <small>{item.description}</small> : null}
+                        </button>
+                      );
+                    }
 
-            return (
-              <Link
-                aria-current={isActive ? 'page' : undefined}
-                className={styles.panelItem}
-                href={item.action.href}
-                key={item.id}
-                onClick={() => handleSelect(item)}
-              >
-                <NavBubbleIcon icon={item.icon} />
-                {item.label}
-              </Link>
-            );
-          })}
+                    const isActive = isNavigationRouteActive(pathname, item.action.href);
+
+                    return (
+                      <Link
+                        aria-current={isActive ? 'page' : undefined}
+                        className={itemClassName}
+                        href={item.action.href}
+                        key={item.id}
+                        onClick={() => handleSelect(item)}
+                      >
+                        <NavBubbleIcon icon={item.icon} />
+                        <span>{item.label}</span>
+                        {item.description ? <small>{item.description}</small> : null}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </nav>
         </div>
       ) : null}
 

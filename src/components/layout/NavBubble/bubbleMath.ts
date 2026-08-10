@@ -29,8 +29,70 @@ export function resolveSnapSide(params: { x: number; vx: number; viewportWidth: 
   return predictedX < viewportWidth / 2 ? 'left' : 'right';
 }
 
+export type BubblePositionValue = {
+  side: BubbleSide;
+  offsetY: number;
+  collapsed: boolean;
+};
+
+export type PanelPlacementResult = {
+  placement: 'above' | 'below';
+  maxHeight: number;
+};
+
 export function clampOffsetY(offsetY: number, viewportHeight: number, bubbleSize: number, topSafe: number, bottomSafe: number): number {
   const min = topSafe;
   const max = Math.max(min, viewportHeight - bottomSafe - bubbleSize);
   return Math.min(Math.max(offsetY, min), max);
+}
+
+export function normalizeBubblePosition(
+  value: unknown,
+  fallback: BubblePositionValue,
+  viewportHeight: number,
+  expandedSize: number,
+  collapsedSize: number,
+  topSafe: number,
+  bottomSafe: number,
+): BubblePositionValue {
+  if (!value || typeof value !== 'object') return fallback;
+  const candidate = value as Partial<BubblePositionValue>;
+  const side = candidate.side === 'left' || candidate.side === 'right' ? candidate.side : fallback.side;
+  const collapsed = typeof candidate.collapsed === 'boolean' ? candidate.collapsed : fallback.collapsed;
+  const rawOffset = typeof candidate.offsetY === 'number' && Number.isFinite(candidate.offsetY) ? candidate.offsetY : fallback.offsetY;
+  const size = collapsed ? collapsedSize : expandedSize;
+
+  return {
+    side,
+    collapsed,
+    offsetY: clampOffsetY(rawOffset, viewportHeight, size, topSafe, bottomSafe),
+  };
+}
+
+export function edgePeekLeft(params: { side: BubbleSide; viewportWidth: number; size: number; visibleSize: number }): number {
+  const { side, viewportWidth, size, visibleSize } = params;
+  return side === 'left' ? visibleSize - size : viewportWidth - visibleSize;
+}
+
+export function choosePanelPlacement(params: {
+  bubbleTop: number;
+  bubbleSize: number;
+  panelHeight: number;
+  viewportHeight: number;
+  topClearance: number;
+  bottomClearance: number;
+  gap: number;
+}): PanelPlacementResult {
+  const { bubbleTop, bubbleSize, panelHeight, viewportHeight, topClearance, bottomClearance, gap } = params;
+  const spaceAbove = bubbleTop - gap - topClearance;
+  const spaceBelow = viewportHeight - bottomClearance - (bubbleTop + bubbleSize + gap);
+  const fitsAbove = panelHeight <= spaceAbove;
+  const fitsBelow = panelHeight <= spaceBelow;
+
+  if (fitsAbove) return { placement: 'above', maxHeight: Math.max(0, spaceAbove) };
+  if (fitsBelow) return { placement: 'below', maxHeight: Math.max(0, spaceBelow) };
+
+  return spaceBelow >= spaceAbove
+    ? { placement: 'below', maxHeight: Math.max(0, spaceBelow) }
+    : { placement: 'above', maxHeight: Math.max(0, spaceAbove) };
 }

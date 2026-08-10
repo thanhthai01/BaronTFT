@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('home decision board updates the diagnostic panel', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /kiến thức cơ bản/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Học cách thắng lobby/i })).toBeVisible();
   await page.getByRole('button', { name: 'ITEM' }).click();
   const selectedPanel = page.getByRole('complementary').filter({ has: page.getByRole('heading', { name: 'Items' }) });
   await expect(selectedPanel.getByText(/chờ bài hoàn hảo/i)).toBeVisible();
@@ -10,18 +10,43 @@ test('home decision board updates the diagnostic panel', async ({ page }) => {
 
 test('foundational knowledge reader switches lessons', async ({ page }) => {
   await page.goto('/kien-thuc-nen-tang');
-  await expect(page.getByRole('heading', { name: /Đọc đúng kỹ năng/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tư duy TFT xuyên mùa' })).toBeVisible();
   // TOC desktop là accordion — bài học nằm trong nhóm khác category đang active
   // (mặc định là "Ra quyết định") chỉ có trong DOM sau khi mở nhóm chứa nó.
   const desktopGroupToggle = page.getByRole('button', { name: /Vận hành kinh tế/i });
   if (await desktopGroupToggle.isVisible()) {
     await desktopGroupToggle.click();
-    await page.getByRole('button', { name: /Level, roll, outs và breakpoint/i }).click();
+    await page.getByRole('link', { name: /Level, roll, outs và breakpoint/i }).click();
   } else {
     await page.getByLabel('Chọn bài học').selectOption('level-roll-outs-va-breakpoint');
   }
   await expect(page.getByRole('heading', { name: 'Level, roll, outs và breakpoint' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Thiết kế outs trước rolldown/i })).toBeVisible();
+});
+
+test('mobile lesson shows apply before article content without lesson TOC', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only lesson reading order');
+
+  await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
+  const article = page.locator('article');
+  await expect(article.getByLabel('Chọn bài học')).toBeVisible();
+  const applyPanel = article.getByLabel('Áp dụng ngay');
+  await expect(applyPanel.getByRole('heading', { name: 'Áp dụng ngay' })).toBeVisible();
+  await expect(applyPanel.getByText('Tôi có ít nhất ba nhóm outs.')).toBeVisible();
+  await expect(applyPanel.getByText('Roll một số vàng ngẫu nhiên.')).toBeVisible();
+  await expect(applyPanel.getByText('Trước roll ghi:')).toBeVisible();
+  await expect(article.getByRole('link', { name: 'Patch cập nhật' })).toHaveCount(0);
+  await expect(article.getByRole('link', { name: 'Xem Mùa 18' })).toHaveCount(0);
+
+  await expect(article.getByRole('heading', { name: 'Trong bài' })).toHaveCount(0);
+  const order = await article.evaluate((node) => {
+    const apply = node.querySelector('[aria-labelledby="mobile-lesson-apply-title"]');
+    const firstBlock = node.querySelector('#level-la-mua-slot-va-phan-phoi-shop');
+    return apply && firstBlock
+      ? Boolean(apply.compareDocumentPosition(firstBlock) & Node.DOCUMENT_POSITION_FOLLOWING)
+      : false;
+  });
+  expect(order).toBe(true);
 });
 
 test('checklist persists a checked item after reload', async ({ page }) => {
@@ -32,13 +57,18 @@ test('checklist persists a checked item after reload', async ({ page }) => {
   await expect(page.getByLabel(/Lõi\/portal đang khuyến khích tempo/i)).toBeChecked();
 });
 
-test.skip('review lab generates markdown summary — /review is disabled, kept for re-enable', async ({ page }) => {
+test('review route redirects to checklist', async ({ page }) => {
   await page.goto('/review');
-  await page.getByLabel('Placement').fill('6th');
-  await page.getByLabel('Comp / line').fill('AD tempo');
-  await page.getByLabel('Lỗi đầu tiên có thể sửa').fill('Rolled without target');
-  await expect(page.getByText('- Placement: 6th')).toBeVisible();
-  await expect(page.getByText('- Comp/line: AD tempo')).toBeVisible();
+  await expect(page).toHaveURL(/\/checklist$/);
+  await expect(page.getByRole('heading', { name: 'Checklist trong trận' })).toBeVisible();
+});
+
+test('post-game stage keeps old checklist interface', async ({ page }) => {
+  await page.goto('/checklist?stage=post');
+  await expect(page.getByRole('tab', { name: 'Sau trận' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByLabel(/Lỗi đầu tiên có thể sửa nằm ở stage nào/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Debrief 30–60 giây' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Lưu debrief' })).toHaveCount(0);
 });
 
 test('command palette opens from the visible search control', async ({ page }) => {
@@ -54,7 +84,39 @@ test('command palette opens from the visible search control', async ({ page }) =
 
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
   await page.getByPlaceholder(/Tìm bài học/i).fill('rolldown');
-  await expect(page.getByText('Mở checklist trước rolldown')).toBeVisible();
+  const actions = page.getByLabel('Hành động');
+  await expect(actions.getByText('Mở checklist trước rolldown')).toBeVisible();
+  await page.getByPlaceholder(/Tìm bài học/i).fill('review vod');
+  await expect(actions.getByText('Review VOD sâu')).toBeVisible();
+});
+
+test('mobile decision tree completes by guided taps', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only guided decision tree flow');
+
+  await page.goto('/cay-quyet-dinh');
+  await expect(page.getByRole('heading', { name: 'Tổng hợp theo giai đoạn trận đấu' })).toBeVisible();
+  await expect(page.locator('svg[aria-label^="Mindmap cây quyết định"]')).toBeHidden();
+
+  await page.getByRole('button', { name: /Stage 2/ }).click();
+  await expect(page.getByRole('heading', { name: /bench và shop/i })).toBeVisible();
+  await page.getByRole('button', { name: /Mạnh bất ngờ/ }).click();
+  await expect(page.getByRole('heading', { name: /Tối ưu board mạnh nhất hiện có/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Đào sâu: Khi nào chơi winstreak\/losestreak/i })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Câu trước' }).click();
+  await expect(page.getByRole('heading', { name: /bench và shop/i })).toBeVisible();
+  await page.getByRole('button', { name: 'Bắt đầu lại' }).click();
+  await expect(page.getByRole('heading', { name: /Trận đấu hiện tại đang ở giai đoạn nào/i })).toBeVisible();
+});
+
+test('desktop decision tree keeps interactive map', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only decision map flow');
+
+  await page.goto('/cay-quyet-dinh');
+  const map = page.locator('svg[aria-label^="Mindmap cây quyết định"]');
+  await expect(map).toBeVisible();
+  await expect(map).toHaveAttribute('role', 'group');
+  await expect(page.getByText(/Cuộn để zoom/)).toBeVisible();
 });
 
 test('visible navigation marks the current route', async ({ page }) => {
@@ -71,7 +133,7 @@ test('visible navigation marks the current route', async ({ page }) => {
     // điều hướng sau này cũng không làm hỏng test.
     await expect(nav.locator('a[aria-current="page"]')).toHaveCount(1);
 
-    await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
+    await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
     const lessonNav = page.getByRole('navigation', { name: 'Điều hướng chính' });
     await expect(lessonNav.getByRole('link', { name: 'Kiến thức nền tảng' })).toHaveAttribute('aria-current', 'page');
     return;
@@ -85,7 +147,7 @@ test('visible navigation marks the current route', async ({ page }) => {
   await expect(panel.getByRole('button', { name: 'Tìm' })).not.toHaveAttribute('aria-current', 'page');
   await page.keyboard.press('Escape');
 
-  await page.goto('/bai-hoc/level-roll-outs-va-breakpoint');
+  await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
   await page.getByRole('button', { name: 'Mở điều hướng' }).click();
   const lessonPanel = page.getByRole('dialog', { name: 'Điều hướng nhanh' });
   await expect(lessonPanel.getByRole('link', { name: 'Kiến thức' })).toHaveAttribute('aria-current', 'page');
@@ -106,16 +168,59 @@ test('compact desktop header keeps search visible', async ({ page }, testInfo) =
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
 });
 
-test('Set18 section query stays synchronized and supports history', async ({ page }, testInfo) => {
+test('mobile Set18 matrix opens a zoomable overview instead of live table', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only Set18 matrix overview');
+
+  await page.goto('/mua-18/ma-tran-toc-he');
+  const trigger = page.getByRole('button', { name: /Ma trận tổng quan/ });
+  await expect(trigger).toBeVisible();
+  await expect(page.getByRole('table')).toHaveCount(0);
+  await expect(page.locator('.specialBox')).toHaveCount(0);
+
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Tổng quan Set 18' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Đóng ma trận phóng to' })).toBeFocused();
+  await expect(dialog.getByText('100%')).toBeVisible();
+  await dialog.getByRole('button', { name: 'Phóng to' }).click();
+  await expect(dialog.getByText('125%')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
+test('desktop Set18 matrix keeps live table', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 matrix');
+
+  await page.goto('/mua-18/ma-tran-toc-he');
+  await expect(page.getByRole('table').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /Ma trận tổng quan/ })).toBeHidden();
+});
+
+test('mobile back-to-top returns to filters', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only back-to-top control');
+
+  await page.goto('/mua-18/nang-cap');
+  await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 48 \/ \d+ nâng cấp/)).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const backToTop = page.getByRole('button', { name: 'Về đầu trang' });
+  await expect(backToTop).toHaveAttribute('data-visible', 'true');
+  await backToTop.click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(120);
+  await expect(page.getByLabel('Chọn phần nội dung')).toBeVisible();
+});
+
+test('Set18 section route stays synchronized and supports history', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 flow');
 
-  await page.goto('/mua-18?section=nang-cap');
+  await page.goto('/mua-18/nang-cap');
   await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
-  await expect(page.getByText('Đang hiển thị 48 / 261 nâng cấp')).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 48 \/ \d+ nâng cấp/)).toBeVisible();
 
   await page.getByRole('link', { name: /Chi tiết tướng/ }).click();
-  await expect(page).toHaveURL(/section=chi-tiet-tuong/, { timeout: 15_000 });
-  await expect(page.getByRole('heading', { name: 'Chi tiết tướng' })).toBeVisible();
+  await expect(page).toHaveURL(/\/mua-18\/chi-tiet-tuong/, { timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Chi tiết tướng', level: 1 })).toBeVisible();
 
   const flip = page.getByRole('button', { name: 'Xem số liệu của Akali, dạng AD' });
   await expect(flip).toHaveAttribute('aria-pressed', 'false');
@@ -125,7 +230,15 @@ test('Set18 section query stays synchronized and supports history', async ({ pag
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
   await page.getByRole('button', { name: /Hiển thị thêm 48/ }).click();
-  await expect(page.getByText('Đang hiển thị 96 / 261 nâng cấp')).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 96 \/ \d+ nâng cấp/)).toBeVisible();
+});
+
+test('phone hides patch presentation entry point', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Phone-only Patch Presentation check');
+
+  await page.goto('/patch');
+  await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Trình chiếu' })).toHaveCount(0);
 });
 
 test('Patch selector switches reports and labels personal analysis', async ({ page }, testInfo) => {
@@ -134,28 +247,22 @@ test('Patch selector switches reports and labels personal analysis', async ({ pa
   await page.goto('/patch');
   await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Bản vá này ảnh hưởng gì tới game' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Trình chiếu' })).toBeVisible();
 
-  // Danh sách bản vá là select (sẽ có hàng chục bản), kèm dòng meta nói ngày
-  // cập nhật và nguồn.
+  // Danh sách bản vá là listbox custom vì sidebar sticky có overflow; kèm dòng
+  // meta nói ngày cập nhật và nguồn.
   const selector = page.getByLabel('Chọn bản vá');
-  await expect(selector).toHaveValue('patch-17-8');
-  await expect(page.getByText('Cập nhật 28/07/2026')).toBeVisible();
-  await expect(page.getByText(/Nguồn: Riot Games/)).toBeVisible();
+  await expect(selector).toBeVisible();
+  await expect(page.getByText('Cập nhật 07/08/2026')).toBeVisible();
+  await expect(page.getByText(/Nguồn: PBE — TheTruexy/)).toBeVisible();
 
-  // Mọi khối diễn giải phải có nhãn nguồn để không nhầm với số liệu chính thức.
+  // Số liệu chính thức phải có nhãn nguồn để không nhầm với nhận định biên tập.
   await expect(page.getByText('Theo patch note gốc').first()).toBeVisible();
-  await expect(page.locator('article').filter({ hasText: 'Nhịp chỉnh sửa' }).getByText('Phân tích cá nhân')).toBeVisible();
 
-  // Lưới thay đổi ở trên KHÔNG được chứa diễn giải — mọi nhận định nằm ở phần
-  // tác động cấp đội hình bên dưới.
-  const impact = page.locator('article').filter({ hasText: 'Đội hình Siêu Thú' });
-  await expect(impact).toContainText('Yếu đi');
-  // Chip dẫn chứng trỏ ngược về đúng thẻ thay đổi ở lưới trên.
-  await expect(impact.locator('a[href="#entry-p178-tuyet-diet"]')).toBeVisible();
-
-  await selector.selectOption('patch-18-2-vi-du');
-  await expect(page.getByText(/Dữ liệu mẫu cho bản vá trước/)).toBeVisible();
-  await expect(page.getByText('Cập nhật 24/07/2026')).toBeVisible();
+  await selector.click();
+  await page.getByRole('option', { name: /PBE 06\/08\/2026 \(18\.1z\)/ }).click();
+  await expect(page.getByText(/Bản vá PBE nhẹ, chủ yếu bugfix/)).toBeVisible();
+  await expect(page.getByText('Cập nhật 06/08/2026')).toBeVisible();
 });
 
 test('Patch filters stack and rank badges follow each category scale', async ({ page }, testInfo) => {
@@ -169,16 +276,19 @@ test('Patch filters stack and rank badges follow each category scale', async ({ 
   // đó, nếu không sẽ bấm vào ô có số mà lưới hiện ra rỗng.
   await kindGroup.getByRole('button', { name: /^giảm/ }).click();
   await expect(kindGroup.getByRole('button', { name: /^giảm/ })).toHaveAttribute('aria-pressed', 'true');
-  await expect(categoryList.getByRole('tab', { name: /^Tướng/ })).toHaveAccessibleName('Tướng, 3 thay đổi');
+  await expect(categoryList.getByRole('tab', { name: /^Tướng/ })).toHaveAccessibleName('Tướng, 1 thay đổi');
   await expect(categoryList.getByRole('tab', { name: /^Nâng cấp/ })).toHaveAccessibleName('Nâng cấp, 0 thay đổi');
 
+  await kindGroup.getByRole('button', { name: /^Tất cả/ }).click();
+
   // Mốc kích hoạt của tộc hệ phải là huy hiệu riêng, không lẫn trong tên.
-  const trait = page.locator('article').filter({ has: page.getByRole('heading', { name: 'Dẫn Truyền', level: 3 }) });
-  await expect(trait.getByText('Mốc 5')).toBeVisible();
+  const trait = page.locator('article').filter({ has: page.getByRole('heading', { name: 'Blackthorn', level: 3 }) });
+  await expect(trait.getByText('Mốc 6')).toBeVisible();
 
   // Mỗi nhóm có thang bậc riêng: tướng theo vàng, nâng cấp theo Bạc/Vàng/Kim
   // Cương, linh hỏa theo cấp.
-  await page.getByLabel('Chọn bản vá').selectOption('patch-18-3-vi-du');
+  await page.getByLabel('Chọn bản vá').click();
+  await page.getByRole('option', { name: /PBE 03\/08\/2026/ }).click();
   await kindGroup.getByRole('button', { name: /^Tất cả/ }).click();
 
   const ranks = await page
@@ -186,8 +296,8 @@ test('Patch filters stack and rank badges follow each category scale', async ({ 
     .evaluateAll((cards) =>
       cards.map((card) => card.querySelector('[class*="rankBadge"], [class*="breakpointBadge"]')?.textContent ?? ''),
     );
-  expect(ranks.slice(0, 6)).toEqual(['1 vàng', '3 vàng', '3 vàng', 'Mốc 3', 'Mốc 7', 'Bạc']);
-  expect(ranks).toContain('Cấp 2');
+  expect(ranks.slice(0, 6)).toEqual(['2 vàng', '3 vàng', '4 vàng', '5 vàng', '5 vàng', 'Mốc 6']);
+  expect(ranks).toContain('Mốc 6');
 });
 
 test('desktop patch changes are visible without scrolling', async ({ page }, testInfo) => {

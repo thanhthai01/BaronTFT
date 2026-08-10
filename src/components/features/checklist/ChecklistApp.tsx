@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Tabs } from '@/components/design-system/Tabs/Tabs';
 import { checklistStages } from '@/content/checklist';
@@ -8,8 +9,18 @@ import styles from './ChecklistApp.module.css';
 
 type ChecklistState = Record<string, boolean>;
 
+const DEFAULT_STAGE = checklistStages[0].id;
+
+function isValidStage(value: string | null): value is (typeof checklistStages)[number]['id'] {
+  return checklistStages.some((stage) => stage.id === value);
+}
+
 export function ChecklistApp() {
-  const [activeStage, setActiveStage] = useState(checklistStages[0].id);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedStage = searchParams.get('stage');
+  const initialStage = isValidStage(requestedStage) ? requestedStage : DEFAULT_STAGE;
+  const [activeStage, setActiveStage] = useState(initialStage);
   const [focusMode, setFocusMode] = useState(false);
   const [checked, setChecked] = useState<ChecklistState>({});
   const [checkedLoaded, setCheckedLoaded] = useState(false);
@@ -17,6 +28,19 @@ export function ChecklistApp() {
   const visibleItems = focusMode ? currentStage.items.filter((item) => item.focus).slice(0, 3) : currentStage.items;
   const total = useMemo(() => checklistStages.flatMap((stage) => stage.items).length, []);
   const done = Object.values(checked).filter(Boolean).length;
+
+  useEffect(() => {
+    const nextStage = isValidStage(requestedStage) ? requestedStage : DEFAULT_STAGE;
+    setActiveStage(nextStage);
+  }, [requestedStage]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (activeStage === DEFAULT_STAGE) params.delete('stage');
+    else params.set('stage', activeStage);
+    const query = params.toString();
+    router.replace(query ? `/checklist?${query}` : '/checklist', { scroll: false });
+  }, [activeStage, router, searchParams]);
 
   useEffect(() => {
     setChecked((current) => (Object.keys(current).length === 0 ? readJson<ChecklistState>(storageKeys.checklist, {}) : current));
@@ -65,7 +89,13 @@ export function ChecklistApp() {
               <input
                 checked={isChecked}
                 type="checkbox"
-                onChange={(event) => setChecked((state) => ({ ...state, [item.id]: event.target.checked }))}
+                onChange={(event) => {
+                  setChecked((state) => {
+                    const next = { ...state, [item.id]: event.target.checked };
+                    writeJson(storageKeys.checklist, next);
+                    return next;
+                  });
+                }}
               />
               <span>{item.text}</span>
             </label>
