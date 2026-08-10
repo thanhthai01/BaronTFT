@@ -279,7 +279,7 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
           <h1 className={styles.pageTitle}>Patch</h1>
         </div>
 
-        <div className={styles.filterBlock}>
+        <div className={[styles.filterBlock, styles.presentationBlock].join(' ')}>
           <PatchPresentation report={report} url={report.id === patchReports[0].id ? '/patch' : `/patch/${report.id}`} />
         </div>
 

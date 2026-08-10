@@ -18,6 +18,7 @@ import type {
 import type { Set18EffectCategory, Set18EffectSource } from '@/content/set18-effects';
 import { buildSlugRefMap } from '@/content/set18/set18-slug-index';
 import styles from './Set18Codex.module.css';
+import { MatrixOverviewModal } from './MatrixOverviewModal';
 
 gsap.registerPlugin(ScrollToPlugin);
 import { AugmentCard } from './cards/AugmentCard';
@@ -211,6 +212,8 @@ function SynergyMatrix({
         <h2>Ma trận tộc hệ</h2>
       </header>
 
+      <MatrixOverviewModal />
+
       <div className={styles.matrixWrap} style={{ '--matrix-rows': matrixOrigins.length } as CSSProperties}>
         <table className={styles.matrix}>
           <thead>
@@ -281,8 +284,8 @@ function SynergyMatrix({
       </div>
 
       <div className={styles.specialBox}>
-        <h3>Tướng đứng ngoài ma trận</h3>
-        <p>Những tướng chỉ mang trait Đặc biệt (Unique) nên không nằm ở giao điểm tộc × hệ nào.</p>
+        <h3>Tướng và tộc hệ đứng ngoài ma trận</h3>
+        <p>Những tướng chỉ mang trait Đặc biệt (Unique), nên không nằm ở giao điểm tộc × hệ trong bảng ma trận.</p>
         <div className={styles.specialList}>
           {specialChampions.map(({ champion, uniqueTrait }) => (
             <div className={styles.specialItem} key={champion.name}>
@@ -1403,7 +1406,9 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
           </div>
         ) : null}
 
-        {isSectionReady && activeSection === 'ma-tran-toc-he' ? <SynergyMatrix onHide={hideTooltip} onShow={showTooltip} /> : null}
+        {isSectionReady && activeSection === 'ma-tran-toc-he' ? (
+          <SynergyMatrix onHide={hideTooltip} onShow={showTooltip} />
+        ) : null}
         {isSectionReady && activeSection === 'chi-tiet-tuong' ? (
           <ChampionDetails costFilter={costFilter} focusSlug={focusSlug} grouped={championGroups} />
         ) : null}

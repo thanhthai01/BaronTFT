@@ -97,11 +97,6 @@
   grid-template-columns: 1fr;
 }
 
-.panelSection[data-section='utilities'] {
-  padding-top: 0.55rem;
-  border-top: 1.5px dashed var(--border-line);
-}
-
 .sectionTitle {
   margin: 0;
   color: var(--text-muted);
@@ -167,18 +162,6 @@
 .primaryItem small,
 .panelItem[aria-current='page'] small {
   color: color-mix(in srgb, var(--text-on-accent) 86%, transparent);
-}
-
-.utilityItem {
-  min-height: 2.75rem;
-  grid-template-columns: auto 1fr;
-  justify-items: start;
-  text-align: left;
-  background: var(--surface-board);
-}
-
-.utilityItem small {
-  grid-column: 2;
 }
 
 .panelItem:focus-visible {

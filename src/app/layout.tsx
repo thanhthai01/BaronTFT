@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Epilogue, JetBrains_Mono, Libre_Franklin } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { CommandPaletteProvider } from '@/components/features/command-palette/CommandPaletteProvider';
+import { BackToTop } from '@/components/layout/BackToTop';
 import { NavBubbleLoader } from '@/components/layout/NavBubble';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             {children}
           </main>
           <SiteFooter />
+          <BackToTop />
           <NavBubbleLoader />
         </CommandPaletteProvider>
         <Analytics />

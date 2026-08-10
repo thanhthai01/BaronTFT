@@ -12,8 +12,7 @@ export type NavBubbleIconName =
 
 export type NavBubbleAction =
   | { kind: 'link'; href: string }
-  | { kind: 'search' }
-  | { kind: 'collapse' };
+  | { kind: 'search' };
 
 export type NavBubbleItem = {
   id: string;
@@ -21,7 +20,7 @@ export type NavBubbleItem = {
   label: string;
   description?: string;
   action: NavBubbleAction;
-  emphasis?: 'primary' | 'utility';
+  emphasis?: 'primary';
 };
 
 export type NavBubbleSection = {
@@ -49,7 +48,6 @@ function navigationItem(href: string): NavBubbleItem {
     icon: iconByHref[href],
     label: link.shortLabel ?? link.label,
     action: { kind: 'link', href },
-    emphasis: href === '/checklist' ? 'primary' : undefined,
   };
 }
 
@@ -64,30 +62,17 @@ export const navBubbleSections: NavBubbleSection[] = [
         description: 'Mở command palette',
         action: { kind: 'search' },
       },
-      navigationItem('/checklist'),
     ],
   },
   {
-    id: 'learn',
-    label: 'Học',
-    items: [navigationItem('/kien-thuc-nen-tang'), navigationItem('/cay-quyet-dinh'), navigationItem('/lo-trinh')],
-  },
-  {
-    id: 'lookup',
-    label: 'Tra cứu',
-    items: [navigationItem('/mua-18'), navigationItem('/patch'), navigationItem('/nguon-hoc')],
-  },
-  {
-    id: 'utilities',
+    id: 'core-actions',
     items: [
-      {
-        id: 'collapse',
-        icon: 'layout-grid',
-        label: 'Thu gọn vào mép',
-        description: 'Giữ nút nhỏ lại nhưng vẫn chạm được',
-        action: { kind: 'collapse' },
-        emphasis: 'utility',
-      },
+      navigationItem('/kien-thuc-nen-tang'),
+      navigationItem('/mua-18'),
+      navigationItem('/checklist'),
+      navigationItem('/patch'),
+      navigationItem('/cay-quyet-dinh'),
+      navigationItem('/lo-trinh'),
     ],
   },
 ];

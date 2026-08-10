@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/design-system/Button/Button';
 import { Callout } from '@/components/design-system/Callout/Callout';
-import { lessons, type LessonBlock } from '@/content/lessons';
+import { lessons, type Lesson, type LessonBlock } from '@/content/lessons';
 import { BlockTypeIcon, ChevronIcon, ClockIcon, FlagIcon, PencilIcon } from './BlockIcons';
 import styles from './KnowledgeReader.module.css';
 
@@ -121,6 +121,76 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 }
 
 const PRACTICE_BLOCK_TYPES = new Set<LessonBlock['type']>(['pitfalls', 'checklist', 'drill']);
+
+function LessonJumpList({ lesson, activeAnchor }: { lesson: Lesson; activeAnchor: string | null }) {
+  return (
+    <div className={styles.jumpList}>
+      {lesson.blocks.map((block) => (
+        <a
+          aria-current={activeAnchor === block.anchor ? 'true' : undefined}
+          className={styles.jumpLink}
+          href={`#${block.anchor}`}
+          key={`${lesson.slug}-jump-${block.anchor}`}
+        >
+          <span className={styles.jumpIcon}>
+            <BlockTypeIcon type={block.type} />
+          </span>
+          <span>{block.title}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function LessonApplyPanel({ idPrefix, lesson }: { idPrefix: string; lesson: Lesson }) {
+  const hasDeepReviewAction = lesson.slug !== 'vod-review-va-phan-loai-loi';
+
+  return (
+    <div className={styles.applyPanel}>
+      <div className={styles.applyBrief}>
+        <span className={styles.applyKicker}>Drill trận kế tiếp</span>
+        <p>Đọc xong chỉ cần mang một kiểm tra vào game, rồi tự tick lại checklist sau trận.</p>
+      </div>
+
+      {lesson.applyQuestions.length > 0 && (
+        <section className={styles.applySection} aria-labelledby={`${idPrefix}-apply-questions`}>
+          <h3 className={styles.applySubtitle} id={`${idPrefix}-apply-questions`}>Câu hỏi tự kiểm</h3>
+          <ol className={styles.applyChecks}>
+            {lesson.applyQuestions.map((question, index) => (
+              <li key={question}>
+                <span className={styles.applyIndex}>{index + 1}</span>
+                <span>{question}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {lesson.commonMistake && (
+        <section className={styles.applySection} aria-labelledby={`${idPrefix}-common-mistake`}>
+          <h3 className={styles.applySubtitle} id={`${idPrefix}-common-mistake`}>Lỗi thường gặp</h3>
+          <p className={styles.applyNote}>{lesson.commonMistake}</p>
+        </section>
+      )}
+
+      {lesson.exercise && (
+        <section className={styles.applySection} aria-labelledby={`${idPrefix}-exercise`}>
+          <h3 className={styles.applySubtitle} id={`${idPrefix}-exercise`}>Bài tập</h3>
+          <p className={styles.applyExercise}>{lesson.exercise}</p>
+        </section>
+      )}
+
+      <div className={styles.applyActions}>
+        <Button href="/checklist" variant="secondary" block>Mở checklist</Button>
+        {hasDeepReviewAction && (
+          <Button href="/kien-thuc-nen-tang/vod-review-va-phan-loai-loi" variant="ghost" block>
+            Đào sâu bằng VOD review
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   const router = useRouter();
@@ -291,6 +361,13 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
           </div>
         </header>
 
+        <div className={styles.mobileReaderTools}>
+          <section className={styles.mobileApplyPanel} aria-labelledby="mobile-lesson-apply-title">
+            <h2 className={styles.applyTitle} id="mobile-lesson-apply-title">Áp dụng ngay</h2>
+            <LessonApplyPanel idPrefix={`mobile-${activeLesson.slug}`} lesson={activeLesson} />
+          </section>
+        </div>
+
         {/* Bài nâng cao trong một chuỗi cơ bản→nâng cao (xem frontmatter
             `prerequisite:`) nhắc rõ nên đọc bài nền nào trước — người lạc vào
             thẳng bài nâng cao biết đường lùi thay vì đọc thiếu ngữ cảnh. */}
@@ -342,27 +419,10 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
       <aside className={styles.apply} ref={applyRef}>
         <h2 className={styles.applyTitle}>Mục lục nội dung</h2>
-        <div className={styles.jumpList}>
-          {activeLesson.blocks.map((block) => (
-            <a
-              aria-current={activeAnchor === block.anchor ? 'true' : undefined}
-              className={styles.jumpLink}
-              href={`#${block.anchor}`}
-              key={`${activeLesson.slug}-jump-${block.anchor}`}
-            >
-              <span className={styles.jumpIcon}>
-                <BlockTypeIcon type={block.type} />
-              </span>
-              <span>{block.title}</span>
-            </a>
-          ))}
-        </div>
+        <LessonJumpList activeAnchor={activeAnchor} lesson={activeLesson} />
 
         <h2 className={styles.applyTitle}>Áp dụng ngay</h2>
-        <div className={styles.applyActions}>
-          <Button href="/patch" variant="secondary" block>Patch cập nhật</Button>
-          <Button href="/mua-18" variant="secondary" block>Xem Mùa 18</Button>
-        </div>
+        <LessonApplyPanel idPrefix={`desktop-${activeLesson.slug}`} lesson={activeLesson} />
       </aside>
     </div>
   );

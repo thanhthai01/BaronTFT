@@ -1,6 +1,6 @@
 export type SearchAction = {
   id: string;
-  group: 'Bài học' | 'Checklist' | 'Cây quyết định' | 'Mùa 18' | 'Sau trận' | 'Góp ý';
+  group: 'Bài học' | 'Checklist' | 'Cây quyết định' | 'Mùa 18' | 'Góp ý';
   label: string;
   description: string;
   href: string;
@@ -63,14 +63,6 @@ export const searchActions: SearchAction[] = [
     description: 'Chốt mục tiêu roll và điểm dừng trước khi tiêu vàng.',
     href: '/checklist',
     keywords: ['roll', 'rolldown', 'vàng', 'gold'],
-  },
-  {
-    id: 'post-game-debrief',
-    group: 'Sau trận',
-    label: 'Ghi debrief sau trận',
-    description: 'Lưu lỗi đầu tiên có thể sửa, một nhãn chính và hành vi trận sau.',
-    href: '/checklist?stage=post',
-    keywords: ['sau trận', 'sau tran', 'debrief', 'review', 'lỗi', 'loi', 'post game'],
   },
   {
     id: 'vod-review',

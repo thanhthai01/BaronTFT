@@ -15,15 +15,14 @@ test.describe('NavBubble (mobile)', () => {
     const panel = page.getByRole('dialog', { name: 'Điều hướng nhanh' });
     await expect(panel).toBeVisible();
     await expect(panel.getByRole('button', { name: /Tìm/ })).toBeVisible();
-    await expect(panel.getByRole('heading', { name: 'Học' })).toBeVisible();
-    await expect(panel.getByRole('heading', { name: 'Tra cứu' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Kiến thức' })).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Mùa 18' })).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Checklist' })).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Patch' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Cây quyết định' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Lộ trình' })).toBeVisible();
-    await expect(panel.getByRole('link', { name: 'Mùa 18' })).toBeVisible();
-    await expect(panel.getByRole('link', { name: 'Patch' })).toBeVisible();
-    await expect(panel.getByRole('link', { name: 'Nguồn học' })).toBeVisible();
-    await expect(panel.getByRole('button', { name: /Thu gọn vào mép/ })).toBeVisible();
+    await expect(panel.getByRole('link', { name: 'Nguồn học' })).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: /Thu gọn vào mép/ })).toHaveCount(0);
     await expect(panel.getByRole('link', { name: 'Trang chủ' })).toHaveCount(0);
     await expect(panel.getByRole('link', { name: 'Review' })).toHaveCount(0);
 
@@ -124,19 +123,6 @@ test.describe('NavBubble (mobile)', () => {
     expect(panelBox!.y).toBeGreaterThanOrEqual(0);
   });
 
-  test('touch utility thu gọn vào mép nhưng vẫn giữ hit target', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Mở điều hướng' }).click();
-    await page.getByRole('dialog', { name: 'Điều hướng nhanh' }).getByRole('button', { name: /Thu gọn vào mép/ }).click();
-
-    const collapsed = page.getByRole('button', { name: 'Mở rộng nút điều hướng' });
-    await expect(collapsed).toBeVisible();
-    const box = await collapsed.boundingBox();
-    const viewportWidth = page.viewportSize()?.width ?? 0;
-    expect(box!.width).toBeGreaterThanOrEqual(44);
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-    expect(box!.x + box!.width).toBeGreaterThan(viewportWidth - 20);
-  });
 
   test('storage hỏng không đẩy bubble khỏi viewport', async ({ page }) => {
     await page.addInitScript(() => {

@@ -33,7 +33,12 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
     function onKeyDown(event: KeyboardEvent) {
       // Đang trình chiếu (xem PatchPresentation.tsx) thì bỏ qua — bật popup tìm
       // kiếm đè lên khung 1920×1080 giữa lúc quay/chiếu là hỏng cả video.
-      if (document.documentElement.hasAttribute('data-presenting')) return;
+      // Tương tự khi đang mở modal ma trận tộc hệ (xem MatrixOverviewModal.tsx):
+      // phím tắt mở palette không được kích khi modal đang giữ focus.
+      if (
+        document.documentElement.hasAttribute('data-presenting') ||
+        document.documentElement.hasAttribute('data-matrix-modal-open')
+      ) return;
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setHasOpenedOnce(true);

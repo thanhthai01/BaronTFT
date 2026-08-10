@@ -148,15 +148,27 @@
 }
 
 @media (max-width: 640px) {
+  .overlay {
+    /* Giữ vùng trống phía trên để chạm ra ngoài là đóng; phần dưới chừa chỗ cho bàn phím ảo. */
+    background: linear-gradient(
+      to bottom,
+      rgba(27, 27, 27, 0.18) 0,
+      rgba(27, 27, 27, 0.18) max(4.5rem, 13dvh),
+      rgba(27, 27, 27, 0.38) max(4.5rem, 13dvh),
+      rgba(27, 27, 27, 0.38) calc(100% - max(14rem, 34dvh)),
+      transparent calc(100% - max(14rem, 34dvh))
+    );
+  }
+
   .dialog {
-    top: max(env(safe-area-inset-top), 0.75rem);
+    top: max(4.5rem, calc(env(safe-area-inset-top) + 13dvh));
     width: calc(100vw - 1rem);
-    max-height: calc(100dvh - max(env(safe-area-inset-top), 0.75rem) - max(env(safe-area-inset-bottom), 0.75rem));
+    max-height: calc(100dvh - max(4.5rem, calc(env(safe-area-inset-top) + 13dvh)) - max(14rem, calc(env(safe-area-inset-bottom) + 34dvh)));
     border-radius: var(--r-md);
   }
 
   .list {
-    max-height: calc(100dvh - 7rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - max(4.5rem, calc(env(safe-area-inset-top) + 13dvh)) - max(14rem, calc(env(safe-area-inset-bottom) + 34dvh)) - 4.25rem);
   }
 
   .item {

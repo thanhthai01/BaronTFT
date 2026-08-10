@@ -24,6 +24,31 @@ test('foundational knowledge reader switches lessons', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /Thiết kế outs trước rolldown/i })).toBeVisible();
 });
 
+test('mobile lesson shows apply before article content without lesson TOC', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only lesson reading order');
+
+  await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
+  const article = page.locator('article');
+  await expect(article.getByLabel('Chọn bài học')).toBeVisible();
+  const applyPanel = article.getByLabel('Áp dụng ngay');
+  await expect(applyPanel.getByRole('heading', { name: 'Áp dụng ngay' })).toBeVisible();
+  await expect(applyPanel.getByText('Tôi có ít nhất ba nhóm outs.')).toBeVisible();
+  await expect(applyPanel.getByText('Roll một số vàng ngẫu nhiên.')).toBeVisible();
+  await expect(applyPanel.getByText('Trước roll ghi:')).toBeVisible();
+  await expect(article.getByRole('link', { name: 'Patch cập nhật' })).toHaveCount(0);
+  await expect(article.getByRole('link', { name: 'Xem Mùa 18' })).toHaveCount(0);
+
+  await expect(article.getByRole('heading', { name: 'Trong bài' })).toHaveCount(0);
+  const order = await article.evaluate((node) => {
+    const apply = node.querySelector('[aria-labelledby="mobile-lesson-apply-title"]');
+    const firstBlock = node.querySelector('#level-la-mua-slot-va-phan-phoi-shop');
+    return apply && firstBlock
+      ? Boolean(apply.compareDocumentPosition(firstBlock) & Node.DOCUMENT_POSITION_FOLLOWING)
+      : false;
+  });
+  expect(order).toBe(true);
+});
+
 test('checklist persists a checked item after reload', async ({ page }) => {
   await page.goto('/checklist');
   const checkbox = page.getByLabel(/Lõi\/portal đang khuyến khích tempo/i);
@@ -32,30 +57,18 @@ test('checklist persists a checked item after reload', async ({ page }) => {
   await expect(page.getByLabel(/Lõi\/portal đang khuyến khích tempo/i)).toBeChecked();
 });
 
-test('review route redirects to post-game debrief', async ({ page }) => {
+test('review route redirects to checklist', async ({ page }) => {
   await page.goto('/review');
-  await expect(page).toHaveURL(/\/checklist\?stage=post$/);
-  await expect(page.getByRole('heading', { name: 'Debrief 30–60 giây' })).toBeVisible();
+  await expect(page).toHaveURL(/\/checklist$/);
+  await expect(page.getByRole('heading', { name: 'Checklist trong trận' })).toBeVisible();
 });
 
-test('post-game debrief requires one label, saves history, and seeds next-game focus', async ({ page }) => {
+test('post-game stage keeps old checklist interface', async ({ page }) => {
   await page.goto('/checklist?stage=post');
   await expect(page.getByRole('tab', { name: 'Sau trận' })).toHaveAttribute('aria-selected', 'true');
-
-  await page.getByRole('button', { name: 'Lưu debrief' }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'Chưa lưu được' })).toContainText('Chọn đúng một nhãn lỗi chính');
-
-  await page.getByRole('textbox', { name: 'Lỗi đầu tiên có thể sửa' }).fill('Rolled before naming outs');
-  await page.getByLabel('ROLL', { exact: true }).check();
-  await page.getByRole('textbox', { name: 'Hành vi quan sát được cho trận sau' }).fill('Name three outs before pressing D');
-  await page.getByRole('button', { name: 'Lưu debrief' }).click();
-
-  await expect(page.getByText('ROLL · Stage 3')).toBeVisible();
-  await page.reload();
-  await expect(page.getByText('ROLL · Stage 3')).toBeVisible();
-
-  await page.getByRole('tab', { name: 'Lobby' }).click();
-  await expect(page.getByLabel('Trọng tâm trận này')).toContainText('Name three outs before pressing D');
+  await expect(page.getByLabel(/Lỗi đầu tiên có thể sửa nằm ở stage nào/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Debrief 30–60 giây' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Lưu debrief' })).toHaveCount(0);
 });
 
 test('command palette opens from the visible search control', async ({ page }) => {
@@ -73,8 +86,8 @@ test('command palette opens from the visible search control', async ({ page }) =
   await page.getByPlaceholder(/Tìm bài học/i).fill('rolldown');
   const actions = page.getByLabel('Hành động');
   await expect(actions.getByText('Mở checklist trước rolldown')).toBeVisible();
-  await page.getByPlaceholder(/Tìm bài học/i).fill('sau tran');
-  await expect(actions.getByText('Ghi debrief sau trận')).toBeVisible();
+  await page.getByPlaceholder(/Tìm bài học/i).fill('review vod');
+  await expect(actions.getByText('Review VOD sâu')).toBeVisible();
 });
 
 test('mobile decision tree completes by guided taps', async ({ page }, testInfo) => {
@@ -155,6 +168,49 @@ test('compact desktop header keeps search visible', async ({ page }, testInfo) =
   await expect(page.getByPlaceholder(/Tìm bài học/i)).toBeVisible();
 });
 
+test('mobile Set18 matrix opens a zoomable overview instead of live table', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only Set18 matrix overview');
+
+  await page.goto('/mua-18/ma-tran-toc-he');
+  const trigger = page.getByRole('button', { name: /Ma trận tổng quan/ });
+  await expect(trigger).toBeVisible();
+  await expect(page.getByRole('table')).toHaveCount(0);
+  await expect(page.locator('.specialBox')).toHaveCount(0);
+
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Tổng quan Set 18' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Đóng ma trận phóng to' })).toBeFocused();
+  await expect(dialog.getByText('100%')).toBeVisible();
+  await dialog.getByRole('button', { name: 'Phóng to' }).click();
+  await expect(dialog.getByText('125%')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
+test('desktop Set18 matrix keeps live table', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 matrix');
+
+  await page.goto('/mua-18/ma-tran-toc-he');
+  await expect(page.getByRole('table').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /Ma trận tổng quan/ })).toBeHidden();
+});
+
+test('mobile back-to-top returns to filters', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only back-to-top control');
+
+  await page.goto('/mua-18/nang-cap');
+  await expect(page.getByRole('heading', { name: 'Nâng cấp (Augment)' })).toBeVisible();
+  await expect(page.getByText(/Đang hiển thị 48 \/ \d+ nâng cấp/)).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const backToTop = page.getByRole('button', { name: 'Về đầu trang' });
+  await expect(backToTop).toHaveAttribute('data-visible', 'true');
+  await backToTop.click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(120);
+  await expect(page.getByLabel('Chọn phần nội dung')).toBeVisible();
+});
+
 test('Set18 section route stays synchronized and supports history', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Set18 flow');
 
@@ -177,12 +233,21 @@ test('Set18 section route stays synchronized and supports history', async ({ pag
   await expect(page.getByText(/Đang hiển thị 96 \/ \d+ nâng cấp/)).toBeVisible();
 });
 
+test('phone hides patch presentation entry point', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Phone-only Patch Presentation check');
+
+  await page.goto('/patch');
+  await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Trình chiếu' })).toHaveCount(0);
+});
+
 test('Patch selector switches reports and labels personal analysis', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop-only Patch flow');
 
   await page.goto('/patch');
   await expect(page.getByRole('heading', { name: 'Patch', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Bản vá này ảnh hưởng gì tới game' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Trình chiếu' })).toBeVisible();
 
   // Danh sách bản vá là listbox custom vì sidebar sticky có overflow; kèm dòng
   // meta nói ngày cập nhật và nguồn.

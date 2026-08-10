@@ -2,31 +2,25 @@ import { Button } from '@/components/design-system/Button/Button';
 import { DecisionBoard } from '@/components/features/decision-board/DecisionBoard';
 import styles from './page.module.css';
 
-const taskEntries = [
+const destinations = [
   {
-    title: 'Tôi chưa biết nên luyện gì',
-    text: 'Chẩn đoán triệu chứng đang lặp lại rồi chọn đúng bài trong lộ trình.',
-    href: '/lo-trinh',
-    cta: 'Bắt đầu lộ trình',
+    title: 'Mùa 18',
+    text: 'Tra cứu tướng, tộc hệ, Tinh Linh và nâng cấp của set hiện tại.',
+    href: '/mua-18',
+    cta: 'Xem Mùa 18',
   },
   {
-    title: 'Tôi đang trong trận',
-    text: 'Mở checklist ngắn để chốt level, roll, giữ vàng, pivot và xếp bài.',
+    title: 'Checklist',
+    text: 'Câu hỏi ngắn dùng ngay trong trận: lên cấp, roll, giữ vàng hay pivot.',
     href: '/checklist',
     cta: 'Mở checklist',
   },
   {
-    title: 'Tôi vừa chơi xong',
-    text: 'Ghi lỗi đầu tiên có thể sửa và một hành vi cho trận kế tiếp trong 30–60 giây.',
-    href: '/checklist?stage=post',
-    cta: 'Ghi debrief sau trận',
+    title: 'Patch',
+    text: 'Đọc thay đổi patch mới nhất: buff, nerf, rework và ảnh hưởng tới meta.',
+    href: '/patch',
+    cta: 'Xem patch',
   },
-];
-
-const lookupLinks = [
-  { label: 'Mùa 18', href: '/mua-18' },
-  { label: 'Patch', href: '/patch' },
-  { label: 'Nguồn học', href: '/nguon-hoc' },
 ];
 
 export default function HomePage() {
@@ -53,29 +47,15 @@ export default function HomePage() {
 
       <section className="section">
         <div className="wide-container">
-          <span className="kicker">Bắt đầu từ việc đang cần</span>
-          <h2 className="section-title">Bạn đang ở nhịp nào?</h2>
+          <span className="kicker">Bắt đầu từ đâu</span>
+          <h2 className="section-title">Ba trang bạn sẽ dùng nhiều nhất</h2>
           <div className={styles.entryGrid}>
-            {taskEntries.map((item) => (
+            {destinations.map((item) => (
               <article className={styles.card} key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
                 <Button className={styles.cardAction} href={item.href} variant="secondary">{item.cta}</Button>
               </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.lookupStrip} aria-labelledby="lookup-title">
-        <div className={[styles.lookupInner, 'wide-container'].join(' ')}>
-          <div>
-            <span className="kicker">Tra cứu nhanh</span>
-            <h2 id="lookup-title">Dữ liệu mùa và patch vẫn ở đây, nhưng không phải điểm bắt đầu.</h2>
-          </div>
-          <div className={styles.lookupLinks}>
-            {lookupLinks.map((link) => (
-              <Button href={link.href} key={link.href} variant="secondary">{link.label}</Button>
             ))}
           </div>
         </div>

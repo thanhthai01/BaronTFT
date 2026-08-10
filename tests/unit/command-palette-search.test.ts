@@ -5,9 +5,9 @@ import { foldSearch, KIND_ORDER, rankActionMatches, rankIndexMatches } from '../
 
 describe('command palette search', () => {
   it('folds Vietnamese diacritics for action matching', () => {
-    expect(foldSearch('sau trận')).toBe('sau tran');
-    const matches = rankActionMatches(searchActions, foldSearch('sau tran'));
-    expect(matches[0]).toMatchObject({ id: 'post-game-debrief', href: '/checklist?stage=post' });
+    expect(foldSearch('mùa 18')).toBe('mua 18');
+    const matches = rankActionMatches(searchActions, foldSearch('mua 18'));
+    expect(matches[0]).toMatchObject({ id: 'mua18-toc-he', href: '/mua-18/chi-tiet-toc-he' });
   });
 
   it('finds rolldown checklist action before entity results', () => {

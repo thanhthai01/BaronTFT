@@ -182,16 +182,9 @@ export default function NavBubble() {
         openPalette();
         return;
       }
-      if (item.action.kind === 'collapse') {
-        setOpen(false);
-        applyPosition((prev) => ({ ...prev, collapsed: true }));
-        setAnnouncement('Đã thu gọn nút điều hướng vào mép màn hình');
-        bubbleRef.current?.focus();
-        return;
-      }
       setOpen(false);
     },
-    [applyPosition, openPalette],
+    [openPalette],
   );
 
   const handlePanelKeyDown = useCallback(
@@ -334,7 +327,7 @@ export default function NavBubble() {
           onKeyDown={handlePanelKeyDown}
         >
           <p className="visually-hidden" id="nav-bubble-instructions">
-            Dùng Tab để đi qua các mục, Escape để đóng. Có thể kéo nút nổi sang cạnh màn hình hoặc bấm Thu gọn vào mép.
+            Dùng Tab để đi qua các mục, Escape để đóng. Có thể kéo nút nổi sang cạnh màn hình hoặc bấm Delete khi focus nút để thu gọn vào mép.
           </p>
           <nav aria-label="Điều hướng nhanh trên điện thoại" className={styles.panelNav}>
             {navBubbleSections.map((section) => (
@@ -342,11 +335,11 @@ export default function NavBubble() {
                 {section.label ? <h2 className={styles.sectionTitle}>{section.label}</h2> : null}
                 <div className={styles.sectionGrid}>
                   {section.items.map((item) => {
-                    const itemClassName = [styles.panelItem, item.emphasis === 'primary' ? styles.primaryItem : null, item.emphasis === 'utility' ? styles.utilityItem : null]
+                    const itemClassName = [styles.panelItem, item.emphasis === 'primary' ? styles.primaryItem : null]
                       .filter(Boolean)
                       .join(' ');
 
-                    if (item.action.kind === 'search' || item.action.kind === 'collapse') {
+                    if (item.action.kind === 'search') {
                       return (
                         <button className={itemClassName} key={item.id} type="button" onClick={() => handleSelect(item)}>
                           <NavBubbleIcon icon={item.icon} />

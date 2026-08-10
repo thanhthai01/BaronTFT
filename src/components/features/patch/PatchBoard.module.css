@@ -1037,6 +1037,10 @@
 }
 
 @media (max-width: 40rem) {
+  .presentationBlock {
+    display: none;
+  }
+
   .cards {
     grid-template-columns: 1fr;
   }
