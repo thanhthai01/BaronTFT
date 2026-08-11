@@ -171,8 +171,8 @@
   margin-right: 6px;
 }
 
-.statBuff strong { color: var(--accent-primary); }
-.statNerf strong { color: var(--accent-secondary); }
+.statBuff strong { color: var(--success); }
+.statNerf strong { color: var(--danger); }
 
 /* ─── Eyebrow / heading chung ─────────────────────────────────────────── */
 .eyebrow {
@@ -183,9 +183,9 @@
   color: var(--text-muted);
 }
 
-.eyebrow.dir-up { color: var(--accent-primary); }
-.eyebrow.dir-down { color: var(--accent-secondary); }
-.eyebrow.dir-mixed { color: var(--text-primary); }
+.eyebrow.dir-up { color: var(--success); }
+.eyebrow.dir-down { color: var(--danger); }
+.eyebrow.dir-mixed { color: var(--warning); }
 
 .slideBody h2 {
   font-family: var(--font-display);
@@ -282,8 +282,8 @@
 
 /* Dải nhãn tô ĐẶC màu (không còn nền pastel nhạt) — đúng kiểu banner
    infographic của bản tham khảo, đọc được ngay cả từ xa lúc quay video. */
-.overviewRowLabel-buff { background: var(--accent-primary); }
-.overviewRowLabel-nerf { background: var(--accent-secondary); }
+.overviewRowLabel-buff { background: var(--success); }
+.overviewRowLabel-nerf { background: var(--danger); }
 .overviewRowLabel-other { background: var(--text-primary); }
 
 .overviewRowCount {
@@ -479,10 +479,11 @@
 }
 
 /* ─── Nhãn tăng/giảm — huy hiệu tô nền đặc + chữ trắng, đọc được từ xa lúc
-   quay video (chữ màu trơn không nền quá mờ ở khung hình nhỏ). Bảng màu
-   riêng cho slide, tách khỏi .kindTag ở /patch: xanh dương = tăng, cam =
-   giảm, đen = chỉnh/cơ chế (hai loại "không rõ hướng buff/nerf" gộp chung
-   một tông trung tính thay vì vàng/xanh dương như trang thường). */
+   quay video (chữ màu trơn không nền quá mờ ở khung hình nhỏ). Cùng bảng màu
+   buff/nerf/chỉnh/cơ chế với .kindTag ở /patch (xanh lá/đỏ/cam/xanh dương) —
+   trước đây slide dùng riêng xanh dương/cam thương hiệu, đổi lại cho khớp
+   theo yêu cầu người dùng 11/08/2026 (trình chiếu phải nhất quán màu với
+   trang thường, không tự bịa bảng màu khác). */
 .kindTag {
   font-family: var(--font-mono);
   font-size: 14px;
@@ -496,10 +497,10 @@
   flex-shrink: 0;
 }
 
-.kind-buff { background: var(--accent-primary); }
-.kind-nerf { background: var(--accent-secondary); }
-.kind-rework { background: var(--text-primary); }
-.kind-mechanic { background: var(--text-primary); }
+.kind-buff { background: var(--success); }
+.kind-nerf { background: var(--danger); }
+.kind-rework { background: var(--warning); }
+.kind-mechanic { background: var(--info); }
 
 /* Chấm hình thoi ở hàng cơ chế — cùng bảng màu tăng/giảm nhưng riêng mục
    cơ chế/chỉnh luôn đứng một mình trên slide này (không trộn với tăng/giảm)
@@ -559,10 +560,10 @@
   font-weight: var(--fw-extra);
 }
 
-.to-buff { color: var(--accent-primary); }
-.to-nerf { color: var(--accent-secondary); }
-.to-rework { color: var(--text-primary); }
-.to-mechanic { color: var(--text-primary); }
+.to-buff { color: var(--success); }
+.to-nerf { color: var(--danger); }
+.to-rework { color: var(--warning); }
+.to-mechanic { color: var(--info); }
 
 /* ─── Lưới thẻ tướng/tộc hệ/trang bị ─────────────────────────────────────
    flex-wrap thay vì CSS Grid: Grid kéo mọi thẻ trong cùng hàng cao bằng thẻ
@@ -594,6 +595,22 @@
   border: 2px solid var(--icon-accent, var(--text-primary));
   border-radius: var(--r-md);
   padding: 16px 18px;
+}
+
+/* .cardGrid dùng overflow:hidden (khung cố định để quay video, không cuộn
+   được) — một thẻ nhiều dòng (vd tộc hệ Blossom Charms) xếp ở khổ 50% mặc
+   định sẽ cao vượt max-height 900px và bị CẮT MẤT ngoài tầm nhìn (mất dữ
+   liệu âm thầm, không chỉ khó đọc). Ngưỡng 9 dòng giống PatchBoard.module.css
+   (trang /patch) — thẻ vượt ngưỡng chiếm trọn hàng và xếp số liệu thành 3 cột
+   để đủ thấp, không cần cuộn hay bị cắt. */
+.card:has(.changes li:nth-child(9)) {
+  flex: 0 1 100%;
+  min-width: 100%;
+}
+
+.card:has(.changes li:nth-child(9)) .changes {
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 24px;
 }
 
 .cardHead {
