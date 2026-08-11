@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { Set18Champion, Set18ChampionForm, Set18ChampionStats, Set18Trait } from '@/content/set18/set18-types';
+import { assertTrustedHtml } from '@/lib/trusted-html';
 import styles from '../Set18Codex.module.css';
 import { CostPill, TraitIcon, traitTitle } from './shared';
 
@@ -110,7 +111,7 @@ export function CardFrontContent({
             {form.mana}
           </span>
         </div>
-        <p className={styles.abdesc} dangerouslySetInnerHTML={{ __html: form.abilityHtmlVi }} />
+        <p className={styles.abdesc} dangerouslySetInnerHTML={{ __html: assertTrustedHtml(form.abilityHtmlVi, 'set18TooltipHtml', `${champion.name}:${form.label}:abilityHtmlVi`) }} />
         {form.calcs.length ? (
           <div className={styles.calcs}>
             {form.calcs.map((calc) => (
@@ -119,7 +120,7 @@ export function CardFrontContent({
                   <span className={calc.style}>{calc.label}:</span>
                   <span>{calc.total}</span>
                 </div>
-                <div className={styles.calcTerms} dangerouslySetInnerHTML={{ __html: calc.terms }} />
+                <div className={styles.calcTerms} dangerouslySetInnerHTML={{ __html: assertTrustedHtml(calc.terms, 'set18TooltipHtml', `${champion.name}:${form.label}:${calc.id}:terms`) }} />
               </div>
             ))}
           </div>

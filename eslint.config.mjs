@@ -27,6 +27,26 @@ const config = [
     ],
   },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    files: [
+      'scripts/db/apply-pbe-champion-updates.ts',
+      'scripts/db/apply-pbe-champion-updates-aug04-05.ts',
+      'scripts/db/apply-pbe-champion-updates-aug06z.ts',
+      'scripts/db/apply-pbe-champion-updates-aug07aa.ts',
+      'scripts/db/apply-pbe-champion-updates-aug10ab.ts',
+      'scripts/db/apply-pbe-trait-augment-updates.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'prefer-const': 'off',
+    },
+  },
+  {
+    files: ['scripts/db/apply-pbe-champion-updates.ts', 'scripts/db/fix-patch-order-pbe.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
 ];
 
 export default config;

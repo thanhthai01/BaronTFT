@@ -6,17 +6,18 @@
 
 Baron TFT là website/web app học TFT tiếng Việt dùng Next.js App Router, TypeScript strict, CSS Modules, generated content, localStorage cho MVP state, Drizzle schema và Neon/Postgres cho authoring data. Kiến trúc hiện tại phù hợp với content-heavy product: static/generated read model, SEO route coverage tốt, nhiều lazy-loading có chủ đích, và test surface khá rộng.
 
-Rủi ro chính không nằm ở stack mà nằm ở operational discipline: release gate chưa xanh, DB/content publish chưa đủ atomic/auditable, generated HTML chưa có sanitizer/allowlist rõ, content pipeline phụ thuộc source ngoài repo, thiếu CI/runbook/error boundaries, và một số feature file lớn cần tách dần khi tiếp tục phát triển.
+Rủi ro chính không nằm ở stack mà nằm ở operational discipline. Các gate cốt lõi, CI, DB/content runbook, HTML validation, error boundaries, SEO/performance smoke và audit hooks đã được bổ sung; phần còn lại chủ yếu là sửa E2E known failures, nâng cấp migration/schema policy theo thực tế vận hành, và tiếp tục tách dần feature file lớn khi có test seam.
 
 ## Evidence From Checks
 
 | Check | Result | Notes |
 |---|---|---|
 | `pnpm typecheck` | Pass | TypeScript no emit passed. |
-| `pnpm test` | Pass | 10 unit test files, 73 tests passed. |
+| `pnpm test` | Pass | Unit test suite includes SEO, trusted HTML, JSON-LD, and pure model seams. |
 | `pnpm build` | Pass | Passed when run alone; first concurrent run likely collided with `.next` while e2e was running. |
-| `pnpm lint` | Fail | 37 errors, mostly old DB/PBE scripts using `any`, plus small TS lint issues. |
-| `pnpm test:e2e` | Fail | 38 passed, 42 skipped, 4 failed. Failures around mobile Set18 matrix trigger, mobile back-to-top, and patch expectations. |
+| `pnpm lint` | Pass | Legacy one-off PBE scripts have narrow overrides for historical untyped JSON mutation code. |
+| `pnpm lint:release` | Pass | Scoped to app, tests, and shared config. |
+| `pnpm test:e2e` | Known fail | 4 stable failures triaged around mobile Set18 matrix trigger, mobile back-to-top, and patch expectations. |
 
 ## Findings By Priority
 
@@ -26,22 +27,22 @@ No repo-only evidence of a current system-wide blocker. Production build passes 
 
 ### P2 - Quality Gates And CI
 
-- Repo-wide lint currently fails in DB/PBE scripts, so `pnpm lint` cannot be used as a release gate without cleanup or targeted policy.
-- No CI workflow, deployment config, IaC, runbook, or environment documentation was found in the repo.
-- E2E has 4 current failures that need triage before treating the suite as a reliable gate.
+- Repo-wide `pnpm lint` and scoped `pnpm lint:release` are usable. Legacy one-off PBE scripts are isolated by narrow overrides.
+- CI exists at `.github/workflows/ci.yml` with typecheck, unit tests, build, perf smoke, lint, and manual E2E smoke.
+- Full E2E has 4 triaged failures; use manual desktop smoke until the full suite is fixed.
 
 ### P2 - Data And Migrations
 
-- `scripts/db/apply-patch-draft.ts` upserts a patch report, deletes old patch entries, then inserts new entries without an observed transaction, dry-run, or post-write verify count.
-- `drizzle.config.ts` points to `src/db/migrations`, but no migration files were found in this repo.
-- `db:push` exists, so production/shared DB workflow needs an explicit policy to avoid unreviewed schema drift.
+- `scripts/db/apply-patch-draft.ts` supports dry-run, writes report + entries through a Neon HTTP transaction batch, and verifies inserted entry count.
+- `src/db/migrations/0000_current_schema.sql` is checked in as a baseline snapshot; existing shared DBs still require explicit migration review before applying schema changes.
+- `pnpm db:push` is disabled and `pnpm db:check-schema` provides a read-only drift gate.
 
 ### P2 - Generated HTML And Content Trust Boundary
 
-- `KnowledgeReader.tsx` renders `block.html` with `dangerouslySetInnerHTML`.
-- `ChampionCard.tsx` renders `abilityHtmlVi` and `calc.terms` with `dangerouslySetInnerHTML`.
-- `scripts/convert-evergreen-lessons.mjs` uses `marked.parse` without an observed sanitizer/allowlist.
-- This is acceptable only while all HTML sources are trusted and reviewed. It becomes unsafe if content comes from scrape/DB/external markdown without validation.
+- `KnowledgeReader.tsx` renders generated `block.html` with `dangerouslySetInnerHTML`.
+- `ChampionCard.tsx` renders generated `abilityHtmlVi` and `calc.terms` with `dangerouslySetInnerHTML`.
+- Generation-time HTML allowlist validation now guards evergreen Markdown conversion and Set18 champion DB pull output; runtime render gates also validate trusted HTML before `dangerouslySetInnerHTML`.
+- This remains a trusted/generated content model, not a user-input HTML renderer.
 
 ### P2 - Content Reproducibility
 
@@ -50,14 +51,14 @@ No repo-only evidence of a current system-wide blocker. Production build passes 
 
 ### P2 - Reliability And Observability
 
-- No App Router `error.tsx`, `loading.tsx`, or `global-error.tsx` files were found.
-- Observability in repo is limited to Vercel Analytics and Speed Insights.
-- No incident runbook, alerting policy, or dashboard documentation was found.
+- Root, global, and key route App Router `error.tsx`/`loading.tsx` boundaries now exist.
+- Observability in repo is Vercel Analytics + Speed Insights, documented in `docs/OPERATIONS_RUNBOOK.md`.
+- Incident runbook and rollback verification are documented; dashboard/alerting automation remains future work.
 
 ### P3 - Performance
 
 - Good patterns exist: dynamic command palette, mobile-only nav bubble, lazy-loaded Set18 section data, dynamic patch presentation.
-- No measurable performance budget or automated performance gate was found.
+- Route bundle budgets are documented and enforced by `pnpm perf:smoke` after build.
 
 ### P3 - Architecture Hotspots
 
@@ -67,27 +68,27 @@ No repo-only evidence of a current system-wide blocker. Production build passes 
 ### P3 - SEO
 
 - SEO foundation is good: metadata, canonical URLs, sitemap, robots preview blocking, entity detail pages, and breadcrumb JSON-LD are present.
-- Missing piece is validation: no automated smoke test for sitemap/canonical duplication or structured metadata regressions.
+- SEO smoke tests now cover sitemap uniqueness, `/patch` canonical behavior, older patch canonicals, and non-production robots blocking.
 
 ## Roadmap
 
 ### Now
 
-1. Triage the 4 current E2E failures.
-2. Make release gates usable: fix or intentionally scope lint for old DB/PBE scripts.
-3. Add CI minimum: `pnpm typecheck`, `pnpm test`, production build, and targeted lint.
-4. Wrap `apply-patch-draft` writes in a DB transaction and verify inserted entry count.
-5. Add generated HTML validation or sanitizer/allowlist.
-6. Add minimal App Router `error.tsx` and `loading.tsx` boundaries.
+1. Done — triage the 4 current E2E failures.
+2. Done — make release gates usable with repo-wide `pnpm lint` and scoped `pnpm lint:release`.
+3. Done — add CI minimum: `pnpm typecheck`, `pnpm test`, production build, and `pnpm lint:release`.
+4. Done — wrap `apply-patch-draft` writes in a Neon transaction batch and verify inserted entry count.
+5. Done — add generated HTML validation/allowlist at content generation boundaries.
+6. Done — add minimal App Router `error.tsx` and `loading.tsx` boundaries.
 
 ### Next
 
-1. Decide DB source of truth: reviewed migrations or documented schema snapshot process.
-2. Document content pipeline source paths, especially external `docs/evergreen` dependency.
-3. Add DB/content publish runbook: apply draft, pull generated files, review diff, validate, rollback/roll-forward.
-4. Add SEO smoke checks for sitemap/canonical behavior.
-5. Add performance targets for `/`, `/mua-18/[section]`, and `/patch`.
-6. Add minimal observability/runbook docs for Vercel, Neon, env vars, rollback, and incident verification.
+1. Done — document current DB source of truth and migration policy in `docs/DB_CONTENT_WORKFLOW.md`.
+2. Done — document content pipeline source paths, especially external `docs/evergreen` dependency.
+3. Done — add DB/content publish runbook: apply draft, pull generated files, review diff, validate, rollback/roll-forward.
+4. Done — add SEO smoke checks for sitemap/canonical behavior.
+5. Done — add performance targets for `/`, `/mua-18/[section]`, and `/patch` in `docs/PERFORMANCE_TARGETS.md`.
+6. Done — add minimal observability/runbook docs for Vercel, Neon, env vars, rollback, and incident verification in `docs/OPERATIONS_RUNBOOK.md`.
 
 ### Scale Trigger
 
@@ -101,11 +102,11 @@ Start the next level of architecture work when one of these happens:
 
 At that point, consider:
 
-- Data publish pipeline with audit log and staging verification.
-- Checked-in migrations and schema drift detection.
-- HTML sanitization as a hard gate.
-- CI with unit, build, e2e smoke, SEO smoke, and performance budget.
-- Modular split of `Set18Codex` and `PatchBoard` by ownership boundaries.
+- Done — data publish pipeline with audit script/log option and target verification.
+- Done — checked-in baseline migration snapshot and read-only schema drift detection.
+- Done — HTML validation at generation and runtime render gates.
+- Done — CI with unit, build, SEO smoke, performance budget, and manual E2E smoke workflow.
+- Started — modular split of `Set18Codex` and `PatchBoard` through pure model helpers and tests.
 
 ## Recommended Agent Split
 
@@ -126,6 +127,6 @@ Avoid assigning two agents to `Set18Codex.tsx`, `PatchBoard.tsx`, or DB scripts 
 - Do not edit generated Set18 files by hand unless the task is explicitly to repair generated output and the source pipeline is unavailable.
 - Before changing DB scripts, read `src/db/schema.ts`, `scripts/db/pull-set18.ts`, and `scripts/db/apply-patch-draft.ts`.
 - Before changing content rendering, grep all `dangerouslySetInnerHTML` and identify trusted vs untrusted data sources.
-- Treat repo-wide lint failure as known until DB/PBE scripts are cleaned up; still lint changed files.
+- Repo-wide `pnpm lint` is expected to pass; legacy one-off PBE scripts are covered by narrow overrides.
 - Build and e2e should not run concurrently because both can touch `.next` or the dev server.
 - If a check cannot run, record why and what risk remains.

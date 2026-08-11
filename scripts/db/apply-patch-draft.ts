@@ -9,12 +9,13 @@
 //        const report: PatchReport = { id: 'patch-18-4', version: '...', ... };
 //        export default report;
 //   2. pnpm db:apply-patch scripts/db/drafts/patch-18-4.ts
+//      hoặc kiểm tra trước: pnpm db:apply-patch:dry-run scripts/db/drafts/patch-18-4.ts
 //   3. pnpm db:pull   (đồng bộ lại patch-notes.generated.ts)
 //   4. git diff Website/src/content/patch-notes.generated.ts  (duyệt trước khi commit)
 
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { eq, min } from 'drizzle-orm';
+import { count, eq, min } from 'drizzle-orm';
 import { db } from '../../src/db/client';
 import { patchReports, patchEntries } from '../../src/db/schema';
 import type { PatchReport } from '../../src/content/patch-notes';
@@ -33,9 +34,15 @@ async function loadDraft(filePath: string): Promise<PatchReport> {
 }
 
 async function main() {
-  const filePath = process.argv[2];
+  const args = process.argv.slice(2);
+  // `tsx`/Node can consume dash-prefixed runtime flags before the script sees them.
+  // Use the plain `dry-run` token in package scripts, but keep `--dry-run` for
+  // direct runtimes that pass it through.
+  const dryRun = args.includes('dry-run') || args.includes('--dry-run');
+  const filePath = args.find((arg) => arg !== 'dry-run' && arg !== '--dry-run');
   if (!filePath) {
     console.error('Dùng: pnpm db:apply-patch <đường dẫn file draft.ts>');
+    console.error('Dry-run: pnpm db:apply-patch:dry-run <đường dẫn file draft.ts>');
     process.exit(1);
   }
 
@@ -57,16 +64,50 @@ async function main() {
     console.log(`Bản vá "${report.id}" mới — thêm làm bản MỚI NHẤT (reportOrder=${reportOrder}).`);
   }
 
-  const row = { ...reportFields, reportOrder };
-  await db.insert(patchReports).values(row).onConflictDoUpdate({ target: patchReports.id, set: row });
+  const row: typeof patchReports.$inferInsert = { ...reportFields, reportOrder };
+  const entryRows: (typeof patchEntries.$inferInsert)[] = entries.map((entry, sortOrder) => ({
+    ...entry,
+    reportId: report.id,
+    sortOrder,
+  }));
+  const duplicateEntryIds = entries
+    .map((entry) => entry.id)
+    .filter((id, index, ids) => ids.indexOf(id) !== index);
+  if (duplicateEntryIds.length > 0) {
+    throw new Error(`Draft "${report.id}" có entry id trùng: ${[...new Set(duplicateEntryIds)].join(', ')}`);
+  }
+
+  if (dryRun) {
+    console.log('DRY RUN — không ghi DB.');
+    console.log(`Mode: ${existing.length > 0 ? 'update existing report' : 'insert new latest report'}`);
+    console.log(`Report: ${report.id} · ${report.version} · ${report.title}`);
+    console.log(`Planned reportOrder: ${row.reportOrder}`);
+    console.log(`Entries: ${entryRows.length}`);
+    console.log('Nếu đúng, chạy lại không có --dry-run rồi chạy `pnpm db:pull` để đồng bộ generated files.');
+    return;
+  }
 
   // Xoá sạch entries cũ của report này rồi ghi lại toàn bộ — đúng hơn upsert
   // từng entry khi draft có thể xoá/thêm/sắp lại thứ tự entries giữa các lần sửa.
-  await db.delete(patchEntries).where(eq(patchEntries.reportId, report.id));
-  let sortOrder = 0;
-  for (const entry of entries) {
-    await db.insert(patchEntries).values({ ...entry, reportId: report.id, sortOrder });
-    sortOrder += 1;
+  // Neon HTTP không hỗ trợ interactive `db.transaction()`. `db.batch()` chạy qua
+  // Neon transaction API nên upsert report, xoá entries cũ, ghi entries mới và
+  // đọc count kiểm tra nằm trong cùng một transaction batch.
+  const countQuery = db.select({ value: count() }).from(patchEntries).where(eq(patchEntries.reportId, report.id));
+  const insertedCount = entryRows.length > 0
+    ? (await db.batch([
+        db.insert(patchReports).values(row).onConflictDoUpdate({ target: patchReports.id, set: row }),
+        db.delete(patchEntries).where(eq(patchEntries.reportId, report.id)),
+        db.insert(patchEntries).values(entryRows),
+        countQuery,
+      ]))[3][0]?.value
+    : (await db.batch([
+        db.insert(patchReports).values(row).onConflictDoUpdate({ target: patchReports.id, set: row }),
+        db.delete(patchEntries).where(eq(patchEntries.reportId, report.id)),
+        countQuery,
+      ]))[2][0]?.value;
+
+  if (insertedCount !== entries.length) {
+    throw new Error(`Ghi "${report.id}" không khớp số mục: draft=${entries.length}, DB=${insertedCount ?? 'unknown'}.`);
   }
 
   console.log(`✓ Đã ghi "${report.id}": ${entries.length} mục.`);

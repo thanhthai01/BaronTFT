@@ -6,6 +6,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/design-system/Button/Button';
 import { Callout } from '@/components/design-system/Callout/Callout';
 import { lessons, type Lesson, type LessonBlock } from '@/content/lessons';
+import { assertTrustedHtml } from '@/lib/trusted-html';
 import { BlockTypeIcon, ChevronIcon, ClockIcon, FlagIcon, PencilIcon } from './BlockIcons';
 import styles from './KnowledgeReader.module.css';
 
@@ -87,7 +88,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
     return (
       <section className={styles.block} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
-        <div className={`prose ${styles.conceptBody}`} dangerouslySetInnerHTML={{ __html: block.html }} />
+        <div className={`prose ${styles.conceptBody}`} dangerouslySetInnerHTML={{ __html: assertTrustedHtml(block.html, 'evergreenMarkdownHtml', `lesson:${anchorId}`) }} />
       </section>
     );
   }

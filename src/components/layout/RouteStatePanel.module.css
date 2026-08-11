@@ -1,0 +1,128 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4.25rem);
+  padding: clamp(3rem, 8vw, 6rem) 1rem;
+}
+
+.window {
+  width: min(100%, 30rem);
+  overflow: hidden;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-offset-ink);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1.5px solid var(--border-line);
+  background: var(--surface-raised);
+}
+
+.dots {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.brandMini {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow: hidden;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.brandMark {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1.16rem;
+  clip-path: var(--hex-clip);
+  background: var(--grad-accent);
+  object-fit: cover;
+}
+
+.body {
+  padding: 1.75rem 1.75rem 2rem;
+}
+
+.term {
+  margin: 0 0 1.1rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+  overflow-wrap: break-word;
+}
+
+.prompt {
+  color: var(--accent-primary);
+}
+
+.err {
+  display: block;
+  color: var(--accent-secondary-text);
+  font-weight: var(--fw-bold);
+}
+
+.title {
+  margin: 0 0 0.6rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: var(--fw-extra);
+  letter-spacing: var(--ls-tight);
+  text-wrap: balance;
+}
+
+.desc {
+  margin: 0 0 1.4rem;
+  color: var(--text-muted);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border-line);
+  border-radius: var(--r-sm);
+  padding: 0.55rem 0.85rem;
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--accent-primary);
+  color: var(--surface-card);
+}
+
+.secondary {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
