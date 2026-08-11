@@ -48,7 +48,7 @@ pnpm playwright test tests/e2e/core-flows.spec.ts
 
 ### DB Or Content Publish Work
 
-1. Confirm which source is being changed: DB, patch draft, tip draft, evergreen markdown, or generated file.
+1. Read `docs/DB_CONTENT_WORKFLOW.md` and confirm which source is being changed: DB, patch draft, tip draft, evergreen markdown, or generated file.
 2. Do not edit generated files by hand unless explicitly intentional.
 3. For Set18/Patch DB sync, use the approved script path, then review generated diff.
 
@@ -68,7 +68,7 @@ pnpm build
 
 ### SEO Or Release Work
 
-1. Check affected metadata, canonical, sitemap, robots, and redirects.
+1. Check affected metadata, canonical, sitemap, robots, redirects, and `docs/OPERATIONS_RUNBOOK.md`.
 2. Run:
 
 ```bash
@@ -123,8 +123,9 @@ Use agents when the work can be split without touching the same file.
 
 ### Current Known Gate Issues
 
-- Repo-wide `pnpm lint` fails in old DB/PBE scripts.
-- `pnpm test:e2e` currently has 4 failures that need triage.
+- Repo-wide `pnpm lint` should pass. Legacy one-off PBE scripts have narrow overrides for historical untyped JSON mutation code.
+- Current usable release lint gate is `pnpm lint:release`, scoped to app, tests, and shared config.
+- `pnpm test:e2e` currently has 4 triaged failures that still need fixes before it can be a release gate.
 - Treat these as known issues until fixed, but do not introduce new failures in changed areas.
 
 ## DB Safety Checklist
@@ -132,13 +133,15 @@ Use agents when the work can be split without touching the same file.
 Before any DB write script:
 
 - Confirm target environment.
+- Run `pnpm db:check-schema` when the target DB is available.
 - Confirm input draft file.
 - Confirm expected row count or entry count.
 - Confirm rollback or roll-forward path.
 - Prefer dry-run/summary when available.
+- For patches, run `pnpm db:apply-patch:dry-run <draft>` before the real write.
 - Run `pnpm db:pull` after intended DB content changes and review generated diff.
 
-Needed improvement: make patch application transaction-safe before heavy use.
+Patch application now writes report + entries through a Neon transaction batch and verifies inserted entry count; still confirm target/input/rollback before running it.
 
 ## Generated HTML Checklist
 

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { serializeJsonLd } from '@/lib/json-ld';
 import { SITE_URL } from '@/lib/site';
 import styles from './EntityDetailShell.module.css';
 
@@ -45,7 +46,7 @@ export function EntityDetailShell({
 
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }} type="application/ld+json" />
       <header className={styles.header}>
         <div className="wide-container">
           <p className={styles.breadcrumb}>

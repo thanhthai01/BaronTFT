@@ -47,19 +47,25 @@ pnpm test
 pnpm playwright test <target-spec>
 ```
 
-### Known Caveat
+### Lint Gates
 
-Repo-wide `pnpm lint` currently fails in old DB/PBE scripts. Do not treat that as a new regression unless your change touched those files. Targeted lint for changed files is still required.
+Repo-wide `pnpm lint` is expected to pass. Legacy one-off PBE scripts have a narrow ESLint override for historical untyped JSON mutation code.
+
+Use `pnpm lint:release` for the current release gate. It intentionally scopes lint to app, tests, and shared config.
 
 Do not run `pnpm build` and `pnpm test:e2e` concurrently. They can contend over `.next` or dev-server artifacts.
 
 ## DB And Content Publishing Rules
 
 - Neon/Postgres is the source workflow for Set 18 and patch data.
+- See `docs/DB_CONTENT_WORKFLOW.md` for source-of-truth, migration policy, publish runbooks, and rollback guidance.
 - Generated files under `src/content/set18/**`, `src/content/patch-notes.generated.ts`, and search/slug generated files should normally come from scripts.
 - Use `pnpm db:pull` only when intentionally syncing DB state back to generated files.
 - After any generated content sync, review `git diff` before continuing.
-- `scripts/db/apply-patch-draft.ts` is currently a risk area because patch report + entries writes should be transaction-safe before heavy use.
+- `pnpm db:push` is disabled; use reviewed migrations and explicit approval for schema changes.
+- `pnpm db:check-schema` is the read-only schema drift gate.
+- `scripts/db/apply-patch-draft.ts` supports `--dry-run`, writes report + entries through a Neon transaction batch, and verifies inserted entry count; still do not run DB write scripts without explicit approval.
+- `pnpm db:publish-audit` verifies generated content is in sync with the configured DB target.
 - Do not use `db:push` against shared/prod DB unless the migration policy has been approved.
 - Evergreen content generation depends on `docs/evergreen` outside the current repo boundary; confirm source path before running `pnpm content:sync`.
 
@@ -78,6 +84,8 @@ Do not run `pnpm build` and `pnpm test:e2e` concurrently. They can contend over 
 - Preserve `/patch/[version]` for older patch versions.
 - Preserve preview/non-production indexing protection in `robots.ts` and metadata.
 - When changing `SITE_URL` or custom domain behavior, verify sitemap and canonical URLs.
+- See `docs/PERFORMANCE_TARGETS.md` and `docs/OPERATIONS_RUNBOOK.md` for release/performance/operations checks.
+- `pnpm perf:smoke` enforces route bundle budgets after `pnpm build`.
 
 ## Agent Split
 

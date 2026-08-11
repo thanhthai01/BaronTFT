@@ -8,6 +8,7 @@ import { BackToTop } from '@/components/layout/BackToTop';
 import { NavBubbleLoader } from '@/components/layout/NavBubble';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { serializeJsonLd } from '@/lib/json-ld';
 import { SITE_URL, IS_PRODUCTION_DEPLOY } from '@/lib/site';
 import '@/styles/globals.css';
 import '@/styles/prose.css';
@@ -63,7 +64,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="vi" className={`${epilogue.variable} ${libreFranklin.variable} ${jetBrainsMono.variable}`}>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} type="application/ld+json" />
+        <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteJsonLd) }} type="application/ld+json" />
         <CommandPaletteProvider>
           <a className="skip-link" href="#main-content">Bỏ qua điều hướng</a>
           <SiteHeader />

@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { marked } from 'marked';
+import { validateTrustedHtml } from './lib/trusted-html-validation.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WEBSITE_ROOT = path.resolve(__dirname, '..');
@@ -134,12 +135,12 @@ function demoteHeadings(markdown) {
   return markdown.replace(/^###\s+/gm, '#### ');
 }
 
-function mdToHtml(markdown) {
+function mdToHtml(markdown, source) {
   let html = marked.parse(markdown, { gfm: true }).trim();
   html = html.replace(/<blockquote>\s*\n?<p>\s*(?:<strong>)?Case study/gi, (match) =>
     match.replace('<blockquote>', '<blockquote class="case-study">'),
   );
-  return html;
+  return validateTrustedHtml(html, { profile: 'evergreenMarkdownHtml', source });
 }
 
 function splitSections(markdown) {
@@ -186,7 +187,7 @@ function resolveRelated(fromRelPath, target, fileMap) {
   return href;
 }
 
-function buildExerciseBlock(heading, body) {
+function buildExerciseBlock(heading, body, relPath) {
   const hasH3 = /^###\s+/m.test(body);
   if (!hasH3) {
     const orderedItems = extractOrderedItems(body);
@@ -198,7 +199,7 @@ function buildExerciseBlock(heading, body) {
       return { type: 'drill', title: heading, goal: goalRaw ? stripInlineMarkdown(goalRaw) : '', steps };
     }
   }
-  return { type: 'concept', title: heading, html: mdToHtml(demoteHeadings(body)) };
+  return { type: 'concept', title: heading, html: mdToHtml(demoteHeadings(body), `${relPath}#${heading}`) };
 }
 
 function deriveExerciseSummary(exerciseSection, warnings, relPath) {
@@ -261,7 +262,7 @@ function buildLesson(relPath, fileMap, warnings, slugTitle) {
   // gồm "Nguồn nền" (không render) hay "Bài liên quan" (chỉ là link, không phải văn đọc).
   const readableParts = intro ? [intro] : [];
 
-  if (intro) blocks.push({ type: 'concept', title: 'Giới thiệu', html: mdToHtml(intro) });
+  if (intro) blocks.push({ type: 'concept', title: 'Giới thiệu', html: mdToHtml(intro, `${relPath}#Giới thiệu`) });
 
   for (const section of sections) {
     const { heading, body: sectionBody } = section;
@@ -279,14 +280,14 @@ function buildLesson(relPath, fileMap, warnings, slugTitle) {
       readableParts.push(sectionBody);
     } else if (heading === 'Bài tập') {
       exerciseSection = section;
-      blocks.push(buildExerciseBlock(heading, sectionBody));
+      blocks.push(buildExerciseBlock(heading, sectionBody, relPath));
       readableParts.push(sectionBody);
     } else if (heading === 'Bài liên quan') {
       relatedRaw = sectionBody;
     } else if (heading === 'Nguồn nền') {
       // bỏ hoàn toàn, không lên web
     } else {
-      blocks.push({ type: 'concept', title: heading, html: mdToHtml(demoteHeadings(sectionBody)) });
+      blocks.push({ type: 'concept', title: heading, html: mdToHtml(demoteHeadings(sectionBody), `${relPath}#${heading}`) });
       readableParts.push(sectionBody);
     }
   }

@@ -19,7 +19,6 @@ import {
   patchBreakpointColors,
   patchCategoryMeta,
   patchCategoryOrder,
-  patchCategoryReadingOrder,
   patchCategoryTabLabel,
   patchImpactMeta,
   patchKindMeta,
@@ -32,6 +31,7 @@ import {
   type PatchContentOrigin,
   type PatchEntry,
 } from '@/content/patch-notes';
+import { buildPatchBoardModel } from './patch-board-model';
 import styles from './PatchBoard.module.css';
 
 const PatchPresentation = dynamic(() => import('./PatchPresentation').then((mod) => mod.PatchPresentation), {
@@ -185,79 +185,11 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
 
   /** Hai bộ lọc chồng nhau nên số đếm của mỗi bên phải tính theo bộ lọc CÒN LẠI,
    * không phải theo cả bản vá — nếu không sẽ có cảnh bấm vào ô ghi "7" mà lưới
-   * hiện ra rỗng. */
-  const byKind = kindFilter === 'all' ? report.entries : report.entries.filter((e) => e.kind === kindFilter);
-  const byCategory = category === 'all' ? report.entries : report.entries.filter((e) => e.category === category);
-
-  const categoryCounts = useMemo(() => {
-    const base = { all: byKind.length } as Record<PatchCategory | 'all', number>;
-    patchCategoryReadingOrder.forEach((key) => {
-      base[key] = byKind.filter((entry) => entry.category === key).length;
-    });
-    return base;
-  }, [byKind]);
-
-  const kindCounts = useMemo(() => {
-    const base = { all: byCategory.length } as Record<PatchChangeKind | 'all', number>;
-    patchKindOrder.forEach((kind) => {
-      base[kind] = byCategory.filter((entry) => entry.kind === kind).length;
-    });
-    return base;
-  }, [byCategory]);
-
-  const filtered = byCategory.filter((entry) => kindFilter === 'all' || entry.kind === kindFilter);
-
-  /** Nhóm theo đúng thứ tự người ta đọc patch note, và trong mỗi nhóm thì xếp
-   * theo đúng thang bậc người chơi quen dùng cho loại đó: tướng theo giá vàng,
-   * nâng cấp theo Bạc → Vàng → Kim Cương, Tinh Linh theo cấp rồi tới loại, tộc
-   * hệ theo mốc kích hoạt. Cùng bậc thì xếp tăng/giảm cạnh nhau để dễ so. */
-  const groups = useMemo(() => {
-    const kindRank = (kind: PatchChangeKind) => patchKindOrder.indexOf(kind);
-
-    const rankOf = (entry: PatchEntry) => {
-      const entity = resolveEntity(entry, entitySet);
-      switch (entry.category) {
-        case 'champion':
-          return entry.cost ?? entity?.cost ?? 0;
-        case 'augment': {
-          const rarity = entry.rarity ?? entity?.rarity;
-          return rarity ? patchRarityMeta[rarity].rank : 0;
-        }
-        case 'wisp': {
-          const facets = wispFacetsFromIcon(entity?.icon ?? entry.icon);
-          return entry.wispTier ?? facets.wispTier ?? entry.cost ?? 0;
-        }
-        case 'trait':
-          return Number(entry.breakpoint ?? 0);
-        default:
-          return 0;
-      }
-    };
-
-    // Tinh Linh cùng cấp thì gom theo loại (Chiến đấu, Vật phẩm...) cho liền mạch.
-    const subRankOf = (entry: PatchEntry) => {
-      if (entry.category !== 'wisp') return '';
-      const entity = resolveEntity(entry, entitySet);
-      return entry.wispCategory ?? wispFacetsFromIcon(entity?.icon ?? entry.icon).wispCategory ?? '';
-    };
-
-    return patchCategoryReadingOrder
-      .map((key) => ({
-        category: key,
-        entries: filtered
-          .filter((entry) => entry.category === key)
-          .slice()
-          .sort((a, b) => {
-            const rankDiff = rankOf(a) - rankOf(b);
-            if (rankDiff !== 0) return rankDiff;
-            const subDiff = subRankOf(a).localeCompare(subRankOf(b));
-            if (subDiff !== 0) return subDiff;
-            if (a.kind !== b.kind) return kindRank(a.kind) - kindRank(b.kind);
-            return a.name.localeCompare(b.name);
-          }),
-      }))
-      .filter((group) => group.entries.length > 0);
-  }, [filtered, entitySet]);
+   * hiện ra rỗng. Model thuần nằm riêng để khóa bằng unit test. */
+  const { categoryCounts, kindCounts, filtered, groups } = useMemo(
+    () => buildPatchBoardModel(report.entries, entitySet, category, kindFilter),
+    [category, entitySet, kindFilter, report.entries],
+  );
 
   const categoryTabs = patchCategoryOrder.map((id) => ({
     id,

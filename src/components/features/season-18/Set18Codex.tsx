@@ -19,6 +19,7 @@ import type { Set18EffectCategory, Set18EffectSource } from '@/content/set18-eff
 import { buildSlugRefMap } from '@/content/set18/set18-slug-index';
 import styles from './Set18Codex.module.css';
 import { MatrixOverviewModal } from './MatrixOverviewModal';
+import { buildSynergyMatrixModel } from './set18-codex-model';
 
 gsap.registerPlugin(ScrollToPlugin);
 import { AugmentCard } from './cards/AugmentCard';
@@ -171,39 +172,10 @@ function SynergyMatrix({
   onHide: () => void;
 }) {
   const [hover, setHover] = useState<{ row: number; col: number } | null>(null);
-  const { classes, gridMap, matrixOrigins, specialChampions } = useMemo(() => {
-    const origins = set18Traits.filter((trait) => trait.type === 'Origin');
-    const classTraits = set18Traits.filter((trait) => trait.type === 'Class');
-    const matrix: Set18Champion[][][] = origins.map(() => classTraits.map(() => []));
-    const special: { champion: Set18Champion; uniqueTrait: Set18Trait | null }[] = [];
-
-    for (const champion of set18Champions) {
-      const championOrigins = champion.traits.filter((name) => set18TraitByName.get(name)?.type === 'Origin');
-      const championClasses = champion.traits.filter((name) => set18TraitByName.get(name)?.type === 'Class');
-      if (championOrigins.length === 0 || championClasses.length === 0) {
-        const reasonName =
-          champion.traits.find((name) => set18TraitByName.get(name)?.type === 'Unique') ?? champion.traits[0];
-        special.push({ champion, uniqueTrait: reasonName ? (set18TraitByName.get(reasonName) ?? null) : null });
-        continue;
-      }
-      for (const originName of championOrigins) {
-        const originIndex = origins.findIndex((trait) => trait.name === originName);
-        for (const className of championClasses) {
-          const classIndex = classTraits.findIndex((trait) => trait.name === className);
-          if (originIndex >= 0 && classIndex >= 0) matrix[originIndex][classIndex].push(champion);
-        }
-      }
-    }
-
-    return {
-      classes: classTraits,
-      gridMap: matrix,
-      matrixOrigins: origins
-        .map((trait, rowIndex) => ({ trait, rowIndex }))
-        .filter(({ rowIndex }) => matrix[rowIndex].some((cell) => cell.length > 0)),
-      specialChampions: special,
-    };
-  }, []);
+  const { classes, gridMap, matrixOrigins, specialChampions } = useMemo(
+    () => buildSynergyMatrixModel(set18Traits, set18Champions, set18TraitByName),
+    [],
+  );
 
   return (
     <section className={styles.section} id="ma-tran-toc-he">

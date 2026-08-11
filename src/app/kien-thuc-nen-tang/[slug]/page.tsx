@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { KnowledgeReader } from '@/components/features/knowledge-reader/KnowledgeReader';
 import { getLesson, lessons } from '@/content/lessons';
+import { serializeJsonLd } from '@/lib/json-ld';
 import { SITE_URL } from '@/lib/site';
 import styles from '../page.module.css';
 
@@ -38,7 +39,7 @@ export default async function LessonDetailPage({ params }: { params: Promise<{ s
 
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }} type="application/ld+json" />
       <header className={styles.header}>
         <div className="wide-container">
           <span className="kicker">{lesson.module}</span>

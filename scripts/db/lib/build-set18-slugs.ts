@@ -37,26 +37,27 @@ export function buildSet18Slugs(entries: Set18SlugSourceEntry[]): Set18SlugEntry
   });
 }
 
+export function buildSet18SlugsSource(entries: Set18SlugEntry[], generatorNote: string) {
+  return [
+    '// GENERATED FILE — do not edit by hand.',
+    `// ${generatorNote}`,
+    '// Slug là hợp đồng URL vĩnh viễn — KHÔNG sửa tay để "làm đẹp" slug hiện có,',
+    '// sửa sẽ đổi URL đã được Google index. Chỉ đổi bằng cách sửa build-set18-slugs.ts',
+    '// rồi chạy lại và chấp nhận review diff.',
+    '',
+    "import type { Set18SlugEntry } from './set18-types';",
+    '',
+    `export const set18Slugs: Set18SlugEntry[] = ${JSON.stringify(entries)};`,
+    'export const set18SlugByKindAndSlug = new Map(set18Slugs.map((entry) => [`${entry.kind}:${entry.slug}`, entry]));',
+    'export const set18SlugById = new Map(set18Slugs.map((entry) => [entry.id, entry]));',
+    "export function findSet18Slug(kind: Set18SlugEntry['kind'], slug: string) {",
+    '  return set18SlugByKindAndSlug.get(`${kind}:${slug}`);',
+    '}',
+    '',
+  ].join('\n');
+}
+
 export function writeSet18Slugs(entries: Set18SlugEntry[], generatorNote: string) {
-  writeFileSync(
-    'src/content/set18/set18-slugs.generated.ts',
-    [
-      '// GENERATED FILE — do not edit by hand.',
-      `// ${generatorNote}`,
-      '// Slug là hợp đồng URL vĩnh viễn — KHÔNG sửa tay để "làm đẹp" slug hiện có,',
-      '// sửa sẽ đổi URL đã được Google index. Chỉ đổi bằng cách sửa build-set18-slugs.ts',
-      '// rồi chạy lại và chấp nhận review diff.',
-      '',
-      "import type { Set18SlugEntry } from './set18-types';",
-      '',
-      `export const set18Slugs: Set18SlugEntry[] = ${JSON.stringify(entries)};`,
-      'export const set18SlugByKindAndSlug = new Map(set18Slugs.map((entry) => [`${entry.kind}:${entry.slug}`, entry]));',
-      'export const set18SlugById = new Map(set18Slugs.map((entry) => [entry.id, entry]));',
-      "export function findSet18Slug(kind: Set18SlugEntry['kind'], slug: string) {",
-      '  return set18SlugByKindAndSlug.get(`${kind}:${slug}`);',
-      '}',
-      '',
-    ].join('\n'),
-  );
+  writeFileSync('src/content/set18/set18-slugs.generated.ts', buildSet18SlugsSource(entries, generatorNote));
   console.log(`✓ set18-slugs.generated.ts: ${entries.length} dòng`);
 }
