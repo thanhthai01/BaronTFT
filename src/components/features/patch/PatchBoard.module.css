@@ -632,6 +632,20 @@
   list-style: none;
 }
 
+/* Đa số entry chỉ có 1-4 dòng, nhưng một tộc hệ/nâng cấp có thể gộp hàng
+   chục dòng con (vd Blossom Charms) — nếu giữ nguyên 1 cột hẹp thì thẻ đó cao
+   gấp chục lần các thẻ khác cùng lưới. Thay vì cuộn riêng trong thẻ (vẫn phải
+   cuộn để đọc hết), giãn thẻ chiếm trọn hàng và xếp các dòng thành nhiều cột
+   — đọc hết ngay không cần thao tác gì thêm. Ngưỡng 9 dòng chọn vì thẻ tướng/
+   tộc hệ bình thường hiếm khi vượt quá 6-7 dòng số liệu. */
+.card:has(.changes li:nth-child(9)) {
+  grid-column: 1 / -1;
+}
+
+.card:has(.changes li:nth-child(9)) .changes {
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+
 .changes li {
   display: flex;
   flex-wrap: wrap;
