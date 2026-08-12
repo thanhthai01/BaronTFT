@@ -186,4 +186,7 @@ export const set18Tips = pgTable('set18_tips', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
   uniqueIndex('set18_tips_slug_unique').on(table.slug),
+  check('set18_tips_entity_ids_array_check', sql`jsonb_typeof(${table.entityIds}) = 'array'`),
+  check('set18_tips_champion_ids_array_check', sql`jsonb_typeof(${table.championIds}) = 'array'`),
+  check('set18_tips_trait_ids_array_check', sql`jsonb_typeof(${table.traitIds}) = 'array'`),
 ]);

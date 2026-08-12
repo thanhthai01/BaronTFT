@@ -33,6 +33,7 @@ Current policy:
 
 - Data/content updates use reviewed draft scripts, then `pnpm db:pull` to regenerate committed read-model files.
 - Schema changes require a separate review step before execution.
+- Any DB write or migration requires explicit target approval in chat, naming the target label, for example `approve DB target: staging`.
 - If schema changes are needed, add checked-in migration files under `src/db/migrations` before applying them to shared DB.
 - Document any manual DB schema change in this file or the PR description with the exact SQL or Drizzle action used.
 - `pnpm db:push` is disabled by default. Use reviewed migration files and explicit approval for schema changes.
@@ -61,6 +62,8 @@ Set 18 and patch data:
 - Pull/generator: `pnpm db:pull` via `scripts/db/pull-set18.ts`.
 - Output: generated Set18 files and `src/content/patch-notes.generated.ts`.
 - Safety gate: Set18 champion tooltip HTML is validated during pull.
+- Set18 tips: `entityIds` is canonical for related codex entities; `championIds` and `traitIds` remain compatibility fields and should mirror the champion/trait subset.
+- `scripts/db/pull-set18.ts` intentionally reads `set18_tips` with a raw compatibility query so targets that have not yet applied `0002_set18_tips_entity_ids.sql` still pull correctly.
 
 Patch changeset target workflow:
 
@@ -152,32 +155,57 @@ but new patch work should move toward structured changesets with dry-run output.
 
 ## Tip Publish Runbook
 
-1. Review the tip draft.
+Use this only after confirming the target database and tip draft. If the target has not yet applied `src/db/migrations/0002_set18_tips_entity_ids.sql`, keep using legacy `championIds/traitIds`; after migration, include `entityIds` and keep the legacy fields populated.
+
+Required tip relation shape:
+
+```ts
+const tip = {
+  entityIds: ['champion:tft18_akali', 'augment:tft18_example'],
+  championIds: ['champion:tft18_akali'],
+  traitIds: [],
+};
+```
+
+1. Review the tip draft and confirm target approval.
+
+```text
+approve DB target: <DB_TARGET_LABEL>
+```
+
+2. Run read-only checks.
+
+```bash
+pnpm db:check-schema
+pnpm db:validate-constraints
+```
+
+3. Apply the tip draft.
 
 ```bash
 pnpm db:apply-tip scripts/db/drafts/<tip-file>.ts
 ```
 
-2. Pull generated files.
+4. Pull generated files.
 
 ```bash
 pnpm db:pull
 ```
 
-3. Verify generated files and audit publish state.
+5. Verify generated files and audit publish state.
 
 ```bash
 pnpm db:pull:check
-pnpm db:publish-audit -- --expect-target staging
+pnpm db:publish-audit -- --expect-target <target>
 ```
 
-4. Review generated diff.
+6. Review generated diff.
 
 ```bash
 git diff -- src/content/set18/set18-tips.ts
 ```
 
-5. Run gates.
+7. Run gates.
 
 ```bash
 pnpm typecheck
@@ -209,6 +237,7 @@ If a generated file looks wrong after pull:
 Before any DB write:
 
 - Confirm `DB_TARGET_LABEL` matches the intended database target.
+- Confirm chat approval names the target label. Do not proceed from a vague approval that omits the target.
 - Confirm the script prints only a redacted database host/path, never the raw URL.
 - Confirm `.env.local` points to the intended database without exposing its value.
 - Confirm the exact draft file path.

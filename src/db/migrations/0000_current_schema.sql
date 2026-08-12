@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS "set18_tips" (
   "slug" text NOT NULL,
   "title_vi" text NOT NULL,
   "content_vi" text NOT NULL,
+  "entity_ids" jsonb DEFAULT '[]'::jsonb NOT NULL,
   "champion_ids" jsonb NOT NULL,
   "trait_ids" jsonb NOT NULL,
   "source_url" text,

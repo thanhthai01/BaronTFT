@@ -2,7 +2,7 @@ import type { PatchEntityMutation } from './patch-changeset';
 
 export type SupportedMutationColumn = {
   column: string;
-  kind: 'string' | 'number' | 'boolean' | 'nullable-string' | 'nullable-number';
+  kind: 'string' | 'number' | 'boolean' | 'string-array' | 'nullable-string' | 'nullable-number';
 };
 
 export type PlannedEntityMutation = {
@@ -76,6 +76,9 @@ const SUPPORTED_FIELDS = {
     slug: { column: 'slug', kind: 'string' },
     titleVi: { column: 'title_vi', kind: 'string' },
     contentVi: { column: 'content_vi', kind: 'string' },
+    entityIds: { column: 'entity_ids', kind: 'string-array' },
+    championIds: { column: 'champion_ids', kind: 'string-array' },
+    traitIds: { column: 'trait_ids', kind: 'string-array' },
     sourceUrl: { column: 'source_url', kind: 'nullable-string' },
   },
 } as const satisfies Record<MutationTable, Record<string, SupportedMutationColumn>>;
@@ -88,6 +91,7 @@ function validateValueKind(value: unknown, kind: SupportedMutationColumn['kind']
   if (kind === 'string') return typeof value === 'string';
   if (kind === 'number') return typeof value === 'number';
   if (kind === 'boolean') return typeof value === 'boolean';
+  if (kind === 'string-array') return Array.isArray(value) && value.every((item) => typeof item === 'string');
   if (kind === 'nullable-string') return value === null || typeof value === 'string';
   if (kind === 'nullable-number') return value === null || typeof value === 'number';
   return false;
@@ -118,7 +122,11 @@ export function planEntityMutation(mutation: PatchEntityMutation): PlannedEntity
 
 export function nextMutationValue(mutation: PatchEntityMutation, currentValue: unknown) {
   if (mutation.matchMode === 'exact') {
-    if (currentValue !== mutation.expectedCurrent) {
+    const expectedCurrent = mutation.expectedCurrent;
+    const matches = Array.isArray(expectedCurrent)
+      ? Array.isArray(currentValue) && currentValue.length === expectedCurrent.length && currentValue.every((item, index) => item === expectedCurrent[index])
+      : currentValue === expectedCurrent;
+    if (!matches) {
       throw new Error(`mutation ${mutation.id}: current value does not match expectedCurrent`);
     }
     return mutation.nextValue;

@@ -114,6 +114,13 @@ Phase 5 implementation status:
 - Do not apply the migration to shared/prod until target, backup/PITR posture, and
   production-clone rehearsal are confirmed.
 
+Set18 tips Phase 1 status:
+
+- `src/db/migrations/0002_set18_tips_entity_ids.sql` adds canonical `set18_tips.entity_ids` and backfills from `champion_ids` plus `trait_ids`.
+- The application and pull pipeline are intentionally compatible before and after this migration.
+- Apply only after exact target approval, for example `approve DB target: staging`, and use the guarded migration runner with `--expect-target <target>`.
+- After apply, run `pnpm db:check-schema`, `pnpm db:validate-constraints`, `pnpm db:pull:check`, and review any generated diff before publishing.
+
 Use script-level validation first for JSON references such as:
 
 - `patch_entries.entity_id`;
@@ -121,6 +128,7 @@ Use script-level validation first for JSON references such as:
 - `set18_traits.champions`;
 - `set18_augments.associated_traits`;
 - `set18_tips.champion_ids` and `set18_tips.trait_ids`.
+- `set18_tips.entity_ids` after migration `0002_set18_tips_entity_ids.sql`.
 
 Do not force all JSON references into foreign keys until the data model actually
 needs multi-set querying, runtime DB reads, or multi-person publishing.

@@ -8,8 +8,8 @@ export type PatchEntityMutation = {
   table: 'set18_champions' | 'set18_traits' | 'set18_augments' | 'set18_wisps' | 'set18_items' | 'set18_tips';
   entityId: string;
   fieldPath: string;
-  expectedCurrent: string | number | boolean | null;
-  nextValue: string | number | boolean | null;
+  expectedCurrent: string | number | boolean | string[] | null;
+  nextValue: string | number | boolean | string[] | null;
   matchMode: 'exact' | 'replaceExact' | 'jsonPath' | 'manual';
   risk?: 'safe' | 'needs-review';
   reason?: string;

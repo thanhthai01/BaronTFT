@@ -7,6 +7,9 @@ export type ConstraintProblem = {
 export type ConstraintValidationCounts = {
   duplicatePatchReportOrders: number;
   duplicateTipSlugs: number;
+  invalidTipEntityIdsJson: number;
+  invalidTipChampionIdsJson: number;
+  invalidTipTraitIdsJson: number;
   invalidPatchEntryCategories: number;
   invalidPatchEntryKinds: number;
   invalidAugmentRarities: number;
@@ -20,6 +23,15 @@ export function constraintProblems(counts: ConstraintValidationCounts): Constrai
   }
   if (counts.duplicateTipSlugs > 0) {
     problems.push({ check: 'set18_tips_slug_unique', detail: 'duplicate set18_tips.slug values', count: counts.duplicateTipSlugs });
+  }
+  if (counts.invalidTipEntityIdsJson > 0) {
+    problems.push({ check: 'set18_tips_entity_ids_array_check', detail: 'set18_tips.entity_ids must be a JSON array', count: counts.invalidTipEntityIdsJson });
+  }
+  if (counts.invalidTipChampionIdsJson > 0) {
+    problems.push({ check: 'set18_tips_champion_ids_array_check', detail: 'set18_tips.champion_ids must be a JSON array', count: counts.invalidTipChampionIdsJson });
+  }
+  if (counts.invalidTipTraitIdsJson > 0) {
+    problems.push({ check: 'set18_tips_trait_ids_array_check', detail: 'set18_tips.trait_ids must be a JSON array', count: counts.invalidTipTraitIdsJson });
   }
   if (counts.invalidPatchEntryCategories > 0) {
     problems.push({ check: 'patch_entries_category_check', detail: 'patch_entries.category has values outside the allowed set', count: counts.invalidPatchEntryCategories });

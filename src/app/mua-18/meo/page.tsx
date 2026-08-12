@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { set18Tips } from '@/content/set18/set18-tips';
 import { set18EntityById } from '@/content/set18/set18-entity-index';
+import { set18TipEntityIds } from '@/content/set18/set18-tip-entities';
 import { set18EntityUrl } from '@/lib/set18-entity-url';
 import styles from './page.module.css';
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 /** Mỗi mẹo tự liệt kê entity codex liên quan (đã gắn tay lúc soát bản dịch —
- * xem set18_tips.championIds/traitIds) thay vì chỉ nói suông tên tướng/tộc hệ,
+ * xem set18_tips.entityIds) thay vì chỉ nói suông tên tướng/tộc hệ,
  * để người đọc bấm thẳng sang trang chi tiết tương ứng. */
 function TipEntityChips({ ids }: { ids: string[] }) {
   if (!ids.length) return null;
@@ -54,7 +55,7 @@ export default function TipsPage() {
               <article className={styles.card} id={tip.slug} key={tip.id}>
                 <h2>{tip.titleVi}</h2>
                 <p>{tip.contentVi}</p>
-                <TipEntityChips ids={[...tip.championIds, ...tip.traitIds]} />
+                <TipEntityChips ids={set18TipEntityIds(tip)} />
                 {tip.sourceUrl && (
                   <a className={styles.source} href={tip.sourceUrl} rel="noreferrer" target="_blank">
                     Nguồn gốc ↗

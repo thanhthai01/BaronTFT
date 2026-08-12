@@ -17,7 +17,7 @@ import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
 import { assertValidPatchChangeset, type PatchChangeset, type PatchEntityMutation } from './lib/patch-changeset';
 import { nextMutationValue, planEntityMutation } from './lib/patch-changeset-apply';
 
-type ScalarValue = string | number | boolean | null;
+type ScalarValue = string | number | boolean | string[] | null;
 
 const championFields = {
   name: set18Champions.name,
@@ -87,6 +87,9 @@ const tipFields = {
   slug: set18Tips.slug,
   titleVi: set18Tips.titleVi,
   contentVi: set18Tips.contentVi,
+  entityIds: set18Tips.entityIds,
+  championIds: set18Tips.championIds,
+  traitIds: set18Tips.traitIds,
   sourceUrl: set18Tips.sourceUrl,
 } as const;
 

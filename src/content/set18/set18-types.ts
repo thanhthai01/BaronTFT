@@ -220,6 +220,8 @@ export type Set18Tip = {
   slug: string;
   titleVi: string;
   contentVi: string;
+  /** Canonical related codex entities. Falls back to championIds/traitIds for legacy generated content. */
+  entityIds?: string[];
   championIds: string[];
   traitIds: string[];
   sourceUrl: string | null;

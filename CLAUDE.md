@@ -64,8 +64,10 @@ Do not run `pnpm build` and `pnpm test:e2e` concurrently. They can contend over 
 - After any generated content sync, review `git diff` before continuing.
 - `pnpm db:push` is disabled; use reviewed migrations and explicit approval for schema changes.
 - `pnpm db:check-schema` is the read-only schema drift gate.
+- DB writes/migrations require an explicit target approval in chat, preferably `approve DB target: <DB_TARGET_LABEL>`. A vague approval like "do it" is not enough.
 - `scripts/db/apply-patch-draft.ts` supports `--dry-run`, writes report + entries through a Neon transaction batch, and verifies inserted entry count; still do not run DB write scripts without explicit approval.
 - `pnpm db:publish-audit` verifies generated content is in sync with the configured DB target.
+- Set18 tips use `entityIds` as the canonical related entity list; keep `championIds/traitIds` populated for compatibility until a later contract migration removes them.
 - Do not use `db:push` against shared/prod DB unless the migration policy has been approved.
 - Evergreen content generation depends on `docs/evergreen` outside the current repo boundary; confirm source path before running `pnpm content:sync`.
 

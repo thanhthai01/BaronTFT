@@ -17,6 +17,8 @@ type DbColumn = {
   is_nullable: 'YES' | 'NO';
 };
 
+const OPTIONAL_PENDING_MIGRATION_COLUMNS = new Set(['set18_tips.entity_ids']);
+
 const tables = [
   set18Champions,
   set18Traits,
@@ -65,6 +67,7 @@ async function main() {
     for (const column of expected.columns) {
       const actualColumn = table.get(column.name);
       if (!actualColumn) {
+        if (OPTIONAL_PENDING_MIGRATION_COLUMNS.has(`${expected.table}.${column.name}`)) continue;
         problems.push(`missing column: ${expected.table}.${column.name}`);
         continue;
       }

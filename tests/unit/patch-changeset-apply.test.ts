@@ -17,6 +17,19 @@ describe('patch changeset apply planning', () => {
     expect(planEntityMutation(mutation).column).toEqual({ column: 'ability_vi', kind: 'string' });
   });
 
+  it('plans set18 tip entity id array mutations', () => {
+    expect(
+      planEntityMutation({
+        ...mutation,
+        table: 'set18_tips',
+        entityId: 'tip-akali-ap-carry',
+        fieldPath: 'entityIds',
+        expectedCurrent: ['champion:tft18_akali'],
+        nextValue: ['champion:tft18_akali', 'augment:tft18_example'],
+      }).column,
+    ).toEqual({ column: 'entity_ids', kind: 'string-array' });
+  });
+
   it('rejects unsupported nested field paths', () => {
     expect(() => planEntityMutation({ ...mutation, fieldPath: 'forms[].abilityHtmlVi' })).toThrow(/not supported/);
   });
