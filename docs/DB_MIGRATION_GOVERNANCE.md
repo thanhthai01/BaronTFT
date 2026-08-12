@@ -121,6 +121,11 @@ Set18 tips Phase 1 status:
 - Apply only after exact target approval, for example `approve DB target: staging`, and use the guarded migration runner with `--expect-target <target>`.
 - After apply, run `pnpm db:check-schema`, `pnpm db:validate-constraints`, `pnpm db:pull:check`, and review any generated diff before publishing.
 
+Set18 tips Phase 2 status:
+
+- `src/content/set18/set18-tip-validation.ts` defines the generated-content relation contract.
+- `pnpm content:validate-tips`, `pnpm test`, and `pnpm db:publish-audit` enforce that generated tips use canonical `entityIds`, resolve all related entity IDs, avoid duplicates, and keep legacy `championIds/traitIds` mirrored.
+
 Use script-level validation first for JSON references such as:
 
 - `patch_entries.entity_id`;

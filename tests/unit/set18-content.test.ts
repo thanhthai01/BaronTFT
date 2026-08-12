@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { set18Champions } from '../../src/content/set18/set18-champions';
+import { set18EntityIndex } from '../../src/content/set18/set18-entity-index';
+import { set18Tips } from '../../src/content/set18/set18-tips';
+import { set18TipRelationProblems } from '../../src/content/set18/set18-tip-validation';
 import { set18Traits } from '../../src/content/set18/set18-traits';
 
 /**
@@ -137,5 +140,11 @@ describe('Set 18 · tộc hệ', () => {
     expect(solar?.subEffects?.items.map((i) => i.label)).toEqual(['3', '5', '8']);
     // Tiền tố "(3)" trùng với chip mốc đã bỏ khỏi đoạn mô tả
     expect(solar?.descriptionVi.startsWith('(3)')).toBe(false);
+  });
+});
+
+describe('Set 18 · mẹo', () => {
+  it('mọi related entity của tip đều resolve và legacy fields mirror entityIds', () => {
+    expect(set18TipRelationProblems(set18Tips, set18EntityIndex, { requireEntityIds: true })).toEqual([]);
   });
 });

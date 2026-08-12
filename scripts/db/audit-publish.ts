@@ -6,7 +6,9 @@ import { db } from '../../src/db/client';
 import { patchEntries, patchReports, set18Champions, set18Tips } from '../../src/db/schema';
 import { patchReports as generatedPatchReports } from '../../src/content/patch-notes.generated';
 import { set18Champions as generatedChampions } from '../../src/content/set18/set18-champions';
+import { set18EntityIndex } from '../../src/content/set18/set18-entity-index';
 import { set18Tips as generatedTips } from '../../src/content/set18/set18-tips';
+import { set18TipRelationProblems } from '../../src/content/set18/set18-tip-validation';
 import type { PatchReport } from '../../src/content/patch-notes';
 import { getDbTargetInfo } from './lib/db-target';
 import type { PatchChangeset } from './lib/patch-changeset';
@@ -47,8 +49,10 @@ async function main() {
   ]);
 
   const generatedEntryCount = generatedPatchReports.reduce((sum, report) => sum + report.entries.length, 0);
+  const tipRelationProblems = set18TipRelationProblems(generatedTips, set18EntityIndex, { requireEntityIds: true });
   if (dbChampionCount[0].value !== generatedChampions.length) problems.push('generated champion count is stale');
   if (dbTipCount[0].value !== generatedTips.length) problems.push('generated tip count is stale');
+  tipRelationProblems.forEach((problem) => problems.push(`generated tip relation invalid: ${problem.tipId}: ${problem.check}: ${problem.detail}`));
   if (dbReportCount[0].value !== generatedPatchReports.length) problems.push('generated patch report count is stale');
   if (dbEntryCount[0].value !== generatedEntryCount) problems.push('generated patch entry count is stale');
 
@@ -84,6 +88,7 @@ async function main() {
       reports: generatedPatchReports.length,
       entries: generatedEntryCount,
     },
+    tipRelationProblems,
     problems,
   };
 

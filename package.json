@@ -17,6 +17,7 @@
     "content:sync": "node scripts/convert-evergreen-lessons.mjs",
     "content:slugs": "tsx scripts/db/generate-set18-slugs.ts",
     "content:search-index": "tsx scripts/db/generate-search-index.ts",
+    "content:validate-tips": "tsx scripts/db/validate-set18-tips.ts",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
     "db:push": "tsx scripts/db/deny-db-push.ts",
     "db:check-schema": "dotenv -e .env.local -- tsx scripts/db/check-schema-drift.ts",

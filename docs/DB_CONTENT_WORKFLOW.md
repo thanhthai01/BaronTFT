@@ -64,6 +64,7 @@ Set 18 and patch data:
 - Safety gate: Set18 champion tooltip HTML is validated during pull.
 - Set18 tips: `entityIds` is canonical for related codex entities; `championIds` and `traitIds` remain compatibility fields and should mirror the champion/trait subset.
 - `scripts/db/pull-set18.ts` intentionally reads `set18_tips` with a raw compatibility query so targets that have not yet applied `0002_set18_tips_entity_ids.sql` still pull correctly.
+- Phase 2 tip validation is enforced by `pnpm content:validate-tips`, `pnpm test`, and `pnpm db:publish-audit`; it checks duplicate tips, unknown related entity IDs, duplicate related entity IDs, and legacy field mirroring.
 
 Patch changeset target workflow:
 
@@ -196,6 +197,7 @@ pnpm db:pull
 
 ```bash
 pnpm db:pull:check
+pnpm content:validate-tips
 pnpm db:publish-audit -- --expect-target <target>
 ```
 
