@@ -22,11 +22,11 @@
 
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { db } from '../../src/db/client';
-import { set18Tips } from '../../src/db/schema';
+import { neon } from '@neondatabase/serverless';
 import type { Set18Tip } from '../../src/content/set18/set18-types';
-import { set18EntityById } from '../../src/content/set18/set18-entity-index';
+import { set18EntityIndex } from '../../src/content/set18/set18-entity-index';
 import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
+import { assertValidTipLinks, buildTipUpsertPlan, normalizeTipForWrite } from './lib/tip-draft';
 
 async function loadDraft(filePath: string): Promise<Set18Tip> {
   const absPath = path.resolve(process.cwd(), filePath);
@@ -41,28 +41,6 @@ async function loadDraft(filePath: string): Promise<Set18Tip> {
   return tip;
 }
 
-function normalizeTipForWrite(tip: Set18Tip) {
-  const entityIds = tip.entityIds?.length ? tip.entityIds : [...tip.championIds, ...tip.traitIds];
-  const championIds = tip.championIds.length > 0 ? tip.championIds : entityIds.filter((id) => id.startsWith('champion:'));
-  const traitIds = tip.traitIds.length > 0 ? tip.traitIds : entityIds.filter((id) => id.startsWith('trait:'));
-  return { ...tip, entityIds, championIds, traitIds };
-}
-
-function assertValidTipLinks(tip: Set18Tip) {
-  const fields = { entityIds: tip.entityIds ?? [], championIds: tip.championIds, traitIds: tip.traitIds };
-  for (const [field, ids] of Object.entries(fields)) {
-    if (!Array.isArray(ids) || ids.some((id) => typeof id !== 'string')) {
-      throw new Error(`Draft "${tip.id}" field ${field} phải là string[].`);
-    }
-  }
-  const badChampionIds = tip.championIds.filter((id) => !id.startsWith('champion:'));
-  if (badChampionIds.length) throw new Error(`Draft "${tip.id}" championIds chứa ID không có prefix champion:: ${badChampionIds.join(', ')}`);
-  const badTraitIds = tip.traitIds.filter((id) => !id.startsWith('trait:'));
-  if (badTraitIds.length) throw new Error(`Draft "${tip.id}" traitIds chứa ID không có prefix trait:: ${badTraitIds.join(', ')}`);
-  const unknownIds = [...new Set([...(tip.entityIds ?? []), ...tip.championIds, ...tip.traitIds])].filter((id) => !set18EntityById.has(id));
-  if (unknownIds.length) throw new Error(`Draft "${tip.id}" chứa entity ID không có trong set18-entity-index: ${unknownIds.join(', ')}`);
-}
-
 async function main() {
   const filePath = process.argv[2];
   if (!filePath) {
@@ -72,10 +50,17 @@ async function main() {
 
   const target = assertKnownDbTarget('db:apply-tip');
   logDbTarget('write', target);
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL chưa được set.');
+  const sql = neon(process.env.DATABASE_URL);
 
   const tip = normalizeTipForWrite(await loadDraft(filePath));
-  assertValidTipLinks(tip);
-  await db.insert(set18Tips).values(tip).onConflictDoUpdate({ target: set18Tips.id, set: tip });
+  assertValidTipLinks(tip, set18EntityIndex);
+  const entityIdsColumn = await sql.query(
+    'select exists (select 1 from information_schema.columns where table_schema = $1 and table_name = $2 and column_name = $3) as exists',
+    ['public', 'set18_tips', 'entity_ids'],
+  ) as { exists: boolean }[];
+  const plan = buildTipUpsertPlan(tip, entityIdsColumn[0]?.exists ?? false);
+  await sql.query(plan.sql, plan.values);
 
   console.log(`✓ Đã ghi mẹo "${tip.id}".`);
   console.log('Chạy `pnpm db:pull` để đồng bộ lại set18-tips.ts, rồi `git diff` để duyệt trước khi commit.');
