@@ -9,6 +9,7 @@
 import { inArray } from 'drizzle-orm';
 import { db } from '../../src/db/client';
 import { patchReports } from '../../src/db/schema';
+import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
 
 async function main() {
   const ids = process.argv.slice(2);
@@ -16,6 +17,9 @@ async function main() {
     console.error('Dùng: pnpm tsx scripts/db/delete-patch-reports.ts <id1> <id2> ...');
     process.exit(1);
   }
+
+  const target = assertKnownDbTarget('delete-patch-reports');
+  logDbTarget('destructive write', target);
 
   const deleted = await db.delete(patchReports).where(inArray(patchReports.id, ids)).returning({ id: patchReports.id });
 

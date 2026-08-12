@@ -132,16 +132,52 @@ Use agents when the work can be split without touching the same file.
 
 Before any DB write script:
 
-- Confirm target environment.
+- Confirm `DB_TARGET_LABEL` and intended target environment.
+- Confirm audit or dry-run output redacts the database host/path and never prints
+  the raw connection string.
 - Run `pnpm db:check-schema` when the target DB is available.
 - Confirm input draft file.
 - Confirm expected row count or entry count.
+- Confirm affected tables and generated files.
+- Confirm skipped or unapplied changes are documented.
 - Confirm rollback or roll-forward path.
 - Prefer dry-run/summary when available.
 - For patches, run `pnpm db:apply-patch:dry-run <draft>` before the real write.
 - Run `pnpm db:pull` after intended DB content changes and review generated diff.
 
 Patch application now writes report + entries through a Neon transaction batch and verifies inserted entry count; still confirm target/input/rollback before running it.
+
+### DB Migration / Constraint Apply Flow
+
+Use this only after the migration file has been reviewed. Prefer a production
+clone first; do not apply directly to shared/prod without explicit approval.
+
+1. Confirm `.env.local` points to the intended target without exposing the value.
+2. Confirm `DB_TARGET_LABEL`, for example `production-clone`, `staging`, or `production`.
+3. Run read-only preflight:
+
+```bash
+pnpm db:validate-constraints
+pnpm db:check-schema
+```
+
+4. Apply the reviewed migration with an explicit target match:
+
+```bash
+pnpm db:migrate:apply src/db/migrations/0001_authoring_constraints.sql --expect-target <target>
+```
+
+5. Re-run verification:
+
+```bash
+pnpm db:check-schema
+pnpm db:validate-constraints
+```
+
+6. If content tables changed, run `pnpm db:pull:check`, `pnpm db:publish-audit -- --expect-target <target>`, and smoke `/patch` plus affected `/mua-18/*` pages.
+
+Never run migration apply if constraint preflight fails, target label is missing,
+or backup/PITR/restore posture is unknown for a non-disposable target.
 
 ## Generated HTML Checklist
 

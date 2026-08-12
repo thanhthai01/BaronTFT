@@ -7,3 +7,13 @@ pnpm db:publish-audit -- --expect-target staging --write-log docs/publish-audits
 ```
 
 Only commit audit logs when they are useful for a reviewed release or incident record. Never include secrets or raw database URLs.
+
+Useful audit logs should include:
+
+- target label and redacted database identity;
+- git revision;
+- draft or changeset id;
+- changed tables and row counts;
+- generated files expected to change;
+- skipped or unapplied changes;
+- verification commands and pass/fail result.

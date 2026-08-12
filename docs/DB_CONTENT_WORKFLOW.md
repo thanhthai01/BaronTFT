@@ -37,10 +37,14 @@ Current policy:
 - Document any manual DB schema change in this file or the PR description with the exact SQL or Drizzle action used.
 - `pnpm db:push` is disabled by default. Use reviewed migration files and explicit approval for schema changes.
 - `pnpm db:check-schema` is the read-only drift gate for comparing `src/db/schema.ts` against the configured DB.
+- `pnpm db:validate-constraints` is the read-only preflight before applying authoring safety constraints.
 
 Next improvement:
 
 - Add Drizzle migration journal metadata or an approved migration runner before allowing schema changes as a normal workflow.
+
+See `docs/DB_MIGRATION_GOVERNANCE.md` for the reviewed schema-change policy,
+constraint priorities, migration manifest, and production-clone validation rules.
 
 ## Content Pipelines
 
@@ -58,6 +62,19 @@ Set 18 and patch data:
 - Output: generated Set18 files and `src/content/patch-notes.generated.ts`.
 - Safety gate: Set18 champion tooltip HTML is validated during pull.
 
+Patch changeset target workflow:
+
+- A patch update should become one reviewed changeset containing the `PatchReport`
+  and every safe entity-table mutation implied by the patch.
+- The changeset must dry-run before writing: validate target label, entity ids,
+  affected rows, exact `from` values, enum-like values, duplicate ids, and any
+  unapplied changes.
+- Patch report writes and safe entity mutations should apply together in one
+  transaction/batch or fail before any write.
+- Any patch-note change that cannot be mapped safely to current DB fields must be
+  listed as `unapplied`, with a reason and manual validation path.
+- See `docs/DB_PATCH_CHANGESET_ARCHITECTURE.md` for the target design.
+
 Search and slugs:
 
 - `pnpm content:slugs` regenerates Set18 slug helpers.
@@ -68,12 +85,22 @@ Search and slugs:
 
 Use this only after confirming the target database and draft file.
 
+Preferred future flow is the patch changeset workflow in
+`docs/DB_PATCH_CHANGESET_ARCHITECTURE.md`. Until that implementation exists, keep
+the current draft flow conservative and do not run separate entity update scripts
+unless the exact target, expected rows, and roll-forward path have been reviewed.
+
 1. Review the patch draft.
 
 ```bash
 pnpm db:check-schema
 pnpm db:apply-patch:dry-run scripts/db/drafts/<patch-file>.ts
 ```
+
+Also review any entity-table updates implied by the patch. If a champion, trait,
+wisp, augment, or item value must change, record it explicitly before applying
+the patch. Do not rely on a later one-off script as an implicit second half of the
+publish.
 
 2. Apply the patch draft.
 
@@ -96,6 +123,10 @@ pnpm db:publish-audit -- --expect-target staging --draft scripts/db/drafts/<patc
 
 Use `--write-log docs/publish-audits/<date>-<patch-id>.json` if the audit output should be preserved in the PR.
 
+For patch publishes that include entity-table updates, the audit record should
+also state affected tables, affected row count, skipped or unapplied changes, and
+the exact generated files expected to change.
+
 5. Review generated diff.
 
 ```bash
@@ -114,6 +145,10 @@ pnpm lint:release
 7. Smoke `/patch` and any linked entity pages affected by the patch.
 
 Do not run patch apply scripts near the end of a session unless there is enough time to pull, diff, verify, and record rollback or roll-forward state.
+
+Do not add new one-off patch/entity mutation scripts marked only as `DONE` or
+`KHÔNG CHẠY LẠI` for normal patch publishing. Keep historical scripts as evidence,
+but new patch work should move toward structured changesets with dry-run output.
 
 ## Tip Publish Runbook
 
@@ -173,10 +208,14 @@ If a generated file looks wrong after pull:
 
 Before any DB write:
 
-- Confirm `.env.local` points to the intended database.
+- Confirm `DB_TARGET_LABEL` matches the intended database target.
+- Confirm the script prints only a redacted database host/path, never the raw URL.
+- Confirm `.env.local` points to the intended database without exposing its value.
 - Confirm the exact draft file path.
 - Confirm expected report id, row count, or entry count.
-- Confirm generated files that should change.
+- Confirm affected tables and generated files that should change.
+- Confirm skipped or unapplied patch-note changes are documented.
 - Confirm rollback or roll-forward path.
+- Prefer a read-only schema drift check and dry-run before the write.
 
 Never commit `.env.local`, database URLs, or local artifacts.

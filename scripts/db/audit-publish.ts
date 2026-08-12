@@ -8,25 +8,20 @@ import { patchReports as generatedPatchReports } from '../../src/content/patch-n
 import { set18Champions as generatedChampions } from '../../src/content/set18/set18-champions';
 import { set18Tips as generatedTips } from '../../src/content/set18/set18-tips';
 import type { PatchReport } from '../../src/content/patch-notes';
+import { getDbTargetInfo } from './lib/db-target';
+import type { PatchChangeset } from './lib/patch-changeset';
 
 function argValue(name: string) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-function redactDatabaseUrl(value: string) {
-  try {
-    const url = new URL(value);
-    return `${url.hostname}${url.pathname}`;
-  } catch {
-    return 'unparseable DATABASE_URL';
-  }
-}
-
 async function loadDraft(filePath: string): Promise<PatchReport> {
   const absPath = path.resolve(process.cwd(), filePath);
   const mod: Record<string, unknown> = await import(pathToFileURL(absPath).href);
-  const report = (mod.default ?? mod.report) as PatchReport | undefined;
+  const value = mod.default ?? mod.report ?? mod.changeset;
+  const maybeChangeset = value as Partial<PatchChangeset> | undefined;
+  const report = (maybeChangeset?.patchReport ?? value) as PatchReport | undefined;
   if (!report) throw new Error(`Draft "${filePath}" không export PatchReport.`);
   return report;
 }
@@ -34,8 +29,10 @@ async function loadDraft(filePath: string): Promise<PatchReport> {
 async function main() {
   const expectedTarget = argValue('--expect-target');
   const draftPath = argValue('--draft');
+  const changesetPath = argValue('--changeset');
   const writeLogPath = argValue('--write-log');
-  const targetLabel = process.env.DB_TARGET_LABEL ?? 'unknown';
+  const target = getDbTargetInfo();
+  const targetLabel = target.label;
   const problems: string[] = [];
 
   if (expectedTarget && targetLabel !== expectedTarget) {
@@ -60,8 +57,9 @@ async function main() {
     problems.push(`latest patch mismatch: DB=${latest[0]?.id ?? 'none'}, generated=${generatedPatchReports[0]?.id ?? 'none'}`);
   }
 
-  if (draftPath) {
-    const draft = await loadDraft(draftPath);
+  const sourcePath = changesetPath ?? draftPath;
+  if (sourcePath) {
+    const draft = await loadDraft(sourcePath);
     const [dbDraftReport] = await db.select().from(patchReports).where(eq(patchReports.id, draft.id));
     const generatedDraftReport = generatedPatchReports.find((report) => report.id === draft.id);
     if (!dbDraftReport) problems.push(`draft ${draft.id} not found in DB`);
@@ -71,9 +69,9 @@ async function main() {
   const audit = {
     auditedAt: new Date().toISOString(),
     targetLabel,
-    database: redactDatabaseUrl(process.env.DATABASE_URL ?? ''),
+    database: target.database,
     latestPatchId: latest[0]?.id ?? null,
-    draft: draftPath ?? null,
+    draft: sourcePath ?? null,
     dbCounts: {
       champions: dbChampionCount[0].value,
       tips: dbTipCount[0].value,

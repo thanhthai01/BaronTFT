@@ -60,6 +60,14 @@ After deploy:
 - If DB scripts were involved, compare generated content diff and confirm the deployed pages show the intended patch/tip data.
 - For DB/content publishes, run `pnpm db:publish-audit -- --expect-target <target>` and save audit output when needed.
 
+For DB patch publishes, also verify:
+
+- The DB target label and redacted host match the intended target.
+- The patch report and related entity-table updates were planned together.
+- Every unapplied patch-note change is documented with a reason.
+- `pnpm db:pull:check` passes after generated files are pulled.
+- `/patch` and affected `/mua-18/*` codex pages agree on the new values.
+
 ## Rollback
 
 Preferred rollback path:
@@ -68,6 +76,52 @@ Preferred rollback path:
 - Roll forward with corrected DB draft + `pnpm db:pull` for DB/content mistakes.
 
 Do not hand-edit generated files as rollback unless explicitly approved and the source pipeline is unavailable.
+
+For DB patch/entity mistakes, prefer roll-forward:
+
+- Create a corrected draft or changeset.
+- Dry-run against the confirmed target.
+- Apply the correction.
+- Pull generated files.
+- Review the generated diff.
+- Re-run publish audit.
+
+Do not rollback irreversible data changes unless a restore rehearsal exists and
+the exact target database has been confirmed.
+
+## DB Publish Recovery Checklist
+
+Use this checklist when a patch update, generated content pull, or entity-table
+sync looks wrong.
+
+1. Identify the target.
+
+- Confirm `DB_TARGET_LABEL`.
+- Confirm the redacted database host/path from audit output.
+- Do not paste or request `DATABASE_URL`.
+
+2. Classify the failure.
+
+- Patch report missing or wrong on `/patch`.
+- Entity codex value wrong on `/mua-18/*` pages.
+- Patch entry icon/name not resolving through `entityId`.
+- Generated files stale after DB changes.
+- Schema drift or migration mismatch.
+
+3. Stabilize.
+
+- If production runtime is healthy but content is wrong, prepare a corrected
+  roll-forward draft or changeset.
+- If generated files are wrong, fix the DB source or draft and rerun `pnpm db:pull`.
+- If schema drift is detected, stop writes and review `docs/DB_MIGRATION_GOVERNANCE.md`.
+
+4. Verify.
+
+- Run `pnpm db:check-schema` against the confirmed target.
+- Run `pnpm db:pull:check` after pulling generated content.
+- Run `pnpm db:publish-audit -- --expect-target <target>`.
+- Smoke `/patch` and all affected codex pages.
+- Record commands run, result, skipped checks, and remaining risk.
 
 ## Incident Triage
 

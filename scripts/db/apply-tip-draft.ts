@@ -10,7 +10,8 @@
 //          slug: 'akali-ap-carry',
 //          titleVi: '...',
 //          contentVi: '...',
-//          championIds: ['champion:tft18_akali'],
+//          entityIds: ['champion:tft18_akali'],
+//          championIds: ['champion:tft18_akali'], // legacy compatibility
 //          traitIds: [],
 //          sourceUrl: 'https://www.datatft.com/tip/...',
 //        };
@@ -24,6 +25,7 @@ import { pathToFileURL } from 'node:url';
 import { db } from '../../src/db/client';
 import { set18Tips } from '../../src/db/schema';
 import type { Set18Tip } from '../../src/content/set18/set18-types';
+import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
 
 async function loadDraft(filePath: string): Promise<Set18Tip> {
   const absPath = path.resolve(process.cwd(), filePath);
@@ -38,6 +40,13 @@ async function loadDraft(filePath: string): Promise<Set18Tip> {
   return tip;
 }
 
+function normalizeTipForWrite(tip: Set18Tip) {
+  const entityIds = tip.entityIds ?? [...tip.championIds, ...tip.traitIds];
+  const championIds = tip.championIds.length > 0 ? tip.championIds : entityIds.filter((id) => id.startsWith('champion:'));
+  const traitIds = tip.traitIds.length > 0 ? tip.traitIds : entityIds.filter((id) => id.startsWith('trait:'));
+  return { ...tip, entityIds, championIds, traitIds };
+}
+
 async function main() {
   const filePath = process.argv[2];
   if (!filePath) {
@@ -45,7 +54,10 @@ async function main() {
     process.exit(1);
   }
 
-  const tip = await loadDraft(filePath);
+  const target = assertKnownDbTarget('db:apply-tip');
+  logDbTarget('write', target);
+
+  const tip = normalizeTipForWrite(await loadDraft(filePath));
   await db.insert(set18Tips).values(tip).onConflictDoUpdate({ target: set18Tips.id, set: tip });
 
   console.log(`✓ Đã ghi mẹo "${tip.id}".`);

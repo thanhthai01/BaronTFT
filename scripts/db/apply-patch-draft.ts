@@ -19,6 +19,9 @@ import { count, eq, min } from 'drizzle-orm';
 import { db } from '../../src/db/client';
 import { patchReports, patchEntries } from '../../src/db/schema';
 import type { PatchReport } from '../../src/content/patch-notes';
+import { set18EntityIndex } from '../../src/content/set18/set18-entity-index';
+import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
+import { assertValidPatchDraft } from './lib/patch-draft-validation';
 
 async function loadDraft(filePath: string): Promise<PatchReport> {
   const absPath = path.resolve(process.cwd(), filePath);
@@ -46,7 +49,12 @@ async function main() {
     process.exit(1);
   }
 
+  const target = assertKnownDbTarget(dryRun ? 'db:apply-patch:dry-run' : 'db:apply-patch');
+  logDbTarget(dryRun ? 'dry-run' : 'write', target);
+
   const report = await loadDraft(filePath);
+  const validation = assertValidPatchDraft(report, { entities: set18EntityIndex });
+  validation.warnings.forEach((warning) => console.warn(`Patch draft warning: ${warning}`));
   const { entries, ...reportFields } = report;
 
   const existing = await db

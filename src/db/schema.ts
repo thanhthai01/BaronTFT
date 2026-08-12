@@ -6,7 +6,8 @@
 // theo từng field con, nên không tách bảng con. Field dùng để lọc/sắp xếp/join
 // (name, cost, kind, category, entityId...) mới lên cột riêng.
 
-import { pgTable, text, integer, boolean, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { check, pgTable, text, integer, boolean, jsonb, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const set18Champions = pgTable('set18_champions', {
   id: text('id').primaryKey(), // khớp entity-index, vd "champion:tft18_akali"
@@ -57,7 +58,9 @@ export const set18Traits = pgTable('set18_traits', {
   activation: text('activation'),
   wide: boolean('wide'),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+}, (table) => [
+  check('set18_traits_type_check', sql`${table.type} in ('Origin', 'Class', 'Unique')`),
+]);
 
 export const set18Augments = pgTable('set18_augments', {
   id: text('id').primaryKey(), // vd "augment:da_loadeddice"
@@ -74,7 +77,9 @@ export const set18Augments = pgTable('set18_augments', {
   rounds: jsonb('rounds').$type<string[]>().notNull(),
   roundVariants: jsonb('round_variants').$type<string[]>().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+}, (table) => [
+  check('set18_augments_rarity_check', sql`${table.rarity} in ('Silver', 'Gold', 'Prismatic')`),
+]);
 
 export const set18Wisps = pgTable('set18_wisps', {
   id: text('id').primaryKey(), // vd "wisp:doodad-sack"
@@ -135,7 +140,9 @@ export const patchReports = pgTable('patch_reports', {
   rhythmVi: jsonb('rhythm_vi').$type<string[]>(),
   impacts: jsonb('impacts'), // PatchImpact[] | null
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => [
+  uniqueIndex('patch_reports_report_order_unique').on(table.reportOrder),
+]);
 
 export const patchEntries = pgTable('patch_entries', {
   id: text('id').primaryKey(), // vd "p178-briar"
@@ -156,20 +163,27 @@ export const patchEntries = pgTable('patch_entries', {
   breakpoint: text('breakpoint'),
   breakpointStyle: text('breakpoint_style'),
   changes: jsonb('changes'), // { label, from, to }[] | null
-});
+}, (table) => [
+  check('patch_entries_category_check', sql`${table.category} in ('champion', 'trait', 'item', 'wisp', 'augment', 'mechanic')`),
+  check('patch_entries_kind_check', sql`${table.kind} in ('buff', 'nerf', 'rework', 'mechanic')`),
+]);
 
 /** Mẹo Mùa 18 dịch tay từ datatft.com/tip — quy mô nhỏ, có kiểm duyệt thủ công
- * (đọc → dịch → tự soát lại → gắn championIds/traitIds → lưu), không phải nội
+ * (đọc → dịch → tự soát lại → gắn entityIds; championIds/traitIds giữ legacy), không phải nội
  * dung sinh hàng loạt. Xem kế hoạch mục C. */
 export const set18Tips = pgTable('set18_tips', {
   id: text('id').primaryKey(), // vd "tip-akali-ap-carry"
   slug: text('slug').notNull(), // anchor ổn định trên trang /mua-18/meo, KHÔNG sửa tay sau khi đã publish
   titleVi: text('title_vi').notNull(),
   contentVi: text('content_vi').notNull(),
-  // Gắn tay lúc soát bản dịch — champion:tft18_akali / trait:elderwood, khớp
-  // convention set18_entity_index. [] nếu mẹo không gắn với entity cụ thể nào.
+  // Gắn tay lúc soát bản dịch — champion:tft18_akali / trait:elderwood /
+  // augment:tft18_... / wisp:tft18_..., khớp convention set18_entity_index.
+  // championIds/traitIds giữ legacy để các draft/giao diện cũ không vỡ ngay.
+  entityIds: jsonb('entity_ids').$type<string[]>().default(sql`'[]'::jsonb`).notNull(),
   championIds: jsonb('champion_ids').$type<string[]>().notNull(),
   traitIds: jsonb('trait_ids').$type<string[]>().notNull(),
   sourceUrl: text('source_url'), // link datatft gốc, để đối chiếu khi patch đổi làm mẹo lỗi thời
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+}, (table) => [
+  uniqueIndex('set18_tips_slug_unique').on(table.slug),
+]);
