@@ -35,6 +35,7 @@ const config = [
       'scripts/db/apply-pbe-champion-updates-aug07aa.ts',
       'scripts/db/apply-pbe-champion-updates-aug10ab.ts',
       'scripts/db/apply-pbe-trait-augment-updates.ts',
+      'scripts/db/apply-pbe-balance-tft18-1ac.ts',
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
