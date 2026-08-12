@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { neon } from '@neondatabase/serverless';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/client';
 import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
@@ -45,11 +46,9 @@ async function main() {
     );
   `));
 
-  const existing = await db.execute(sql`
-    SELECT id, checksum
-    FROM "schema_migrations"
-    WHERE id = ${migration.id}
-  `) as unknown as JournalRow[];
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL chưa được set.');
+  const query = neon(process.env.DATABASE_URL);
+  const existing = await query.query('select id, checksum from schema_migrations where id = $1', [migration.id]) as JournalRow[];
   if (existing.length > 0) {
     if (existing[0].checksum !== migration.checksum) {
       throw new Error(`Migration ${migration.id} already applied with a different checksum.`);
