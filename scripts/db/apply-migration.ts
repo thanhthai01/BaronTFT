@@ -3,7 +3,7 @@ import path from 'node:path';
 import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/client';
 import { assertKnownDbTarget, logDbTarget } from './lib/db-target';
-import { assertSafeMigrationSql, buildMigrationManifest } from './lib/migration-runner';
+import { assertSafeMigrationSql, buildMigrationManifest, splitMigrationStatements } from './lib/migration-runner';
 
 type JournalRow = {
   id: string;
@@ -59,13 +59,16 @@ async function main() {
   }
 
   const gitRevision = process.env.GIT_COMMIT_SHA ?? null;
-  await db.batch([
-    db.execute(sql.raw(migration.sql)),
+  const statements = splitMigrationStatements(migration.sql);
+  if (statements.length === 0) throw new Error(`Migration ${migration.id} has no SQL statements.`);
+  const batchItems = [
+    ...statements.map((statement) => db.execute(sql.raw(statement))),
     db.execute(sql`
       INSERT INTO "schema_migrations" ("id", "checksum", "target_label", "database", "git_revision", "file_path")
       VALUES (${migration.id}, ${migration.checksum}, ${target.label}, ${target.database}, ${gitRevision}, ${migration.filePath})
     `),
-  ]);
+  ] as unknown as Parameters<typeof db.batch>[0];
+  await db.batch(batchItems);
 
   console.log(`✓ Applied migration ${migration.id}.`);
   console.log(`Checksum: ${migration.checksum}`);
