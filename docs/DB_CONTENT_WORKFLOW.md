@@ -198,6 +198,7 @@ pnpm db:pull
 ```bash
 pnpm db:pull:check
 pnpm content:validate-tips
+pnpm db:audit-tip-links -- --expect-migrated
 pnpm db:publish-audit -- --expect-target <target>
 ```
 

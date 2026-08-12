@@ -8,11 +8,35 @@ export type TipUpsertPlan = {
   values: (string | null)[];
 };
 
+export type RawTipRow = {
+  id: string;
+  slug: string;
+  title_vi: string;
+  content_vi: string;
+  entity_ids?: string[] | null;
+  champion_ids: string[];
+  trait_ids: string[];
+  source_url: string | null;
+};
+
 export function normalizeTipForWrite(tip: Set18Tip): NormalizedSet18Tip {
   const entityIds = tip.entityIds?.length ? tip.entityIds : [...tip.championIds, ...tip.traitIds];
   const championIds = tip.championIds.length > 0 ? tip.championIds : entityIds.filter((id) => id.startsWith('champion:'));
   const traitIds = tip.traitIds.length > 0 ? tip.traitIds : entityIds.filter((id) => id.startsWith('trait:'));
   return { ...tip, entityIds, championIds, traitIds };
+}
+
+export function tipFromRawRow(row: RawTipRow): NormalizedSet18Tip {
+  return normalizeTipForWrite({
+    id: row.id,
+    slug: row.slug,
+    titleVi: row.title_vi,
+    contentVi: row.content_vi,
+    entityIds: row.entity_ids ?? undefined,
+    championIds: row.champion_ids,
+    traitIds: row.trait_ids,
+    sourceUrl: row.source_url,
+  });
 }
 
 export function assertValidTipLinks(tip: NormalizedSet18Tip, entities: Iterable<Pick<Set18EntityIndexEntry, 'id'>>) {

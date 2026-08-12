@@ -125,6 +125,7 @@ Set18 tips Phase 2 status:
 
 - `src/content/set18/set18-tip-validation.ts` defines the generated-content relation contract.
 - `pnpm content:validate-tips`, `pnpm test`, and `pnpm db:publish-audit` enforce that generated tips use canonical `entityIds`, resolve all related entity IDs, avoid duplicates, and keep legacy `championIds/traitIds` mirrored.
+- `pnpm db:audit-tip-links -- --expect-migrated` is the read-only target audit for migrated DBs; it verifies the column exists, backfill completed, and DB rows satisfy the same relation contract.
 
 Use script-level validation first for JSON references such as:
 

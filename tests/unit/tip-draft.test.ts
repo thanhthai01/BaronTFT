@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Set18Tip } from '../../src/content/set18/set18-types';
-import { assertValidTipLinks, buildTipUpsertPlan, normalizeTipForWrite } from '../../scripts/db/lib/tip-draft';
+import { assertValidTipLinks, buildTipUpsertPlan, normalizeTipForWrite, tipFromRawRow } from '../../scripts/db/lib/tip-draft';
 
 const tip: Set18Tip = {
   id: 'tip-akali-ap-carry',
@@ -22,6 +22,32 @@ describe('tip draft helpers', () => {
       championIds: ['champion:tft18_akali'],
       traitIds: [],
     });
+  });
+
+  it('normalizes raw DB rows before and after entity_ids migration', () => {
+    expect(
+      tipFromRawRow({
+        id: 'tip-akali-ap-carry',
+        slug: 'akali-ap-carry',
+        title_vi: 'Akali carry AP',
+        content_vi: 'Giu do AP cho Akali.',
+        champion_ids: ['champion:tft18_akali'],
+        trait_ids: [],
+        source_url: null,
+      }),
+    ).toMatchObject({ entityIds: ['champion:tft18_akali'], championIds: ['champion:tft18_akali'], traitIds: [] });
+    expect(
+      tipFromRawRow({
+        id: 'tip-akali-ap-carry',
+        slug: 'akali-ap-carry',
+        title_vi: 'Akali carry AP',
+        content_vi: 'Giu do AP cho Akali.',
+        entity_ids: ['augment:tft18_example'],
+        champion_ids: ['champion:tft18_akali'],
+        trait_ids: [],
+        source_url: null,
+      }),
+    ).toMatchObject({ entityIds: ['augment:tft18_example'], championIds: ['champion:tft18_akali'], traitIds: [] });
   });
 
   it('validates entity ids against the generated entity index', () => {

@@ -206,6 +206,7 @@ or backup/PITR/restore posture is unknown for a non-disposable target.
 - `RelatedTips` and `/mua-18/meo` must read through `set18TipEntityIds()` so old generated content still works.
 - `pull-set18` must remain compatible with DB targets both before and after `entity_ids` migration; do not switch back to a plain Drizzle select for tips unless all active targets are migrated.
 - Run `pnpm content:validate-tips` after any tip draft, pull, or relation helper change.
+- After migration `0002`, run `pnpm db:audit-tip-links -- --expect-migrated` before publishing generated tip changes.
 - Do not hand-edit `src/content/set18/set18-tips.ts`; change DB content via a reviewed tip draft, then run `pnpm db:pull` and review the generated diff.
 
 ## Generated HTML Checklist

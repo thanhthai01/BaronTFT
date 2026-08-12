@@ -33,6 +33,7 @@
     "db:apply-changeset": "dotenv -e .env.local -- tsx scripts/db/apply-changeset.ts",
     "db:apply-tip": "dotenv -e .env.local -- tsx scripts/db/apply-tip-draft.ts",
     "db:publish-audit": "dotenv -e .env.local -- tsx scripts/db/audit-publish.ts",
+    "db:audit-tip-links": "dotenv -e .env.local -- tsx scripts/db/audit-tip-links.ts",
     "db:verify": "dotenv -e .env.local -- tsx scripts/db/verify.ts",
     "db:studio": "dotenv -e .env.local -- drizzle-kit studio",
     "perf:smoke": "node scripts/check-route-bundles.mjs",
