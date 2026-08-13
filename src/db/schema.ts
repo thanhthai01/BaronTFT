@@ -119,6 +119,12 @@ export const set18Items = pgTable('set18_items', {
    * KHÔNG suy đoán hàng loạt từ statLine (đã phát hiện lệch, vd Titan's Resolve
    * có giá trị HP hard-code không nằm trong statLine tự động trích xuất). */
   statBadges: jsonb('stat_badges').$type<{ stat: string; value: string }[]>(),
+  /** Cho phép giữ lại item tham khảo từ mùa khác (vd trang vnTFT chưa cập
+   * nhật Set 18) mà không cần xoá — false = có trong DB nhưng ẩn khỏi UI. */
+  visible: boolean('visible').notNull().default(true),
+  /** Mùa mà dữ liệu item này thật sự thuộc về (161 item gốc mặc định 18;
+   * item lấy nhầm từ nguồn tham khảo mùa khác thì set đúng số mùa đó). */
+  season: integer('season').notNull().default(18),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 

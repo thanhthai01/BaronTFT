@@ -209,6 +209,11 @@ export type Set18Item = {
   compositionApi: string[];
   unique: boolean;
   statBadges?: Set18ItemStatBadge[];
+  /** false = có trong DB nhưng ẩn khỏi UI (vd item lấy từ nguồn tham khảo
+   * mùa khác, chưa xác nhận có thật trong Set 18). */
+  visible: boolean;
+  /** Mùa mà dữ liệu item này thật sự thuộc về — 161 item gốc luôn là 18. */
+  season: number;
 };
 
 export type Set18CostMeta = { cost: number; label: string; color: string };
