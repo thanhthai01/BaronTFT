@@ -24,7 +24,7 @@ vntft ghi số lượng tướng khác hẳn db (2/2/1 so với 1/1/1 của db),
 
 ---
 
-## 2. Tất Tay Bậc Đồng II (Bronze For Life II)
+## 2. Tất Tay Bậc Đồng II (Bronze For Life II) — ✅ ĐÃ KIỂM TRA LẠI, XÁC NHẬN GIỮ DB
 
 - **id**: `augment:da_bronzeforlifeii`
 - **Độ hiếm**: Prismatic
@@ -37,6 +37,8 @@ vntft ghi số lượng tướng khác hẳn db (2/2/1 so với 1/1/1 của db),
 
 **Lý do cần soát tay:**
 vntft mô tả thêm cơ chế Vương Miện Chiến Thuật/Lá Chắn/Áo Choàng hoàn toàn không có trong db — có thể là dữ liệu của phiên bản/patch khác, không đủ tin cậy để gộp nên giữ nguyên db.
+
+**Kết quả kiểm tra lại (2026-08-14):** đúng như bạn nghi ngờ — đây là **lỗi parser của tôi**, không phải augment khác thật. Trang vntft.com có link "xem chi tiết" sau đoạn mô tả của "Tất Tay Bậc Đồng II", khiến regex trích xuất nuốt luôn nội dung của augment kế tiếp trong danh sách ("Lên Ngôi Vương" — trùng khớp chính xác với đoạn "Vương Miện Chiến Thuật..." bị lẫn vào). Đã sửa parser, tách đúng lại 2 augment riêng biệt. Augment "Lên Ngôi Vương" (`augment:da_coronation`) đã được cập nhật bản dịch đúng theo vntft ở dòng update riêng. Với "Tất Tay Bậc Đồng II", giữ nguyên bản DB là quyết định đúng.
 
 ---
 
@@ -176,19 +178,23 @@ vntft mô tả một cơ chế hoàn toàn khác (nhận thêm XP sau giao tranh
 
 ---
 
-## 11. Kim Long (The Golden Dragon)
+## 11. Kim Long (The Golden Dragon) — ✅ ĐÃ ÁP DỤNG
 
 - **id**: `augment:da_thegoldendragon`
 - **Độ hiếm**: Gold
 
-**DB hiện tại (giữ nguyên):**
+**Trước (placeholder chưa resolve):**
 > Nhận 1 Giáp Đại Hãn. Các tướng mang Giáp Đại Hãn chiếm 2 vị trí trong đội hình nhưng nhận thêm @BonusHealth@ Máu và @DurabilityPct\*100@% Chống Chịu.
 
-**vntft.com (bị từ chối áp dụng):** *chốt theo mô tả này*
+**vntft.com:**
 > Nhận 1 Giáp Đại Hãn. Các tướng mang Giáp Đại Hãn chiếm 2 vị trí trong đội hình nhưng nhận thêm 500 Máu và 20% Chống Chịu. Giáp Đại Hãn này mang lại vàng và tăng sức mạnh chiến đấu. Giải Vô Địch Thế Giới Rồng, 2022
 
-**Lý do cần soát tay:**
-db_description_vi chỉ chứa placeholder chưa resolve (`@BonusHealth@`, `@DurabilityPct*100@`), không có số liệu literal để đối chiếu. vntft ghi 500 Máu / 20% Chống Chịu nhưng đây là augment cũ (Giải Vô Địch Thế Giới Rồng 2022) nên số liệu có thể lỗi thời hoặc không khớp giá trị placeholder hiện tại — cần tra giá trị thật từ game data trước khi điền số cụ thể.
+**Đã ghi vào DB (áp dụng theo yêu cầu "chốt theo mô tả này", nhưng sửa số Máu):**
+> Nhận 1 Giáp Đại Hãn. Các tướng mang Giáp Đại Hãn chiếm 2 vị trí trong đội hình nhưng nhận thêm 700 Máu và 20% Chống Chịu. Giáp Đại Hãn này mang lại vàng và tăng sức mạnh chiến đấu.
+>
+> Giải Vô Địch Thế Giới Rồng, 2022
+
+**Ghi chú:** trường `description` (tiếng Anh) trong DB thực ra không hề chứa placeholder — nó đã có số liệu thật ("700 Health and 20% Durability"), chỉ riêng `description_vi` bị bỏ sót lúc dịch nên còn placeholder `@BonusHealth@`/`@DurabilityPct*100@`. vntft ghi 500 Máu là sai lệch so với nguồn gốc tiếng Anh (700) — đã dùng cấu trúc câu của vntft nhưng thay đúng số 700 theo nguồn gốc, được xác nhận qua câu hỏi lại vào 2026-08-14.
 
 ---
 
