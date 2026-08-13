@@ -76,6 +76,8 @@ export const set18Augments = pgTable('set18_augments', {
   associatedTraits: jsonb('associated_traits').$type<string[]>().notNull(),
   rounds: jsonb('rounds').$type<string[]>().notNull(),
   roundVariants: jsonb('round_variants').$type<string[]>().notNull(),
+  season: integer('season'),
+  isPublished: boolean('is_published').default(true).notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
   check('set18_augments_rarity_check', sql`${table.rarity} in ('Silver', 'Gold', 'Prismatic')`),

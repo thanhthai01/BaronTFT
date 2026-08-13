@@ -183,6 +183,7 @@ export type Set18Augment = {
   associatedTraits: string[];
   rounds: string[];
   roundVariants: string[];
+  season: number;
 };
 
 /** 'Radiant'/'Artifact' là ràng buộc hiển thị: quyết định viền vàng (Radiant)
