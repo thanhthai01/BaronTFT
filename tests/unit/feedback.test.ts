@@ -12,6 +12,7 @@ describe('feedback validation', () => {
   it('rejects short messages and malformed contact emails', () => {
     expect(validateFeedbackSubmission({ message: 'ngắn', contact: '' })).toMatchObject({ ok: false });
     expect(validateFeedbackSubmission({ message: 'Góp ý này đủ dài.', contact: 'khong-phai-email' })).toMatchObject({ ok: false });
+    expect(validateFeedbackSubmission({ message: 'Góp ý này đủ dài.', contact: 'test@example.com?subject=Injected' })).toMatchObject({ ok: false });
   });
 
   it('recognizes only supported inbox statuses', () => {

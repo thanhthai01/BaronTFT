@@ -15,7 +15,7 @@ type ValidationResult =
   | { ok: true; value: FeedbackSubmissionInput }
   | { ok: false; error: string };
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[A-Za-z0-9.!#$'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/;
 
 export function validateFeedbackSubmission(payload: unknown): ValidationResult {
   if (!payload || typeof payload !== 'object') {

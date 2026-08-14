@@ -7,6 +7,9 @@ import {
   hasFeedbackAdminToken,
 } from '@/lib/feedback-admin-auth';
 import { consumeFeedbackRateLimit, hasAllowedOrigin } from '@/lib/feedback-rate-limit';
+import { readJsonWithLimit } from '@/lib/request-security';
+
+const MAX_ADMIN_LOGIN_BODY_BYTES = 1_024;
 
 function suppliedTokenMatches(value: unknown) {
   const expected = process.env.FEEDBACK_ADMIN_TOKEN;
@@ -21,30 +24,28 @@ export async function POST(request: Request) {
   if (!hasAllowedOrigin(request)) {
     return NextResponse.json({ error: 'Nguồn gửi không hợp lệ.' }, { status: 403 });
   }
-  if (Number(request.headers.get('content-length')) > 1_024) {
-    return NextResponse.json({ error: 'Dữ liệu gửi quá lớn.' }, { status: 413 });
-  }
   if (!hasFeedbackAdminToken()) {
     return NextResponse.json({ error: 'Chưa cấu hình FEEDBACK_ADMIN_TOKEN.' }, { status: 503 });
   }
 
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Mật khẩu không hợp lệ.' }, { status: 400 });
-  }
-
   const { db } = await import('@/db/client');
-  const rateLimit = await consumeFeedbackRateLimit(db, request, 'admin-login', 5);
-  if (!rateLimit.allowed) {
-    return NextResponse.json({ error: rateLimit.reason ?? 'Bạn đã thử đăng nhập quá nhiều lần. Thử lại sau 15 phút nhé.' }, {
-      status: rateLimit.reason ? 503 : 429,
-      headers: rateLimit.reason ? undefined : { 'Retry-After': '900' },
-    });
+  try {
+    const rateLimit = await consumeFeedbackRateLimit(db, request, 'admin-login', 5);
+    if (!rateLimit.allowed) {
+      return NextResponse.json({ error: rateLimit.reason ?? 'Bạn đã thử đăng nhập quá nhiều lần. Thử lại sau 15 phút nhé.' }, {
+        status: rateLimit.reason ? 503 : 429,
+        headers: rateLimit.reason ? undefined : { 'Retry-After': '900' },
+      });
+    }
+  } catch (error) {
+    console.error('Unable to check feedback admin rate limit', error instanceof Error ? error.name : 'unknown');
+    return NextResponse.json({ error: 'Không thể đăng nhập lúc này.' }, { status: 503 });
   }
 
-  const token = payload && typeof payload === 'object' ? (payload as { token?: unknown }).token : undefined;
+  const payload = await readJsonWithLimit(request, MAX_ADMIN_LOGIN_BODY_BYTES);
+  if (!payload.ok) return NextResponse.json({ error: payload.error }, { status: payload.status });
+
+  const token = payload.value && typeof payload.value === 'object' ? (payload.value as { token?: unknown }).token : undefined;
   if (!suppliedTokenMatches(token)) {
     return NextResponse.json({ error: 'Mật khẩu không đúng.' }, { status: 401 });
   }
@@ -63,7 +64,11 @@ export async function POST(request: Request) {
   return response;
 }
 
-export function DELETE() {
+export function DELETE(request: Request) {
+  if (!hasAllowedOrigin(request)) {
+    return NextResponse.json({ error: 'Nguồn gửi không hợp lệ.' }, { status: 403 });
+  }
+
   const response = NextResponse.json({ ok: true });
   response.cookies.set(FEEDBACK_ADMIN_COOKIE, '', { httpOnly: true, maxAge: 0, path: '/' });
   return response;

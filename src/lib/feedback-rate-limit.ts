@@ -9,11 +9,21 @@ type Database = typeof database;
 type RateLimitRow = { request_count: number };
 
 function clientAddress(request: Request) {
-  const vercelAddress = request.headers.get('x-vercel-forwarded-for');
-  if (vercelAddress) return vercelAddress;
+  const vercelAddress = firstForwardedAddress(request.headers.get('x-vercel-forwarded-for'));
+  if (isReasonableIpAddress(vercelAddress)) return vercelAddress;
 
+  if (process.env.NODE_ENV === 'production') return 'unknown';
   const forwardedFor = request.headers.get('x-forwarded-for');
-  return forwardedFor?.split(',')[0]?.trim() || 'unknown';
+  const localAddress = firstForwardedAddress(forwardedFor);
+  return isReasonableIpAddress(localAddress) ? localAddress : 'unknown';
+}
+
+function firstForwardedAddress(value: string | null) {
+  return value?.split(',')[0]?.trim() ?? null;
+}
+
+function isReasonableIpAddress(value: string | null) {
+  return Boolean(value && /^[0-9a-f:.]{3,45}$/i.test(value));
 }
 
 function requestKey(request: Request, scope: string) {

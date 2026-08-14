@@ -60,7 +60,7 @@ export function FeedbackInbox({ initialItems }: { initialItems: FeedbackInboxIte
                 <time dateTime={item.submittedAt}>{formatDate(item.submittedAt)}</time>
               </div>
               <p className={styles.message}>{item.message}</p>
-              {item.contactEmail && <a className={styles.contact} href={`mailto:${item.contactEmail}`}>{item.contactEmail}</a>}
+              {item.contactEmail && <a className={styles.contact} href={`mailto:${encodeURIComponent(item.contactEmail)}`}>{item.contactEmail}</a>}
               <div className={styles.actions}>
                 {item.status !== 'read' && <button disabled={updatingId === item.id} onClick={() => updateStatus(item.id, 'read')} type="button">Đánh dấu đã đọc</button>}
                 {item.status !== 'new' && <button disabled={updatingId === item.id} onClick={() => updateStatus(item.id, 'new')} type="button">Đánh dấu chưa đọc</button>}

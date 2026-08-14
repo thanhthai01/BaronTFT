@@ -4,24 +4,28 @@ import { eq } from 'drizzle-orm';
 import { feedbackSubmissions } from '@/db/schema';
 import { FEEDBACK_ADMIN_COOKIE, isFeedbackAdminSession } from '@/lib/feedback-admin-auth';
 import { isFeedbackStatus } from '@/lib/feedback';
+import { hasAllowedOrigin } from '@/lib/feedback-rate-limit';
+import { readJsonWithLimit } from '@/lib/request-security';
+
+const MAX_ADMIN_MUTATION_BODY_BYTES = 1_024;
 
 export async function PATCH(request: Request) {
+  if (!hasAllowedOrigin(request)) {
+    return NextResponse.json({ error: 'Nguồn gửi không hợp lệ.' }, { status: 403 });
+  }
+
   const cookieStore = await cookies();
   if (!isFeedbackAdminSession(cookieStore.get(FEEDBACK_ADMIN_COOKIE)?.value)) {
     return NextResponse.json({ error: 'Không có quyền truy cập.' }, { status: 401 });
   }
 
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
-  }
+  const payload = await readJsonWithLimit(request, MAX_ADMIN_MUTATION_BODY_BYTES);
+  if (!payload.ok) return NextResponse.json({ error: payload.error }, { status: payload.status });
 
-  if (!payload || typeof payload !== 'object') {
+  if (!payload.value || typeof payload.value !== 'object') {
     return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
   }
-  const { id, status } = payload as Record<string, unknown>;
+  const { id, status } = payload.value as Record<string, unknown>;
   if (typeof id !== 'string' || !isFeedbackStatus(status)) {
     return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
   }
