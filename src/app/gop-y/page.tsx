@@ -3,7 +3,7 @@ import { FeedbackForm } from '@/components/features/feedback/FeedbackForm';
 
 export const metadata: Metadata = {
   title: 'Góp ý',
-  description: 'Báo lỗi dữ liệu Mùa 18 hoặc đề xuất tính năng cho Baron TFT qua email.',
+  description: 'Báo lỗi dữ liệu Mùa 18 hoặc đề xuất tính năng cho Baron TFT.',
   alternates: { canonical: '/gop-y' },
 };
 
@@ -14,7 +14,7 @@ export default function FeedbackPage() {
         <div className="wide-container">
           <span className="kicker">Góp ý</span>
           <h1>Website còn thiếu gì, hoặc có chỗ nào chưa ổn?</h1>
-          <p>Gửi thẳng qua email, mình đọc và phản hồi trực tiếp.</p>
+          <p>Góp ý của bạn sẽ được lưu vào hộp thư riêng để mình đọc và phản hồi trực tiếp.</p>
         </div>
       </header>
       <section className="section">

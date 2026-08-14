@@ -198,3 +198,20 @@ export const set18Tips = pgTable('set18_tips', {
   check('set18_tips_champion_ids_array_check', sql`jsonb_typeof(${table.championIds}) = 'array'`),
   check('set18_tips_trait_ids_array_check', sql`jsonb_typeof(${table.traitIds}) = 'array'`),
 ]);
+
+export const feedbackSubmissions = pgTable('feedback_submissions', {
+  id: text('id').primaryKey(),
+  message: text('message').notNull(),
+  contactEmail: text('contact_email'),
+  status: text('status').$type<'new' | 'read' | 'archived'>().default('new').notNull(),
+  submittedAt: timestamp('submitted_at').defaultNow().notNull(),
+  readAt: timestamp('read_at'),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const feedbackRequestLimits = pgTable('feedback_request_limits', {
+  key: text('key').primaryKey(),
+  windowStartedAt: timestamp('window_started_at').notNull(),
+  requestCount: integer('request_count').notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
