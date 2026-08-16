@@ -1,13 +1,13 @@
 .shell {
   --reader-measure: 48rem;
+  --reader-accent-secondary-text: #b63a0c;
   display: grid;
-  grid-template-columns: minmax(11.5rem, 13rem) minmax(0, var(--reader-measure)) minmax(10.5rem, 12rem);
+  grid-template-columns: minmax(0, var(--reader-measure)) minmax(11rem, 13rem);
   justify-content: center;
   gap: clamp(1.5rem, 2.5vw, 2.25rem);
   align-items: start;
 }
 
-.toc,
 .apply {
   position: sticky;
   top: 5.5rem;
@@ -17,15 +17,10 @@
   padding-block: 0.25rem 1rem;
 }
 
-.toc {
-  border-top: 3px solid var(--accent-primary);
-}
-
 .apply {
   border-top: 3px solid var(--accent-secondary);
 }
 
-.tocTitle,
 .applyTitle {
   margin: 0;
   border-bottom: 1px solid var(--border-line);
@@ -157,22 +152,24 @@
 .article {
   min-width: 0;
   width: 100%;
+  border: 1px solid var(--border-line);
+  border-radius: 0.5rem;
+  background: var(--surface-card);
+  box-shadow: 5px 5px 0 color-mix(in srgb, var(--text-primary) 16%, transparent);
   color: var(--text-secondary);
   font-size: 1.09375rem;
   line-height: 1.75;
+  padding: 2rem 2.5rem 2.5rem;
 }
 
 .articleHead {
-  border: 1px solid var(--border-strong);
-  border-radius: 0.5rem;
-  background: var(--surface-card);
-  box-shadow: var(--shadow-offset-ink);
-  padding: clamp(1.35rem, 3vw, 2rem);
-  margin-bottom: 2.25rem;
+  border-bottom: 3px solid var(--accent-primary);
+  padding: 0 0 2rem;
+  margin-bottom: 0;
 }
 
 .articleHead :global(.kicker) {
-  color: var(--accent-secondary-press);
+  color: var(--reader-accent-secondary-text);
 }
 
 .articleHead h1 {
@@ -236,6 +233,28 @@
 }
 
 .readerToolbar {
+  display: flex;
+  margin-block: 1rem 0;
+}
+
+.readerToolbar button {
+  min-height: 2.75rem;
+  border: 1px solid var(--border-line);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
+  padding: 0.55rem 0.9rem;
+}
+
+.readerToolbar button:hover,
+.readerToolbar button:focus-visible {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+}
+
+.readerToolbar button + button {
   display: none;
 }
 
@@ -308,6 +327,15 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
+  border-left: 0.3rem solid var(--accent-primary);
+  background: var(--accent-primary-soft);
+  padding: 0.75rem 0.9rem;
+}
+
+.block[data-block-type='drill'] .blockHeading,
+.block[data-block-type='checklist'] .blockHeading {
+  border-left-color: var(--accent-secondary);
+  background: color-mix(in srgb, var(--accent-secondary) 9%, var(--surface-card));
 }
 
 .blockIcon {
@@ -334,7 +362,7 @@
   align-items: center;
   gap: 0.8rem;
   margin-block: 1.5rem 0;
-  color: var(--text-muted);
+  color: var(--reader-accent-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: var(--fw-bold);
@@ -347,7 +375,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--border-line);
+  background: color-mix(in srgb, var(--accent-secondary) 55%, var(--border-line));
 }
 
 .principles {
@@ -378,7 +406,7 @@
 .scenarioCard {
   border: 1px solid var(--border-line);
   border-radius: 0.5rem;
-  background: var(--surface-card);
+  background: var(--surface-raised);
   padding: 1rem;
 }
 
@@ -386,7 +414,7 @@
 .matrixHead,
 .checkItem strong {
   display: block;
-  color: var(--accent-secondary-press);
+  color: var(--reader-accent-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: var(--fw-bold);
@@ -417,7 +445,7 @@
   align-items: start;
   border: 1px solid var(--border-line);
   border-radius: 0.5rem;
-  background: var(--surface-card);
+  background: var(--surface-raised);
   padding: 1rem;
 }
 
@@ -443,7 +471,7 @@
   gap: 0.8rem;
   border: 1px solid var(--border-line);
   border-radius: 0.5rem;
-  background: var(--surface-card);
+  background: var(--surface-raised);
   padding: 0.9rem 1rem;
 }
 
@@ -529,9 +557,9 @@
   grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
   gap: 1.5rem;
   align-items: center;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--accent-primary);
   border-radius: 0.5rem;
-  background: var(--surface-card);
+  background: var(--accent-primary-soft);
   box-shadow: var(--shadow-offset-accent);
   margin-top: 2.25rem;
   padding: 1.35rem;
@@ -540,7 +568,7 @@
 .actionsKicker,
 .dialogKicker {
   display: block;
-  color: var(--accent-secondary-press);
+  color: var(--reader-accent-secondary-text);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: var(--fw-bold);
@@ -655,12 +683,11 @@
   padding-block: 0.65rem;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1120px) {
   .shell {
     grid-template-columns: minmax(0, var(--reader-measure));
   }
 
-  .toc,
   .apply {
     display: none;
   }
@@ -693,6 +720,7 @@
   }
 
   .readerToolbar button + button {
+    display: flex;
     border-left: 1px solid var(--border-line);
   }
 
@@ -706,11 +734,12 @@
 @media (max-width: 760px) {
   .article {
     font-size: 1.0625rem;
+    padding: 1rem;
   }
 
   .articleHead {
-    margin-bottom: 1.5rem;
-    padding: 1.25rem;
+    margin-bottom: 0;
+    padding: 0 0 1.5rem;
   }
 
   .articleHead h1 {

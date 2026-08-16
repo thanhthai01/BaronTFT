@@ -23,7 +23,7 @@ function BlockHeading({ title, type }: { title: string; type: LessonBlock['type'
 function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: string }) {
   if (block.type === 'principles') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
         <ul className={styles.principles}>
           {block.items.map((item) => <li key={item}>{item}</li>)}
@@ -34,7 +34,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
   if (block.type === 'scenario') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
         <div className={styles.scenario}>
           <div className={styles.scenarioCard}>
@@ -56,7 +56,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
   if (block.type === 'checklist') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
         <ul className={styles.checklist}>
           {block.items.map((item, index) => (
@@ -71,7 +71,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
   if (block.type === 'drill') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
         <div className={styles.drill}>
           {block.goal && <p className={styles.drillGoal}>{block.goal}</p>}
@@ -85,7 +85,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
   if (block.type === 'concept') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
         <div className={`prose ${styles.conceptBody}`} dangerouslySetInnerHTML={{ __html: assertTrustedHtml(block.html, 'evergreenMarkdownHtml', `lesson:${anchorId}`) }} />
       </section>
@@ -94,7 +94,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
   if (block.type === 'pitfalls') {
     return (
-      <section className={styles.block} id={anchorId}>
+      <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <Callout title={block.title} tone="warning">
           <ul>
             {block.items.map((item) => <li key={item}>{item}</li>)}
@@ -105,7 +105,7 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
   }
 
   return (
-    <section className={styles.block} id={anchorId}>
+    <section className={styles.block} data-block-type={block.type} id={anchorId}>
       <BlockHeading title={block.title} type={block.type} />
       <div className={styles.matrix}>
         {block.rows.map((row) => (
@@ -352,16 +352,6 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
   return (
     <div className={styles.shell}>
-      <aside className={styles.toc} aria-label="Mục lục kiến thức nền tảng">
-        <h2 className={styles.tocTitle}>Các bài viết</h2>
-        <LessonNavigation
-          activeLesson={activeLesson}
-          expandedCategory={expandedCategory}
-          groups={groupedLessons}
-          onExpandedCategoryChange={setExpandedCategory}
-        />
-      </aside>
-
       <article className={styles.article} data-knowledge-reader>
         <header className={styles.articleHead}>
           <span className="kicker">{activeLesson.module}</span>

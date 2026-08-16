@@ -30,6 +30,34 @@ test('desktop reader keeps one masthead and a readable measure', async ({ page }
   expect(metrics.lineHeight).toBeGreaterThanOrEqual(28);
 });
 
+test('desktop reader separates the reading sheet and shows one table of contents', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop reading hierarchy');
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(lessonPath);
+
+  await expect(page.locator('aside[aria-label="Mục lục kiến thức nền tảng"]')).toHaveCount(0);
+  await expect(page.locator('aside[aria-label="Mục lục bài"]')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Mở danh sách bài' })).toBeVisible();
+
+  const surfaces = await page.getByRole('article').evaluate((article) => {
+    const articleStyle = getComputedStyle(article);
+    const bodyStyle = getComputedStyle(document.body);
+    const regularHeading = article.querySelector<HTMLElement>('[data-block-type="concept"] h2');
+    return {
+      articleBackground: articleStyle.backgroundColor,
+      bodyBackground: bodyStyle.backgroundColor,
+      inlinePadding: Number.parseFloat(articleStyle.paddingInlineStart),
+      headingBackground: regularHeading ? getComputedStyle(regularHeading).backgroundColor : 'transparent',
+    };
+  });
+
+  expect(surfaces.articleBackground).not.toBe(surfaces.bodyBackground);
+  expect(surfaces.articleBackground).not.toBe('rgba(0, 0, 0, 0)');
+  expect(surfaces.inlinePadding).toBeGreaterThanOrEqual(32);
+  expect(surfaces.headingBackground).not.toBe('rgba(0, 0, 0, 0)');
+});
+
 test('compact reader tools open accessible panels and keep article first', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile reader contract');
 
