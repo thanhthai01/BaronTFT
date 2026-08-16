@@ -37,6 +37,7 @@ const config = [
       'scripts/db/apply-pbe-trait-augment-updates.ts',
       'scripts/db/apply-pbe-balance-tft18-1ac.ts',
       'scripts/db/apply-pbe-balance-tft18-1ad.ts',
+      'scripts/db/apply-pbe-balance-tft18-1ae.ts',
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
