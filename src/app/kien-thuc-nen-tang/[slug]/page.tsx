@@ -40,13 +40,6 @@ export default async function LessonDetailPage({ params }: { params: Promise<{ s
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }} type="application/ld+json" />
-      <header className={styles.header}>
-        <div className="wide-container">
-          <span className="kicker">{lesson.module}</span>
-          <h1>{lesson.title}</h1>
-          <p>{lesson.summary}</p>
-        </div>
-      </header>
       <section aria-label="Nội dung kiến thức nền tảng" className={styles.readerSection}>
         <div className="wide-container">
           <KnowledgeReader initialSlug={slug} />
