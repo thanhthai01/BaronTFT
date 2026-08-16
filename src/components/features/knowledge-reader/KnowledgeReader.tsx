@@ -84,6 +84,21 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
   }
 
   if (block.type === 'concept') {
+    if (block.anchor === 'bai-tap') {
+      return (
+        <section className={`${styles.block} ${styles.practiceBlock}`} data-block-type={block.type} id={anchorId}>
+          <BlockHeading title={block.title} type={block.type} />
+          <details className={styles.practiceDisclosure}>
+            <summary>
+              <span>Xem nội dung bài tập</span>
+              <span aria-hidden="true" className={styles.disclosureMark}>+</span>
+            </summary>
+            <div className={`prose ${styles.conceptBody}`} dangerouslySetInnerHTML={{ __html: assertTrustedHtml(block.html, 'evergreenMarkdownHtml', `lesson:${anchorId}`) }} />
+          </details>
+        </section>
+      );
+    }
+
     return (
       <section className={styles.block} data-block-type={block.type} id={anchorId}>
         <BlockHeading title={block.title} type={block.type} />
@@ -242,8 +257,6 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   const [activePanel, setActivePanel] = useState<'lessons' | 'contents' | null>(null);
   const applyRef = useRef<HTMLElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const lessonTriggerRef = useRef<HTMLButtonElement>(null);
-  const contentsTriggerRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
 
   const groupedLessons = useMemo(() => {
@@ -341,8 +354,8 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   const practiceStartIndex = activeLesson.blocks.findIndex((block) => PRACTICE_BLOCK_TYPES.has(block.type));
   const panelTitle = activePanel === 'lessons' ? 'Danh sách bài' : 'Mục lục bài';
 
-  function openPanel(panel: 'lessons' | 'contents') {
-    returnFocusRef.current = panel === 'lessons' ? lessonTriggerRef.current : contentsTriggerRef.current;
+  function openPanel(panel: 'lessons' | 'contents', trigger: HTMLButtonElement) {
+    returnFocusRef.current = trigger;
     setActivePanel(panel);
   }
 
@@ -369,9 +382,8 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
             aria-controls="reader-panel"
             aria-expanded={activePanel === 'lessons'}
             aria-label="Mở danh sách bài"
-            ref={lessonTriggerRef}
             type="button"
-            onClick={() => openPanel('lessons')}
+            onClick={(event) => openPanel('lessons', event.currentTarget)}
           >
             Danh sách bài
           </button>
@@ -379,9 +391,8 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
             aria-controls="reader-panel"
             aria-expanded={activePanel === 'contents'}
             aria-label="Mở mục lục bài"
-            ref={contentsTriggerRef}
             type="button"
-            onClick={() => openPanel('contents')}
+            onClick={(event) => openPanel('contents', event.currentTarget)}
           >
             Mục lục bài
           </button>
@@ -446,6 +457,17 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
       </article>
 
       <aside aria-label="Mục lục bài" className={styles.apply} ref={applyRef}>
+        <button
+          aria-controls="reader-panel"
+          aria-expanded={activePanel === 'lessons'}
+          aria-label="Mở danh sách bài"
+          className={styles.lessonListButton}
+          type="button"
+          onClick={(event) => openPanel('lessons', event.currentTarget)}
+        >
+          <span>Danh sách bài</span>
+          <span aria-hidden="true" className={styles.lessonCount}>{lessons.length}</span>
+        </button>
         <h2 className={styles.applyTitle}>Trong bài</h2>
         <LessonJumpList activeAnchor={activeAnchor} lesson={activeLesson} />
       </aside>

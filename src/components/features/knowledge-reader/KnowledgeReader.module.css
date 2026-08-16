@@ -14,23 +14,56 @@
   max-height: calc(100vh - 7rem);
   overflow-y: auto;
   scrollbar-width: thin;
-  padding-block: 0.25rem 1rem;
-}
-
-.apply {
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 20%, var(--border-line));
   border-top: 3px solid var(--accent-secondary);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--accent-primary) 5%, var(--surface-card));
+  padding: 0.75rem;
 }
 
 .applyTitle {
-  margin: 0;
+  margin: 0.75rem 0 0;
   border-bottom: 1px solid var(--border-line);
-  padding: 0.75rem 0.35rem 0.7rem;
+  padding: 0.7rem 0.35rem;
   color: var(--text-primary);
   font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: var(--fw-extra);
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.lessonListButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid var(--border-line);
+  border-radius: 0.375rem;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
+  text-align: left;
+  transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+}
+
+.lessonListButton:hover,
+.lessonListButton:focus-visible,
+.lessonListButton[aria-expanded='true'] {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-soft);
+  color: var(--accent-primary-press);
+}
+
+.lessonCount {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: var(--fw-bold);
 }
 
 .tocGroups {
@@ -233,8 +266,7 @@
 }
 
 .readerToolbar {
-  display: flex;
-  margin-block: 1rem 0;
+  display: none;
 }
 
 .readerToolbar button {
@@ -506,6 +538,59 @@
   font-weight: var(--fw-bold);
 }
 
+.practiceBlock .blockHeading {
+  border-left-color: var(--accent-secondary);
+  background: color-mix(in srgb, var(--accent-secondary) 9%, var(--surface-card));
+}
+
+.practiceDisclosure {
+  border-block: 1px solid var(--border-line);
+}
+
+.practiceDisclosure summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: var(--fw-bold);
+  list-style: none;
+  padding: 0.65rem 0.25rem;
+}
+
+.practiceDisclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.practiceDisclosure summary:hover,
+.practiceDisclosure summary:focus-visible {
+  color: var(--accent-primary-press);
+}
+
+.disclosureMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--accent-primary-press);
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--dur-fast);
+}
+
+.practiceDisclosure[open] .disclosureMark {
+  transform: rotate(45deg);
+}
+
+.practiceDisclosure .conceptBody {
+  padding: 0.25rem 0.25rem 0.5rem;
+}
+
 .article .conceptBody {
   font-size: inherit;
   line-height: inherit;
@@ -702,7 +787,7 @@
     border-radius: 0.5rem;
     background: color-mix(in srgb, var(--surface-canvas) 92%, transparent);
     backdrop-filter: blur(12px);
-    margin-bottom: 1.25rem;
+    margin: 1rem 0 1.25rem;
     overflow: hidden;
   }
 

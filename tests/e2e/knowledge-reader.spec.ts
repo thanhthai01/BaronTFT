@@ -37,10 +37,15 @@ test('desktop reader separates the reading sheet and shows one table of contents
   await page.goto(lessonPath);
 
   await expect(page.locator('aside[aria-label="Mục lục kiến thức nền tảng"]')).toHaveCount(0);
-  await expect(page.locator('aside[aria-label="Mục lục bài"]')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Mở danh sách bài' })).toBeVisible();
+  const article = page.getByRole('article');
+  const readerRail = page.locator('aside[aria-label="Mục lục bài"]');
+  const lessonTrigger = readerRail.getByRole('button', { name: 'Mở danh sách bài' });
 
-  const surfaces = await page.getByRole('article').evaluate((article) => {
+  await expect(readerRail).toBeVisible();
+  await expect(article.getByRole('button', { name: 'Mở danh sách bài' })).toHaveCount(0);
+  await expect(lessonTrigger).toBeVisible();
+
+  const surfaces = await article.evaluate((article) => {
     const articleStyle = getComputedStyle(article);
     const bodyStyle = getComputedStyle(document.body);
     const regularHeading = article.querySelector<HTMLElement>('[data-block-type="concept"] h2');
@@ -56,6 +61,36 @@ test('desktop reader separates the reading sheet and shows one table of contents
   expect(surfaces.articleBackground).not.toBe('rgba(0, 0, 0, 0)');
   expect(surfaces.inlinePadding).toBeGreaterThanOrEqual(32);
   expect(surfaces.headingBackground).not.toBe('rgba(0, 0, 0, 0)');
+
+  const railMetrics = await readerRail.evaluate((rail) => {
+    const railStyle = getComputedStyle(rail);
+    const bodyStyle = getComputedStyle(document.body);
+    const button = rail.querySelector('button');
+    const buttonStyle = button ? getComputedStyle(button) : null;
+    return {
+      background: railStyle.backgroundColor,
+      bodyBackground: bodyStyle.backgroundColor,
+      buttonHeight: button?.getBoundingClientRect().height ?? 0,
+      buttonPaddingInline: buttonStyle ? Number.parseFloat(buttonStyle.paddingInlineStart) : 0,
+    };
+  });
+
+  expect(railMetrics.background).not.toBe(railMetrics.bodyBackground);
+  expect(railMetrics.background).not.toBe('rgba(0, 0, 0, 0)');
+  expect(railMetrics.buttonHeight).toBeGreaterThanOrEqual(44);
+  expect(railMetrics.buttonPaddingInline).toBeGreaterThanOrEqual(12);
+});
+
+test('practice worksheets stay out of the primary reading flow until opened', async ({ page }) => {
+  await page.goto(lessonPath);
+
+  const practiceBlock = page.locator('#bai-tap');
+  const disclosure = practiceBlock.locator('details');
+
+  await expect(disclosure).not.toHaveAttribute('open', '');
+  await expect(practiceBlock.getByText('Phiếu rolldown', { exact: true })).toBeHidden();
+  await practiceBlock.locator('summary').click();
+  await expect(practiceBlock.getByText('Phiếu rolldown', { exact: true })).toBeVisible();
 });
 
 test('compact reader tools open accessible panels and keep article first', async ({ page }, testInfo) => {
