@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/design-system/Button/Button';
 import { Callout } from '@/components/design-system/Callout/Callout';
@@ -12,12 +11,12 @@ import styles from './KnowledgeReader.module.css';
 
 function BlockHeading({ title, type }: { title: string; type: LessonBlock['type'] }) {
   return (
-    <h3 className={styles.blockHeading}>
+    <h2 className={styles.blockHeading}>
       <span className={styles.blockIcon}>
         <BlockTypeIcon type={type} />
       </span>
       {title}
-    </h3>
+    </h2>
   );
 }
 
@@ -123,7 +122,15 @@ function BlockRenderer({ block, anchorId }: { block: LessonBlock; anchorId: stri
 
 const PRACTICE_BLOCK_TYPES = new Set<LessonBlock['type']>(['pitfalls', 'checklist', 'drill']);
 
-function LessonJumpList({ lesson, activeAnchor }: { lesson: Lesson; activeAnchor: string | null }) {
+function LessonJumpList({
+  lesson,
+  activeAnchor,
+  onNavigate,
+}: {
+  lesson: Lesson;
+  activeAnchor: string | null;
+  onNavigate?: () => void;
+}) {
   return (
     <div className={styles.jumpList}>
       {lesson.blocks.map((block) => (
@@ -132,6 +139,7 @@ function LessonJumpList({ lesson, activeAnchor }: { lesson: Lesson; activeAnchor
           className={styles.jumpLink}
           href={`#${block.anchor}`}
           key={`${lesson.slug}-jump-${block.anchor}`}
+          onClick={onNavigate}
         >
           <span className={styles.jumpIcon}>
             <BlockTypeIcon type={block.type} />
@@ -139,6 +147,65 @@ function LessonJumpList({ lesson, activeAnchor }: { lesson: Lesson; activeAnchor
           <span>{block.title}</span>
         </a>
       ))}
+    </div>
+  );
+}
+
+type LessonGroup = { category: string; items: Lesson[] };
+
+function LessonNavigation({
+  activeLesson,
+  expandedCategory,
+  groups,
+  onExpandedCategoryChange,
+  onNavigate,
+}: {
+  activeLesson: Lesson;
+  expandedCategory: string;
+  groups: LessonGroup[];
+  onExpandedCategoryChange: (category: string) => void;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div className={styles.tocGroups}>
+      {groups.map((group) => {
+        const isExpanded = group.category === expandedCategory;
+
+        return (
+          <div className={styles.tocGroup} key={group.category}>
+            <button
+              aria-expanded={isExpanded}
+              className={styles.tocGroupHeader}
+              type="button"
+              onClick={() => onExpandedCategoryChange(isExpanded ? '' : group.category)}
+            >
+              <span className={styles.tocGroupTitle}>{group.category}</span>
+              <span className={styles.tocGroupMeta}>
+                <span className={styles.tocGroupCount}>{group.items.length}</span>
+                <span className={styles.tocChevron}>
+                  <ChevronIcon expanded={isExpanded} />
+                </span>
+              </span>
+            </button>
+            {isExpanded && (
+              <div className={styles.tocList}>
+                {group.items.map((lesson) => (
+                  <Link
+                    aria-current={lesson.slug === activeLesson.slug ? 'page' : undefined}
+                    className={styles.tocItem}
+                    href={`/kien-thuc-nen-tang/${lesson.slug}`}
+                    key={lesson.slug}
+                    onClick={onNavigate}
+                  >
+                    <span className={styles.tocItemIndex}>{String(lessons.indexOf(lesson) + 1).padStart(2, '0')}</span>
+                    <span className={styles.tocItemTitle}>{lesson.shortTitle}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -161,7 +228,6 @@ function LessonApplyPanel({ lesson }: { lesson: Lesson }) {
 }
 
 export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
-  const router = useRouter();
   // Bài đang đọc luôn bám theo URL (initialSlug đến từ route param của
   // page.tsx) thay vì state riêng — điều hướng qua <Link> nên route đổi,
   // Next.js re-render page.tsx với slug mới, props này đổi theo. Trước đây
@@ -173,10 +239,15 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   );
   const [expandedCategory, setExpandedCategory] = useState(activeLesson.module);
   const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
+  const [activePanel, setActivePanel] = useState<'lessons' | 'contents' | null>(null);
   const applyRef = useRef<HTMLElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const lessonTriggerRef = useRef<HTMLButtonElement>(null);
+  const contentsTriggerRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLButtonElement | null>(null);
 
   const groupedLessons = useMemo(() => {
-    const groups: Array<{ category: string; items: typeof lessons }> = [];
+    const groups: LessonGroup[] = [];
     for (const lesson of lessons) {
       const group = groups.find((entry) => entry.category === lesson.module);
       if (group) group.items.push(lesson);
@@ -197,6 +268,14 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   useEffect(() => {
     setExpandedCategory(activeLesson.module);
   }, [activeLesson.module]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (activePanel && !dialog.open) dialog.showModal();
+    if (!activePanel && dialog.open) dialog.close();
+  }, [activePanel]);
 
   // Scrollspy: mục đang đọc là block CUỐI CÙNG có mép trên đã vượt qua mốc
   // tham chiếu gần đỉnh viewport — không dùng "đang intersect" vì block dài
@@ -260,68 +339,34 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
   }, [activeAnchor]);
 
   const practiceStartIndex = activeLesson.blocks.findIndex((block) => PRACTICE_BLOCK_TYPES.has(block.type));
+  const panelTitle = activePanel === 'lessons' ? 'Danh sách bài' : 'Mục lục bài';
+
+  function openPanel(panel: 'lessons' | 'contents') {
+    returnFocusRef.current = panel === 'lessons' ? lessonTriggerRef.current : contentsTriggerRef.current;
+    setActivePanel(panel);
+  }
+
+  function closePanel() {
+    setActivePanel(null);
+  }
 
   return (
     <div className={styles.shell}>
       <aside className={styles.toc} aria-label="Mục lục kiến thức nền tảng">
-        <h2 className={styles.tocTitle}>Mục lục</h2>
-        <div className={styles.tocGroups}>
-          {groupedLessons.map((group) => {
-            const isExpanded = group.category === expandedCategory;
-            return (
-              <div className={styles.tocGroup} key={group.category}>
-                <button
-                  aria-expanded={isExpanded}
-                  className={styles.tocGroupHeader}
-                  type="button"
-                  onClick={() => setExpandedCategory((current) => (current === group.category ? '' : group.category))}
-                >
-                  <span className={styles.tocGroupTitle}>{group.category}</span>
-                  <span className={styles.tocGroupMeta}>
-                    <span className={styles.tocGroupCount}>{group.items.length}</span>
-                    <span className={styles.tocChevron}>
-                      <ChevronIcon expanded={isExpanded} />
-                    </span>
-                  </span>
-                </button>
-                {isExpanded && (
-                  <div className={styles.tocList}>
-                    {group.items.map((lesson) => (
-                      <Link
-                        aria-current={lesson.slug === activeLesson.slug}
-                        className={styles.tocItem}
-                        href={`/kien-thuc-nen-tang/${lesson.slug}`}
-                        key={lesson.slug}
-                      >
-                        <span className={styles.tocItemIndex}>{String(lessons.indexOf(lesson) + 1).padStart(2, '0')}</span>
-                        <span className={styles.tocItemTitle}>{lesson.shortTitle}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <h2 className={styles.tocTitle}>Các bài viết</h2>
+        <LessonNavigation
+          activeLesson={activeLesson}
+          expandedCategory={expandedCategory}
+          groups={groupedLessons}
+          onExpandedCategoryChange={setExpandedCategory}
+        />
       </aside>
 
-      <article className={styles.article}>
-        <select
-          aria-label="Chọn bài học"
-          className={styles.mobileSelect}
-          value={activeLesson.slug}
-          onChange={(event) => router.push(`/kien-thuc-nen-tang/${event.target.value}`)}
-        >
-          {groupedLessons.map((group) => (
-            <optgroup key={group.category} label={group.category}>
-              {group.items.map((lesson) => <option key={lesson.slug} value={lesson.slug}>{lesson.title}</option>)}
-            </optgroup>
-          ))}
-        </select>
-
+      <article className={styles.article} data-knowledge-reader>
         <header className={styles.articleHead}>
           <span className="kicker">{activeLesson.module}</span>
-          <p>{activeLesson.summary}</p>
+          <h1>{activeLesson.title}</h1>
+          <p className={styles.articleLead}>{activeLesson.summary}</p>
           <div className={styles.metaRow}>
             <span className={styles.metaChip}><ClockIcon /><span>{activeLesson.duration}</span></span>
             <span className={styles.metaChip}><FlagIcon /><span>{activeLesson.skill}</span></span>
@@ -329,12 +374,28 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
           </div>
         </header>
 
-        <div className={styles.mobileReaderTools}>
-          <section className={styles.mobileApplyPanel} aria-labelledby="mobile-lesson-apply-title">
-            <h2 className={styles.applyTitle} id="mobile-lesson-apply-title">Áp dụng ngay</h2>
-            <LessonApplyPanel lesson={activeLesson} />
-          </section>
-        </div>
+        <nav aria-label="Công cụ đọc" className={styles.readerToolbar}>
+          <button
+            aria-controls="reader-panel"
+            aria-expanded={activePanel === 'lessons'}
+            aria-label="Mở danh sách bài"
+            ref={lessonTriggerRef}
+            type="button"
+            onClick={() => openPanel('lessons')}
+          >
+            Danh sách bài
+          </button>
+          <button
+            aria-controls="reader-panel"
+            aria-expanded={activePanel === 'contents'}
+            aria-label="Mở mục lục bài"
+            ref={contentsTriggerRef}
+            type="button"
+            onClick={() => openPanel('contents')}
+          >
+            Mục lục bài
+          </button>
+        </nav>
 
         {/* Bài nâng cao trong một chuỗi cơ bản→nâng cao (xem frontmatter
             `prerequisite:`) nhắc rõ nên đọc bài nền nào trước — người lạc vào
@@ -360,7 +421,7 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
         {activeLesson.related.length > 0 && (
           <section className={styles.block}>
-            <h3>Bài liên quan</h3>
+            <h2>Bài liên quan</h2>
             <div className={styles.relatedList}>
               {activeLesson.related.map((item) => (
                 <Link className={styles.relatedLink} href={item.href} key={item.href}>
@@ -373,7 +434,7 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
 
         {advancedFollowUps.length > 0 && (
           <section className={styles.block}>
-            <h3>Đọc tiếp nâng cao</h3>
+            <h2>Đọc tiếp nâng cao</h2>
             <div className={styles.relatedList}>
               {advancedFollowUps.map((lesson) => (
                 <Link className={styles.relatedLink} href={`/kien-thuc-nen-tang/${lesson.slug}`} key={lesson.slug}>
@@ -383,15 +444,62 @@ export function KnowledgeReader({ initialSlug }: { initialSlug?: string }) {
             </div>
           </section>
         )}
+
+        <section aria-labelledby="reader-actions-title" className={styles.readerActions} data-reader-actions>
+          <div className={styles.actionsCopy}>
+            <span className={styles.actionsKicker}>Tiếp tục luyện tập</span>
+            <h2 id="reader-actions-title">Áp dụng vào trận tiếp theo</h2>
+            <p>Chuyển điều vừa đọc thành một câu hỏi cụ thể cho trận đấu kế tiếp.</p>
+          </div>
+          <LessonApplyPanel lesson={activeLesson} />
+        </section>
       </article>
 
-      <aside className={styles.apply} ref={applyRef}>
-        <h2 className={styles.applyTitle}>Mục lục nội dung</h2>
+      <aside aria-label="Mục lục bài" className={styles.apply} ref={applyRef}>
+        <h2 className={styles.applyTitle}>Trong bài</h2>
         <LessonJumpList activeAnchor={activeAnchor} lesson={activeLesson} />
-
-        <h2 className={styles.applyTitle}>Áp dụng ngay</h2>
-        <LessonApplyPanel lesson={activeLesson} />
       </aside>
+
+      <dialog
+        aria-labelledby="reader-panel-title"
+        className={styles.readerDialog}
+        id="reader-panel"
+        ref={dialogRef}
+        onCancel={closePanel}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) closePanel();
+        }}
+        onClose={() => {
+          setActivePanel(null);
+          const trigger = returnFocusRef.current;
+          requestAnimationFrame(() => trigger?.focus());
+        }}
+      >
+        <div className={styles.dialogPanel}>
+          <header className={styles.dialogHead}>
+            <div>
+              <span className={styles.dialogKicker}>Kiến thức nền tảng</span>
+              <h2 id="reader-panel-title">{panelTitle}</h2>
+            </div>
+            <button aria-label={`Đóng ${panelTitle.toLocaleLowerCase('vi')}`} className={styles.dialogClose} type="button" onClick={closePanel}>
+              <span aria-hidden="true">×</span>
+            </button>
+          </header>
+          <div className={styles.dialogBody}>
+            {activePanel === 'lessons' ? (
+              <LessonNavigation
+                activeLesson={activeLesson}
+                expandedCategory={expandedCategory}
+                groups={groupedLessons}
+                onExpandedCategoryChange={setExpandedCategory}
+                onNavigate={closePanel}
+              />
+            ) : (
+              <LessonJumpList activeAnchor={activeAnchor} lesson={activeLesson} onNavigate={closePanel} />
+            )}
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }

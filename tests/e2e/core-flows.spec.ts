@@ -18,7 +18,10 @@ test('foundational knowledge reader switches lessons', async ({ page }) => {
     await desktopGroupToggle.click();
     await page.getByRole('link', { name: /Level, roll, outs và breakpoint/i }).click();
   } else {
-    await page.getByLabel('Chọn bài học').selectOption('level-roll-outs-va-breakpoint');
+    await page.getByRole('button', { name: 'Mở danh sách bài' }).click();
+    const lessonDialog = page.getByRole('dialog', { name: 'Danh sách bài' });
+    await lessonDialog.getByRole('button', { name: /Vận hành kinh tế/i }).click();
+    await lessonDialog.getByRole('link', { name: /Level, roll, outs và breakpoint/i }).click();
   }
   await expect(page.getByRole('heading', { name: 'Level, roll, outs và breakpoint' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Thiết kế outs trước rolldown/i })).toBeVisible();
