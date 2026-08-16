@@ -24,29 +24,19 @@ test('foundational knowledge reader switches lessons', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /Thiết kế outs trước rolldown/i })).toBeVisible();
 });
 
-test('mobile lesson shows apply before article content without lesson TOC', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only lesson reading order');
+test('mobile lesson switches from the compact lesson panel', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile-only lesson navigation');
 
   await page.goto('/kien-thuc-nen-tang/level-roll-outs-va-breakpoint');
-  const article = page.locator('article');
-  await expect(article.getByLabel('Chọn bài học')).toBeVisible();
-  const applyPanel = article.getByLabel('Áp dụng ngay');
-  await expect(applyPanel.getByRole('heading', { name: 'Áp dụng ngay' })).toBeVisible();
-  await expect(applyPanel.getByText('Tôi có ít nhất ba nhóm outs.')).toBeVisible();
-  await expect(applyPanel.getByText('Roll một số vàng ngẫu nhiên.')).toBeVisible();
-  await expect(applyPanel.getByText('Trước roll ghi:')).toBeVisible();
-  await expect(article.getByRole('link', { name: 'Patch cập nhật' })).toHaveCount(0);
-  await expect(article.getByRole('link', { name: 'Xem Mùa 18' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Mở danh sách bài' }).click();
 
-  await expect(article.getByRole('heading', { name: 'Trong bài' })).toHaveCount(0);
-  const order = await article.evaluate((node) => {
-    const apply = node.querySelector('[aria-labelledby="mobile-lesson-apply-title"]');
-    const firstBlock = node.querySelector('#level-la-mua-slot-va-phan-phoi-shop');
-    return apply && firstBlock
-      ? Boolean(apply.compareDocumentPosition(firstBlock) & Node.DOCUMENT_POSITION_FOLLOWING)
-      : false;
-  });
-  expect(order).toBe(true);
+  const dialog = page.getByRole('dialog', { name: 'Danh sách bài' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: /Ra quyết định/i }).click();
+  await dialog.getByRole('link', { name: /Tư duy TFT xuyên mùa/i }).click();
+
+  await expect(page).toHaveURL(/\/kien-thuc-nen-tang\/tu-duy-tft-xuyen-mua$/);
+  await expect(page.getByRole('article').getByRole('heading', { level: 1, name: 'Tư duy TFT xuyên mùa' })).toBeVisible();
 });
 
 test('checklist persists a checked item after reload', async ({ page }) => {
