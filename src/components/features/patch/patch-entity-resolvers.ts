@@ -71,8 +71,9 @@ export const WISP_CATEGORY_LABEL: Record<string, string> = {
 export function resolveIcon(entry: PatchEntry, entitySet: number): ResolvedIcon {
   const entity = resolveEntity(entry, entitySet);
   const cost = entry.cost ?? entity?.cost;
+  const hasPlaceholderIcon = /placeholder.*icon|chưa có ảnh/i.test(entry.note ?? '');
   return {
-    src: entity?.icon ?? entry.icon ?? null,
+    src: entry.icon ?? (hasPlaceholderIcon ? null : entity?.icon) ?? null,
     variant: iconVariantByCategory[entry.category],
     // Màu viền tướng luôn lấy từ token giá tiền để trùng với phần còn lại của
     // site; các loại khác dùng accent của codex (màu hệ / độ hiếm).

@@ -4,6 +4,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: projectRoot,
@@ -32,6 +33,9 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    const scriptSrc = ["script-src 'self' 'unsafe-inline'", isDevelopment ? "'unsafe-eval'" : null, 'https://va.vercel-scripts.com']
+      .filter(Boolean)
+      .join(' ');
     const contentSecurityPolicy = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -41,10 +45,12 @@ const nextConfig: NextConfig = {
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+      scriptSrc,
       "connect-src 'self' https://vitals.vercel-insights.com https://*.vercel-insights.com",
-      'upgrade-insecure-requests',
-    ].join('; ');
+      isDevelopment ? null : 'upgrade-insecure-requests',
+    ]
+      .filter(Boolean)
+      .join('; ');
 
     return [
       {

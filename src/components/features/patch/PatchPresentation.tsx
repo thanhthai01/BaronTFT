@@ -244,6 +244,7 @@ function EntryCard({
 }) {
   const name = resolveDisplayName(entry, entitySet);
   const icon = resolveIcon(entry, entitySet);
+  const cost = entry.cost ?? icon.cost;
   return (
     <article className={[styles.card, size === 'sm' ? styles.cardSm : null].filter(Boolean).join(' ')} style={{ borderColor: icon.accent }}>
       <div className={styles.cardHead}>
@@ -254,7 +255,7 @@ function EntryCard({
             {name.en ? <span className={styles.nameEn}> {name.en}</span> : null}
           </h3>
           <div className={styles.cardTags}>
-            {entry.cost ? (
+            {cost ? (
               // Chỉ tô màu giá cho tướng — icon.accent của Tinh Linh là màu
               // loại (Giao Tranh/Cửa Hàng...), không phải màu giá, tô nhầm sẽ
               // sai nghĩa hoàn toàn.
@@ -262,7 +263,7 @@ function EntryCard({
                 className={styles.costBadge}
                 style={entry.category === 'champion' ? { color: icon.accent, borderColor: icon.accent } : undefined}
               >
-                {entry.cost} vàng
+                {cost} vàng
               </span>
             ) : null}
             {entry.breakpoint ? <span className={styles.costBadge}>Mốc {entry.breakpoint}</span> : null}
@@ -346,14 +347,22 @@ function SlideImpact({ slide }: { slide: Extract<PatchSlide, { kind: 'impact' }>
  * trái — vẫn giữ nền full-bleed màu accent (đẹp), chỉ đổi cách chia chữ để
  * đọc lướt được (hiệu quả). */
 function SlideQuote({ slide }: { slide: Extract<PatchSlide, { kind: 'quote' }> }) {
-  const [lead, ...rest] = slide.summaryLines.length ? slide.summaryLines : [slide.summaryVi];
+  const lines = slide.summaryLines.length ? slide.summaryLines : [slide.summaryVi];
+  const pageLabel = slide.pageIndex && slide.pageTotal ? ` · ${slide.pageIndex}/${slide.pageTotal}` : '';
+  const heading = slide.pageIndex === 2 ? 'Điểm cần nhớ' : 'Tổng kết nhanh';
+  const [first, ...rest] = lines;
+  const lead = slide.pageIndex === 2 ? 'Augment, Wisp và bugfix' : first;
+  const supportingLines = slide.pageIndex === 2 ? lines : rest;
   return (
     <div className={styles.slideQuote}>
-      <span className={styles.quoteEyebrow}>{patchOriginMeta[slide.summaryOrigin].label}</span>
+      <div className={styles.quoteHeader}>
+        <span className={styles.quoteEyebrow}>{patchOriginMeta[slide.summaryOrigin].label}{pageLabel}</span>
+        <h2>{heading}</h2>
+      </div>
       <p className={styles.quoteLead}>{lead}</p>
-      {rest.length ? (
+      {supportingLines.length ? (
         <ul className={styles.quoteList}>
-          {rest.map((line) => <li key={line}>{line}</li>)}
+          {supportingLines.map((line) => <li key={line}>{line}</li>)}
         </ul>
       ) : null}
       <div className={styles.quoteFooter}>

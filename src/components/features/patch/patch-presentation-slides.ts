@@ -19,7 +19,16 @@ export type PatchSlide =
   | { kind: 'grid'; eyebrow: string; heading: string; badge?: string; entries: PatchEntry[]; cardSize?: 'md' | 'sm' }
   | { kind: 'mechanic'; eyebrow: string; entries: PatchEntry[] }
   | { kind: 'impact'; impact: PatchImpact }
-  | { kind: 'quote'; summaryVi: string; summaryLines: string[]; summaryOrigin: PatchContentOrigin; stats: PatchStatCounts; dateVi: string }
+  | {
+      kind: 'quote';
+      summaryVi: string;
+      summaryLines: string[];
+      summaryOrigin: PatchContentOrigin;
+      stats: PatchStatCounts;
+      dateVi: string;
+      pageIndex?: number;
+      pageTotal?: number;
+    }
   | { kind: 'outro'; url: string };
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -70,12 +79,14 @@ function computeStats(entries: PatchEntry[]): PatchStatCounts {
   return counts;
 }
 
-/** `summaryVi` là một câu dài duy nhất — bổ dồn hết vào một khối chữ giữa
- * slide thì đẹp nhưng phải đọc hết mới nắm được ý, không quét nhanh được. Tách
- * theo dấu phẩy Ở CẤP NGOÀI CÙNG (bỏ qua dấu phẩy bên trong ngoặc, vd danh
- * sách tướng "(Akali, Cinderling, ...)") thành từng dòng ngắn — giữ NGUYÊN
- * từng chữ gốc, chỉ đổi cách trình bày từ một câu thành danh sách quét được. */
+/** Ưu tiên tách summary theo câu để mỗi bullet vẫn giữ đủ ngữ cảnh. Nếu bản vá
+ * cũ chỉ có một câu rất dài thì mới fallback sang dấu phẩy cấp ngoài cùng. */
 function splitSummaryLines(text: string): string[] {
+  const sentences = text.split(/(?<=\.)\s+/).map((line) => line.trim()).filter(Boolean);
+  if (sentences.length > 1) {
+    return sentences.flatMap((line) => line.split(/;\s+/).map((part) => part.trim()).filter(Boolean));
+  }
+
   const lines: string[] = [];
   let depth = 0;
   let current = '';
@@ -91,6 +102,23 @@ function splitSummaryLines(text: string): string[] {
   }
   if (current.trim()) lines.push(current.trim());
   return lines.filter(Boolean);
+}
+
+const QUOTE_LINES_PER_SLIDE = 3;
+
+function quoteSlides(report: PatchReport, stats: PatchStatCounts): Extract<PatchSlide, { kind: 'quote' }>[] {
+  const summaryLines = splitSummaryLines(report.summaryVi);
+  const pages = chunk(summaryLines.length ? summaryLines : [report.summaryVi], QUOTE_LINES_PER_SLIDE);
+  return pages.map((page, index) => ({
+    kind: 'quote',
+    summaryVi: report.summaryVi,
+    summaryLines: page,
+    summaryOrigin: report.summaryOrigin ?? 'official',
+    stats,
+    dateVi: report.dateVi,
+    pageIndex: pages.length > 1 ? index + 1 : undefined,
+    pageTotal: pages.length > 1 ? pages.length : undefined,
+  }));
 }
 
 function byNameVi(entitySet: number) {
@@ -170,11 +198,18 @@ function wispGroupPaginate(ordered: PatchEntry[]): PatchEntry[][] {
   return pages;
 }
 
-function championGridSlides(entries: PatchEntry[]): Extract<PatchSlide, { kind: 'grid' }>[] {
+function championCost(entry: PatchEntry, entitySet: number): number | undefined {
+  return entry.cost ?? resolveEntity(entry, entitySet)?.cost;
+}
+
+function championGridSlides(entries: PatchEntry[], entitySet: number): Extract<PatchSlide, { kind: 'grid' }>[] {
   const eyebrow = `Tướng · ${entries.length} thay đổi · xếp theo mốc vàng`;
   const slides: Extract<PatchSlide, { kind: 'grid' }>[] = [];
   for (const band of CHAMPION_COST_BANDS) {
-    const bandEntries = entries.filter((entry) => entry.cost != null && band.match(entry.cost));
+    const bandEntries = entries.filter((entry) => {
+      const cost = championCost(entry, entitySet);
+      return cost != null && band.match(cost);
+    });
     for (const page of chunkByHeight(bandEntries, (e) => cardHeightPx(e), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT)) {
       slides.push({ kind: 'grid', eyebrow, heading: 'Tướng', badge: band.label, entries: page });
     }
@@ -290,7 +325,7 @@ export function buildPatchSlides(report: PatchReport, url: string): PatchSlide[]
 
   if (report.rhythmVi?.length) slides.push({ kind: 'rhythm', lines: report.rhythmVi });
 
-  slides.push(...championGridSlides(byCategory('champion')));
+  slides.push(...championGridSlides(byCategory('champion'), entitySet));
   slides.push(...categoryGridSlides(byCategory('trait'), 'Tộc hệ'));
   slides.push(...augmentGroupSlides(byCategory('augment'), entitySet));
   slides.push(...categoryGridSlides(byCategory('item'), 'Trang bị'));
@@ -307,14 +342,7 @@ export function buildPatchSlides(report: PatchReport, url: string): PatchSlide[]
 
   for (const impact of report.impacts ?? []) slides.push({ kind: 'impact', impact });
 
-  slides.push({
-    kind: 'quote',
-    summaryVi: report.summaryVi,
-    summaryLines: splitSummaryLines(report.summaryVi),
-    summaryOrigin: report.summaryOrigin ?? 'official',
-    stats,
-    dateVi: report.dateVi,
-  });
+  slides.push(...quoteSlides(report, stats));
   slides.push({ kind: 'outro', url });
   return slides;
 }

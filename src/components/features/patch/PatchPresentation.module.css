@@ -663,6 +663,13 @@
   white-space: nowrap;
 }
 
+.noteBadge {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: var(--lh-snug);
+}
+
 /* Thẻ cỡ nhỏ dùng cho Tinh Linh — cùng bố cục với
    thẻ tướng/tộc hệ, chỉ thu gọn khoảng đệm/cỡ chữ và cơ số nhỏ hơn để nhiều
    thẻ vừa một hàng. */
@@ -751,10 +758,15 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 28px;
+  gap: 26px;
   padding: 0 200px;
   background: var(--grad-accent);
   color: #fff;
+}
+
+.quoteHeader {
+  display: grid;
+  gap: 10px;
 }
 
 .quoteEyebrow {
@@ -765,13 +777,23 @@
   color: rgba(255, 255, 255, 0.72);
 }
 
+.quoteHeader h2 {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.84);
+}
+
 .quoteLead {
   font-family: var(--font-display);
-  font-size: 46px;
+  font-size: 48px;
   font-weight: var(--fw-bold);
   line-height: var(--lh-snug);
   margin: 0;
-  max-width: 1300px;
+  max-width: 1260px;
 }
 
 .quoteList {
@@ -783,7 +805,7 @@
   gap: 14px;
   font-size: 26px;
   line-height: var(--lh-body);
-  max-width: 1200px;
+  max-width: 1220px;
 }
 
 .quoteList li {
