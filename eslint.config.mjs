@@ -38,6 +38,7 @@ const config = [
       'scripts/db/apply-pbe-balance-tft18-1ac.ts',
       'scripts/db/apply-pbe-balance-tft18-1ad.ts',
       'scripts/db/apply-pbe-balance-tft18-1ae.ts',
+      'scripts/db/apply-pbe-balance-tft18-1af.ts',
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
