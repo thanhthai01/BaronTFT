@@ -522,6 +522,19 @@
   list-style: none;
 }
 
+/* Thẻ không có `changes` (cơ chế/rework thuần) — hiện `note` làm nội dung
+   chính thay vì badge nổi trong cardTags (xem EntryChanges/EntryCard). */
+.mechanicNoteText {
+  margin: 10px 0 0;
+  color: var(--text-primary);
+  font-size: 17px;
+  line-height: var(--lh-snug);
+}
+
+.cardSm .mechanicNoteText {
+  font-size: 14px;
+}
+
 /* Không còn nền ô xám cho từng dòng — chữ đứng trần trên nền thẻ, đúng kiểu
    tối giản/in-ấn của bản tham khảo, chỉ ngăn cách bằng khoảng gap. */
 .changes li {
@@ -627,14 +640,23 @@
   min-width: 0;
 }
 
+/* Trước đây cắt 1 dòng + "..." — tên dài (đặc biệt trang bị "Tên Việt (Tên
+   gốc)" hay Tinh Linh cardSm hẹp) mất luôn nửa sau, có lần đứt giữa từ. Cho
+   phép tối đa 3 dòng (line-clamp, không wrap vô hạn — thẻ vẫn giữ chiều cao
+   ước lượng được cho việc chia trang theo bậc, xem titleCharCount()/
+   *_WRAP_EXTRA trong patch-presentation-slides.ts). 3 chứ không phải 2: tên
+   dài nhất thực tế đo được ("Đến Giờ Ăn Nhẹ Rồi! Snacktime!") vẫn tràn quá
+   2 dòng ở khổ thẻ Tinh Linh hẹp — 3 dòng mới đủ dư địa an toàn. */
 .cardHeadText h3 {
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: var(--fw-bold);
+  line-height: 1.2;
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .nameEn {

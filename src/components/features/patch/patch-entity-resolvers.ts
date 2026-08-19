@@ -1,4 +1,5 @@
 import { findSet18Entity, set18EntityById } from '@/content/set18/set18-entity-index';
+import { set18ItemIconByName } from '@/content/set18/set18-item-icons';
 import type { PatchCategory, PatchEntry } from '@/content/patch-notes';
 import type { Set18EntityKind } from '@/content/set18/set18-types';
 
@@ -47,6 +48,24 @@ export function resolveDisplayName(entry: PatchEntry, entitySet: number): { vi: 
   return entity?.nameVi ? { vi: entity.nameVi, en: entry.name } : { vi: entry.name, en: null };
 }
 
+/** `item` không có entity-index (không tra `nameVi` tự động — quy ước dịch
+ * tay "<Tên Việt> (<Tên gốc>)" viết thẳng vào `name`, xem hướng dẫn
+ * tft-patch-update). Nhưng ICON thì đã có sẵn theo tên gốc qua
+ * `set18-item-icons.ts` (file RIÊNG chỉ name→icon, tách khỏi
+ * `set18-items.ts` đầy đủ mô tả/statLine — import cả bảng item vào đây từng
+ * làm bundle /patch vượt ngân sách perf:smoke, xem ghi chú trong
+ * pull-set18.ts::pullItems()). Tách phần trong ngoặc cuối cùng của `name`
+ * để tra, không cần soạn tay `entry.icon` cho từng trang bị mỗi bản vá nữa
+ * (từng bị bỏ sót, hiện placeholder chữ tắt thay vì icon thật). */
+const itemIconByName = new Map(Object.entries(set18ItemIconByName).map(([name, icon]) => [name.toLowerCase(), icon]));
+
+function resolveItemIcon(entry: PatchEntry): string | undefined {
+  if (entry.category !== 'item') return undefined;
+  const match = entry.name.match(/\(([^()]+)\)\s*$/);
+  if (!match) return undefined;
+  return itemIconByName.get(match[1].toLowerCase());
+}
+
 /** Icon Tinh Linh của Set 18 mã hoá sẵn loại + cấp trong tên file, vd
  * `t_shopcardsicon18_misc_tier2.png`. Đọc từ đó thay vì kéo cả bảng Tinh Linh
  * vào bundle chỉ để lấy hai con số dùng cho việc xếp thứ tự. */
@@ -73,7 +92,7 @@ export function resolveIcon(entry: PatchEntry, entitySet: number): ResolvedIcon 
   const cost = entry.cost ?? entity?.cost;
   const hasPlaceholderIcon = /placeholder.*icon|chưa có ảnh/i.test(entry.note ?? '');
   return {
-    src: entry.icon ?? (hasPlaceholderIcon ? null : entity?.icon) ?? null,
+    src: entry.icon ?? (hasPlaceholderIcon ? null : (entity?.icon ?? resolveItemIcon(entry))) ?? null,
     variant: iconVariantByCategory[entry.category],
     // Màu viền tướng luôn lấy từ token giá tiền để trùng với phần còn lại của
     // site; các loại khác dùng accent của codex (màu hệ / độ hiếm).

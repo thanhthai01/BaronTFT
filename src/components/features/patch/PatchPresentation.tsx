@@ -44,21 +44,31 @@ function EntryIcon({ entry, entitySet, size = 'md' }: { entry: PatchEntry; entit
   );
 }
 
+/** Ghi chú CẢ CÂU (mô tả cơ chế/lý do đổi) mà nhét vào noteBadge (bo tròn
+ * kiểu "pill") thì wrap nhiều dòng nhìn như bong bóng nổi tách khỏi thẻ, vỡ
+ * khung — kể cả khi thẻ VẪN CÓ `changes` đi kèm (vd Tâm Sắt/Iron Core: có số
+ * liệu HP nhưng note đổi mốc xuất hiện vẫn tràn badge). `note` luôn hiện làm
+ * nội dung chính của thẻ (đứng trước danh sách số liệu nếu có), không còn
+ * badge trong cardTags — xem EntryCard. */
 function EntryChanges({ entry }: { entry: PatchEntry }) {
-  if (!entry.changes?.length) return null;
+  const note = entry.note ? <p className={styles.mechanicNoteText}>{entry.note}</p> : null;
+  if (!entry.changes?.length) return note;
   return (
-    <ul className={styles.changes}>
-      {entry.changes.map((change, index) => (
-        <li key={`${change.label}-${index}`}>
-          <span className={styles.changeLabel}>{change.label}</span>
-          <span className={styles.changeValues}>
-            <span className={styles.changeFrom}>{change.from}</span>
-            <span aria-hidden="true" className={styles.arrow}>→</span>
-            <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
+    <>
+      {note}
+      <ul className={styles.changes}>
+        {entry.changes.map((change, index) => (
+          <li key={`${change.label}-${index}`}>
+            <span className={styles.changeLabel}>{change.label}</span>
+            <span className={styles.changeValues}>
+              <span className={styles.changeFrom}>{change.from}</span>
+              <span aria-hidden="true" className={styles.arrow}>→</span>
+              <span className={[styles.changeTo, styles[`to-${entry.kind}`]].join(' ')}>{change.to}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -267,7 +277,6 @@ function EntryCard({
               </span>
             ) : null}
             {entry.breakpoint ? <span className={styles.costBadge}>Mốc {entry.breakpoint}</span> : null}
-            {entry.note ? <span className={styles.noteBadge}>{entry.note}</span> : null}
           </div>
         </div>
         {/* Huy hiệu tăng/giảm neo góc phải thẻ — tách khỏi cardTags (tên/giá/mốc)

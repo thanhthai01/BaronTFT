@@ -13,7 +13,6 @@ import {
   resolveDisplayName,
   resolveEntity,
   resolveIcon,
-  wispFacetsFromIcon,
 } from './patch-entity-resolvers';
 import {
   patchBreakpointColors,
@@ -123,13 +122,6 @@ function RankBadge({ entry, entitySet }: { entry: PatchEntry; entitySet: number 
     );
   }
 
-  if (entry.category === 'wisp') {
-    const facets = wispFacetsFromIcon(entity?.icon ?? entry.icon);
-    const tier = entry.wispTier ?? facets.wispTier;
-    if (!tier) return null;
-    return <span className={styles.rankBadge}>Cấp {tier}</span>;
-  }
-
   if (entry.category === 'champion') {
     const cost = entry.cost ?? entity?.cost;
     if (!cost) return null;
@@ -148,17 +140,24 @@ function RankBadge({ entry, entitySet }: { entry: PatchEntry; entitySet: number 
  * dễ nhận ra ngay là huy hiệu mốc sao, không lẫn với ghi chú chữ khác. */
 const STAR_NOTE_PATTERN = /^(\d)\s*sao$/i;
 
+/** Ghi chú NGẮN theo mẫu cố định ("3 sao") mới hợp badge — câu mô tả dài
+ * (lý do đổi/cơ chế) nhét vào badge bo tròn kiểu "pill" mà wrap nhiều dòng
+ * nhìn như bong bóng nổi tách khỏi thẻ, vỡ khung (đã xảy ra thật kể cả khi
+ * thẻ có `changes` đi kèm, vd Tâm Sắt/Iron Core). Notes dạng câu luôn xuống
+ * nội dung chính của thẻ — xem chỗ gọi `entry.note` bên dưới cardHeadInner. */
+function isStarNote(note: string) {
+  return STAR_NOTE_PATTERN.test(note);
+}
+
 function NoteBadge({ note }: { note: string }) {
   const starMatch = note.match(STAR_NOTE_PATTERN);
-  if (starMatch) {
-    const level = starMatch[1];
-    return (
-      <span className={styles.starBadge} title={`Chỉ áp dụng ở mốc ${level} sao`}>
-        <Image alt={`${level} sao`} height={16} sizes="48px" src={`/set18/assets/text_icons/star${level}.png`} width={48} />
-      </span>
-    );
-  }
-  return <span className={styles.noteBadge}>{note}</span>;
+  if (!starMatch) return null;
+  const level = starMatch[1];
+  return (
+    <span className={styles.starBadge} title={`Chỉ áp dụng ở mốc ${level} sao`}>
+      <Image alt={`${level} sao`} height={16} sizes="48px" src={`/set18/assets/text_icons/star${level}.png`} width={48} />
+    </span>
+  );
 }
 
 /** Nhãn phân biệt "Riot nói vậy" và "mình nghĩ vậy" — bắt buộc ở mọi khối diễn
@@ -357,6 +356,15 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
                     // Chỉ tướng/tộc hệ/nâng cấp/Tinh Linh Set 18 mới có trang codex để
                     // trỏ tới — bản vá mùa khác hoặc mục "mechanic" giữ nguyên không link.
                     const entityHref = set18EntityUrl(entry.entityId);
+                    const hasChanges = !!entry.changes?.length;
+                    // Ghi chú CẢ CÂU (mô tả cơ chế/lý do đổi) mà nhét vào badge bo
+                    // tròn kiểu "pill" thì wrap nhiều dòng nhìn như bong bóng nổi
+                    // tách khỏi thẻ, vỡ khung — kể cả khi thẻ VẪN CÓ `changes` đi
+                    // kèm (vd Tâm Sắt/Iron Core: có số liệu HP nhưng note đổi mốc
+                    // xuất hiện vẫn tràn badge). Chỉ note NGẮN dạng "N sao" mới hợp
+                    // badge (xem isStarNote/NoteBadge); mọi note câu dài luôn xuống
+                    // nội dung chính của thẻ, không phụ thuộc có/không có changes.
+                    const noteIsStar = entry.note ? isStarNote(entry.note) : false;
                     const cardHeadInner = (
                       <>
                         <EntryIcon entry={entry} entitySet={entitySet} />
@@ -367,7 +375,7 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
                           </h3>
                           <span className={styles.cardTags}>
                             <RankBadge entry={entry} entitySet={entitySet} />
-                            {entry.note ? <NoteBadge note={entry.note} /> : null}
+                            {entry.note && noteIsStar ? <NoteBadge note={entry.note} /> : null}
                             <span className={[styles.kindTag, styles[entry.kind]].join(' ')}>
                               {patchKindMeta[entry.kind].label}
                             </span>
@@ -389,9 +397,11 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
                         <div className={styles.cardHead}>{cardHeadInner}</div>
                       )}
 
-                      {entry.changes?.length ? (
+                      {entry.note && !noteIsStar ? <p className={styles.mechanicText}>{entry.note}</p> : null}
+
+                      {hasChanges ? (
                         <ul className={styles.changes}>
-                          {entry.changes.map((change, index) => (
+                          {entry.changes!.map((change, index) => (
                             <li key={`${change.label}-${index}`}>
                               <span className={styles.changeLabel}>{change.label}</span>
                               <span className={styles.changeValues}>
@@ -402,9 +412,9 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
                             </li>
                           ))}
                         </ul>
-                      ) : (
+                      ) : !entry.note ? (
                         <span className={styles.mechanicLabel}>Không có chỉ số trước/sau</span>
-                      )}
+                      ) : null}
                     </article>
                     );
                   })}

@@ -83,7 +83,7 @@ const report: PatchReport = {
       kind: 'nerf',
       name: 'Warwick',
       entityId: 'champion:tft18_warwick',
-      note: 'Giảm mức độ thời gian tung chiêu co giãn theo Tốc Độ Đánh (không có số liệu before/after cụ thể)',
+      note: 'Giảm mức độ thời gian tung chiêu co giãn theo Tốc Độ Đánh',
     },
     {
       id: 'pbe0818af-champ-yunara',
@@ -187,7 +187,7 @@ const report: PatchReport = {
       category: 'item',
       kind: 'mechanic',
       name: 'Vũ Khúc Tử Thần (Death\'s Defiance)',
-      note: 'Gỡ bỏ hoàn toàn khỏi game do bug — không phải thay đổi số liệu',
+      note: 'Gỡ bỏ hoàn toàn khỏi game do bug',
     },
     {
       id: 'pbe0818af-item-aegisofdusk',
@@ -264,7 +264,7 @@ const report: PatchReport = {
       category: 'item',
       kind: 'rework',
       name: 'Ấn Đao Phủ (Executioner Emblem)',
-      note: 'Đổi mechanic — thay field Khuếch Đại Sát Thương cũ bằng Sát Thương Chí Mạng',
+      note: 'Thay Khuếch Đại Sát Thương cũ bằng Sát Thương Chí Mạng',
       changes: [
         { label: 'Sát Thương Chí Mạng (mới, thay Khuếch Đại Sát Thương cũ)', from: '10%', to: '8%' },
         { label: 'Ngưỡng Hành Quyết', from: '12%', to: '8%' },
@@ -310,7 +310,6 @@ const report: PatchReport = {
       kind: 'rework',
       name: 'Inferno',
       entityId: 'trait:inferno',
-      note: 'Người dùng xác nhận đây là điều chỉnh cơ chế, không phải buff/nerf thuần',
       changes: [
         { label: 'Thời lượng Thiêu Đốt', from: '4 giây', to: '3 giây' },
         { label: 'Lượng Thiêu Đốt mỗi mốc', from: '1/1/2/3%', to: '1/1/3/3.5%' },
@@ -333,7 +332,7 @@ const report: PatchReport = {
       name: 'Artifactinate',
       entityId: 'wisp:artifactinate',
       changes: [{ label: 'Giá', from: '0 vàng', to: '2 vàng' }],
-      note: 'Kèm giảm tần suất xuất hiện (không có số liệu cụ thể)',
+      note: 'Kèm giảm tần suất xuất hiện',
     },
     {
       id: 'pbe0818af-wisp-backrowstar',
@@ -368,7 +367,7 @@ const report: PatchReport = {
       kind: 'mechanic',
       name: 'Moonrise',
       entityId: 'wisp:moonrise',
-      note: 'Đổi mốc xuất hiện từ 3-5 sang 4-1',
+      note: 'Bỏ ràng buộc mốc xuất hiện — có thể xuất hiện bất kỳ giai đoạn nào',
     },
     {
       id: 'pbe0818af-wisp-snacktime',
@@ -395,7 +394,7 @@ const report: PatchReport = {
       kind: 'buff',
       name: 'Iron Core',
       entityId: 'wisp:iron-core',
-      note: 'Đổi mốc xuất hiện từ 3-5 sang 4-1',
+      note: 'Bỏ ràng buộc mốc xuất hiện — có thể xuất hiện bất kỳ giai đoạn nào',
       changes: [{ label: 'Máu mỗi đơn vị hàng đầu', from: '4/6%', to: '6/8%' }],
     },
     {

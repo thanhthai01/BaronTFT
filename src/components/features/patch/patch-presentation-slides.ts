@@ -37,6 +37,32 @@ function chunk<T>(items: T[], size: number): T[][] {
   return pages.length ? pages : [];
 }
 
+/** `.cardHeadText h3` giờ cho phép wrap tối đa 3 dòng thay vì cắt "..." (xem
+ * PatchPresentation.module.css) — tên dài (đặc biệt trang bị dạng "Tên Việt
+ * (Tên gốc)") có thể chiếm thêm 1-2 dòng tiêu đề. Không đo DOM thật được ở
+ * tầng dựng slide (chạy trước khi render) nên ước lượng SỐ DÒNG THÊM theo
+ * tổng số ký tự VI+EN gộp trong thẻ, chia bậc (0/1/2 dòng) thay vì nhị phân —
+ * nhị phân từng đánh giá thiếu cho tên rất dài (vd "Đến Giờ Ăn Nhẹ Rồi!
+ * Snacktime!" ở khổ thẻ Tinh Linh hẹp cần tới 3 dòng, không phải 2). */
+function titleCharCount(entry: PatchEntry, entitySet: number): number {
+  const name = resolveDisplayName(entry, entitySet);
+  return name.vi.length + (name.en ? name.en.length + 1 : 0);
+}
+
+function titleWrapExtraLines(charCount: number, threshold1: number, threshold2: number): 0 | 1 | 2 {
+  if (charCount > threshold2) return 2;
+  if (charCount > threshold1) return 1;
+  return 0;
+}
+
+// Thẻ 'md' (tướng/tộc hệ/trang bị): font 24px bold, khung nội dung tiêu đề
+// ước lượng ~700px (50% của slideBody 1560px trừ padding/icon) → ~46 ký tự
+// vừa 1 dòng, ~92 ký tự mới cần tới dòng thứ 3. Mỗi dòng thêm cộng ~34px
+// (24px × line-height 1.2 + khoảng đệm hàng).
+const MD_TITLE_THRESHOLD_1 = 46;
+const MD_TITLE_THRESHOLD_2 = 92;
+const MD_TITLE_LINE_HEIGHT = 34;
+
 /** Không còn cắt số dòng số liệu trong một thẻ (yêu cầu: nội dung chi tiết
  * phải hiện đầy đủ, không "+N khác") — nên phải chia trang theo ƯỚC LƯỢNG
  * CHIỀU CAO thật của từng thẻ thay vì đếm số lượng cố định. Một thẻ 1 dòng và
@@ -45,9 +71,14 @@ function chunk<T>(items: T[], size: number): T[][] {
  * toàn thẻ ngắn thì trống thừa (đúng hai lỗi đã gặp trước đó). Dùng cho thẻ cỡ
  * 'md' (tướng/tộc hệ/trang bị) — Tinh Linh (cardSm) có hàm riêng bên dưới vì
  * padding/cỡ chữ khác hẳn. */
-function cardHeightPx(entry: PatchEntry): number {
+function cardHeightPx(entry: PatchEntry, entitySet: number): number {
   const lines = entry.changes?.length ?? 0;
-  return 130 + lines * 42;
+  const extraTitleLines = titleWrapExtraLines(titleCharCount(entry, entitySet), MD_TITLE_THRESHOLD_1, MD_TITLE_THRESHOLD_2);
+  // Thẻ không có `changes` giờ hiện `note` làm nội dung chính (xem
+  // EntryChanges/.mechanicNoteText trong PatchPresentation.tsx) thay vì chỉ
+  // trơ mỗi phần đầu thẻ — cộng thêm chiều cao ước lượng cho đoạn văn đó.
+  const noteExtra = entry.note ? 40 : 0;
+  return 130 + lines * 42 + extraTitleLines * MD_TITLE_LINE_HEIGHT + noteExtra;
 }
 
 /** Chia trang theo tổng chiều cao ước lượng thay vì đếm số lượng; vẫn chặn
@@ -137,13 +168,25 @@ const CHAMPION_COST_BANDS: { label: string; match: (cost: number) => boolean }[]
 const GRID_HEIGHT_BUDGET = 1180;
 const GRID_MAX_COUNT = 6;
 
+// Thẻ 'sm' (Tinh Linh): font 18px bold, khung nội dung tiêu đề hẹp hơn hẳn
+// (~200px, thẻ 280px trừ padding/icon) → ~20 ký tự vừa 1 dòng. Tên Tinh Linh
+// VI+EN gộp (vd "Đến Giờ Ăn Nhẹ Rồi! Snacktime!") rất dễ vượt ngưỡng này.
+// Ngưỡng 1 (~20 ký tự vừa 1 dòng) và ngưỡng 2 (~28 ký tự cần tới dòng 3) —
+// đo thật từ tên Tinh Linh dài nhất phát sinh ("Đến Giờ Ăn Nhẹ Rồi!
+// Snacktime!", 31 ký tự) vẫn tràn quá 2 dòng ở khổ thẻ hẹp này.
+const SM_TITLE_THRESHOLD_1 = 20;
+const SM_TITLE_THRESHOLD_2 = 28;
+const SM_TITLE_LINE_HEIGHT = 26;
+
 /** Thẻ Tinh Linh (cardSm), đo thật: 130 + 46×số dòng (13 dòng ≈ 728px, khớp
  * chiều cao đo được ngoài trình duyệt — công thức cũ 92+34n ước non gần 1/3).
  * Đây là hàm RIÊNG cho cardSm, không dùng chung với cardHeightPx (thẻ tướng/
  * tộc hệ cỡ 'md' có padding/cỡ chữ khác hẳn). */
-function wispCardHeightPx(entry: PatchEntry): number {
+function wispCardHeightPx(entry: PatchEntry, entitySet: number): number {
   const lines = entry.changes?.length ?? 0;
-  return 130 + lines * 46;
+  const extraTitleLines = titleWrapExtraLines(titleCharCount(entry, entitySet), SM_TITLE_THRESHOLD_1, SM_TITLE_THRESHOLD_2);
+  const noteExtra = lines === 0 && entry.note ? 34 : 0;
+  return 130 + lines * 46 + extraTitleLines * SM_TITLE_LINE_HEIGHT + noteExtra;
 }
 
 const WISP_PER_ROW = 4;
@@ -160,7 +203,7 @@ const WISP_STACK_BUDGET = 820;
  * cách flex-wrap xếp 4 thẻ/hàng, sang trang mới ngay khi tổng ước tính vượt
  * ngân sách — đảm bảo không trang nào tràn khung, đồng thời lấp kín từng
  * trang trước khi mở trang mới (không ngắt giữa chừng vì đổi loại). */
-function wispGroupPaginate(ordered: PatchEntry[]): PatchEntry[][] {
+function wispGroupPaginate(ordered: PatchEntry[], entitySet: number): PatchEntry[][] {
   const pages: PatchEntry[][] = [];
   let page: PatchEntry[] = [];
   let committedHeight = 0;
@@ -168,7 +211,7 @@ function wispGroupPaginate(ordered: PatchEntry[]): PatchEntry[][] {
   let rowCount = 0;
 
   for (const entry of ordered) {
-    const h = wispCardHeightPx(entry);
+    const h = wispCardHeightPx(entry, entitySet);
     const rowFull = rowCount >= WISP_PER_ROW;
 
     const tentativeCommitted = rowFull ? committedHeight + rowMax : committedHeight;
@@ -210,17 +253,17 @@ function championGridSlides(entries: PatchEntry[], entitySet: number): Extract<P
       const cost = championCost(entry, entitySet);
       return cost != null && band.match(cost);
     });
-    for (const page of chunkByHeight(bandEntries, (e) => cardHeightPx(e), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT)) {
+    for (const page of chunkByHeight(bandEntries, (e) => cardHeightPx(e, entitySet), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT)) {
       slides.push({ kind: 'grid', eyebrow, heading: 'Tướng', badge: band.label, entries: page });
     }
   }
   return slides;
 }
 
-function categoryGridSlides(entries: PatchEntry[], heading: string): Extract<PatchSlide, { kind: 'grid' }>[] {
+function categoryGridSlides(entries: PatchEntry[], heading: string, entitySet: number): Extract<PatchSlide, { kind: 'grid' }>[] {
   if (!entries.length) return [];
   const eyebrow = `${heading} · ${entries.length} thay đổi`;
-  return chunkByHeight(entries, (e) => cardHeightPx(e), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT).map((page) => ({
+  return chunkByHeight(entries, (e) => cardHeightPx(e, entitySet), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT).map((page) => ({
     kind: 'grid',
     eyebrow,
     heading,
@@ -255,7 +298,7 @@ function augmentGroupSlides(entries: PatchEntry[], entitySet: number): Extract<P
     if (!rarityEntries?.length) continue;
     const eyebrow = `Nâng cấp · Bậc ${patchRarityMeta[rarity].label} · ${rarityEntries.length} thay đổi`;
     const ordered = [...rarityEntries].sort(byNameVi(entitySet));
-    for (const page of chunkByHeight(ordered, (e) => cardHeightPx(e), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT)) {
+    for (const page of chunkByHeight(ordered, (e) => cardHeightPx(e, entitySet), GRID_HEIGHT_BUDGET, GRID_MAX_COUNT)) {
       slides.push({ kind: 'grid', eyebrow, heading: 'Nâng cấp', badge: `Bậc ${patchRarityMeta[rarity].label}`, entries: page });
     }
   }
@@ -296,7 +339,7 @@ function wispGroupSlides(entries: PatchEntry[], entitySet: number): Extract<Patc
       const catDiff = categoryOf(a).localeCompare(categoryOf(b), 'vi');
       return catDiff !== 0 ? catDiff : byNameVi(entitySet)(a, b);
     });
-    for (const page of wispGroupPaginate(ordered)) {
+    for (const page of wispGroupPaginate(ordered, entitySet)) {
       slides.push({ kind: 'grid', eyebrow, heading: 'Tinh Linh', badge: `Cấp ${tier}`, entries: page, cardSize: 'sm' });
     }
   }
@@ -326,9 +369,9 @@ export function buildPatchSlides(report: PatchReport, url: string): PatchSlide[]
   if (report.rhythmVi?.length) slides.push({ kind: 'rhythm', lines: report.rhythmVi });
 
   slides.push(...championGridSlides(byCategory('champion'), entitySet));
-  slides.push(...categoryGridSlides(byCategory('trait'), 'Tộc hệ'));
+  slides.push(...categoryGridSlides(byCategory('trait'), 'Tộc hệ', entitySet));
   slides.push(...augmentGroupSlides(byCategory('augment'), entitySet));
-  slides.push(...categoryGridSlides(byCategory('item'), 'Trang bị'));
+  slides.push(...categoryGridSlides(byCategory('item'), 'Trang bị', entitySet));
   slides.push(...wispGroupSlides(byCategory('wisp'), entitySet));
 
   const mechanicEntries = byCategory('mechanic');

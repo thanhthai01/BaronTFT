@@ -316,7 +316,7 @@ const report: PatchReport = {
       kind: 'buff',
       name: 'Build a Bud',
       entityId: 'augment:da_18_buildabud',
-      note: 'Augment mới — placeholder rarity/icon, cần xác nhận lại sau',
+      note: 'Augment mới',
       changes: [{ label: 'Vàng khởi đầu', from: '3 vàng', to: '6 vàng' }],
     },
     {
