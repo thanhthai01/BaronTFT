@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { set18Costs, set18Sections, set18TraitTypes, type Set18SectionId } from '@/content/set18/set18-meta';
+import { set18SectionHint } from '@/content/set18/set18-section-hint';
 import type {
   Set18Augment,
   Set18Champion,
@@ -1318,7 +1319,7 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
               >
                 <strong>{section.label}</strong>
                 <span>
-                  {String(index + 1).padStart(2, '0')} · {section.hint}
+                  {String(index + 1).padStart(2, '0')} · {set18SectionHint(section)}
                 </span>
               </Link>
             ))}

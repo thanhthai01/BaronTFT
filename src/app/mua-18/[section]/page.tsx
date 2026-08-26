@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { Set18Codex } from '@/components/features/season-18/Set18Codex';
 import { set18Sections } from '@/content/set18/set18-meta';
+import { set18SectionHint } from '@/content/set18/set18-section-hint';
 import styles from '../page.module.css';
 
 export function generateStaticParams() {
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ section: 
   if (!meta) return {};
   return {
     title: meta.label,
-    description: `${meta.label} — ${meta.hint}. Dữ liệu Mùa 18 Baron TFT.`,
+    description: `${meta.label} — ${set18SectionHint(meta)}. Dữ liệu Mùa 18 Baron TFT.`,
     alternates: { canonical: `/mua-18/${section}` },
   };
 }
@@ -35,7 +36,7 @@ export default async function Season18SectionPage({ params }: { params: Promise<
         <div className={styles.headerInner}>
           <span className="kicker">Mùa 18</span>
           <h1>{meta.label}</h1>
-          <p>{meta.hint}</p>
+          <p>{set18SectionHint(meta)}</p>
         </div>
       </header>
       <section aria-label={meta.label} className={styles.readerSection}>
