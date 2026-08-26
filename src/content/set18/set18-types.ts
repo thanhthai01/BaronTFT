@@ -165,6 +165,9 @@ export type Set18Wisp = {
   appearsStart: string | null;
   appearsEnd: string | null;
   conditionsVi: string[];
+  /** false = Riot đã gỡ khỏi game; codex ẩn đi nhưng entity index vẫn giữ để
+   * /patch tra được tên tiếng Việt + icon của mục vừa bị gỡ. */
+  visible: boolean;
 };
 
 /** Nguồn: data/metatft_set18_vi.json (261 nâng cấp). `rounds`/`roundVariants`
@@ -184,6 +187,9 @@ export type Set18Augment = {
   rounds: string[];
   roundVariants: string[];
   season: number;
+  /** false = Riot đã gỡ khỏi game; codex ẩn đi nhưng entity index vẫn giữ để
+   * /patch tra được tên tiếng Việt + icon của mục vừa bị gỡ. */
+  visible: boolean;
 };
 
 /** 'Radiant'/'Artifact' là ràng buộc hiển thị: quyết định viền vàng (Radiant)

@@ -45,7 +45,11 @@ export function resolveEntity(entry: PatchEntry, entitySet: number) {
  * `en` trả về null — nơi gọi chỉ hiện 1 dòng như cũ, không đổi hành vi. */
 export function resolveDisplayName(entry: PatchEntry, entitySet: number): { vi: string; en: string | null } {
   const entity = resolveEntity(entry, entitySet);
-  return entity?.nameVi ? { vi: entity.nameVi, en: entry.name } : { vi: entry.name, en: null };
+  // `nameVi === name` xảy ra khi codex cố ý giữ nguyên tên gốc vì chưa có bản
+  // dịch chính thức (vd Beggar's Wisp thêm mới ở 18.1ah). Trả `en` trong
+  // trường hợp đó sẽ làm UI hiện lặp "Beggar's Wisp Beggar's Wisp".
+  if (!entity?.nameVi || entity.nameVi === entry.name) return { vi: entry.name, en: null };
+  return { vi: entity.nameVi, en: entry.name };
 }
 
 /** `item` không có entity-index (không tra `nameVi` tự động — quy ước dịch

@@ -78,6 +78,9 @@ export const set18Augments = pgTable('set18_augments', {
   roundVariants: jsonb('round_variants').$type<string[]>().notNull(),
   season: integer('season'),
   isPublished: boolean('is_published').default(true).notNull(),
+  /** false = Riot đã gỡ Nâng Cấp này khỏi game — giữ dòng để tra cứu, codex ẩn
+   * đi. Khác `isPublished` (lọc ngay ở tầng pull, kéo theo entity index). */
+  visible: boolean('visible').notNull().default(true),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
   check('set18_augments_rarity_check', sql`${table.rarity} in ('Silver', 'Gold', 'Prismatic')`),
@@ -100,6 +103,8 @@ export const set18Wisps = pgTable('set18_wisps', {
   appearsStart: text('appears_start'),
   appearsEnd: text('appears_end'),
   conditionsVi: jsonb('conditions_vi').$type<string[]>().notNull(),
+  /** false = Riot đã gỡ Tinh Linh này khỏi game — giữ dòng để tra cứu, codex ẩn đi. */
+  visible: boolean('visible').notNull().default(true),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 

@@ -52,7 +52,9 @@ export function WispCard({
 
       <div className={styles.wispNames}>
         <strong className={styles.wispNameVi}>{wisp.nameVi}</strong>
-        <span className={styles.wispNameEn}>{wisp.name}</span>
+        {/* Trùng nhau = codex cố ý giữ tên gốc vì chưa có bản dịch chính thức
+            (vd Beggar's Wisp thêm ở 18.1ah) — hiện 1 dòng thay vì lặp lại. */}
+        {wisp.nameVi === wisp.name ? null : <span className={styles.wispNameEn}>{wisp.name}</span>}
       </div>
 
       <p className={styles.wispDesc}>{wisp.descriptionVi}</p>

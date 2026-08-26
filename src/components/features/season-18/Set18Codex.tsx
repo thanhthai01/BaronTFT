@@ -1090,12 +1090,15 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
       try {
         if (activeSection === 'tinh-linh') {
           const wisps = await import('@/content/set18/set18-wisps');
-          set18Wisps = wisps.set18Wisps;
+          // visible === false = Riot đã gỡ khỏi game. Ẩn khỏi danh sách codex,
+          // nhưng vẫn truyền bản ĐẦY ĐỦ vào buildSlugRefMap để link cũ còn
+          // sống và /patch không mất tên tiếng Việt + icon của mục vừa bị gỡ.
+          set18Wisps = wisps.set18Wisps.filter((wisp) => wisp.visible !== false);
           const { entityIndex, slugById } = await loadSlugMaps();
           set18WispSlugByRef = buildSlugRefMap('wisp', wisps.set18Wisps, entityIndex, slugById);
         } else if (activeSection === 'nang-cap') {
           const augments = await import('@/content/set18/set18-augments');
-          set18Augments = augments.set18Augments;
+          set18Augments = augments.set18Augments.filter((augment) => augment.visible !== false);
           const { entityIndex, slugById } = await loadSlugMaps();
           set18AugmentSlugByRef = buildSlugRefMap('augment', augments.set18Augments, entityIndex, slugById);
         } else {
@@ -1119,7 +1122,7 @@ export function Set18Codex({ section: activeSection }: { section: SectionId }) {
               import('@/content/set18/set18-wisps'),
               import('@/content/set18-effects'),
             ]);
-            set18Wisps = wisps.set18Wisps;
+            set18Wisps = wisps.set18Wisps.filter((wisp) => wisp.visible !== false);
             set18WispByNameVi = new Map();
             for (const wisp of wisps.set18Wisps) {
               if (!set18WispByNameVi.has(wisp.nameVi)) set18WispByNameVi.set(wisp.nameVi, wisp);
