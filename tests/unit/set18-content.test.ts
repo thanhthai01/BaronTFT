@@ -126,13 +126,16 @@ describe('Set 18 · tộc hệ', () => {
     expect(eclipse?.champions).toEqual([]);
   });
 
-  it('Đao Phủ tách câu giải nghĩa Chính Xác ra khỏi bullet mốc', () => {
+  // Thuật ngữ `Precision` dịch chính thức là "Chuẩn Xác" (không phải "Chính
+  // Xác") — xác nhận ở bản vi_vn của Riot và ở patch note live 18.1, xem
+  // scripts/db/fix-vi-gaps-set18-traits-wisps.ts.
+  it('Đao Phủ tách câu giải nghĩa Chuẩn Xác ra khỏi bullet mốc', () => {
     const exe = set18Traits.find((t) => t.name === 'Executioner');
-    expect(exe?.note).toContain('Chính Xác:');
-    // Mốc (2) vẫn được phép nhắc "Chính Xác" như một hiệu ứng; thứ phải biến
+    expect(exe?.note).toContain('Chuẩn Xác:');
+    // Mốc (2) vẫn được phép nhắc "Chuẩn Xác" như một hiệu ứng; thứ phải biến
     // khỏi bullet là câu GIẢI NGHĨA, nhận ra nhờ dấu hai chấm ngay sau.
     const bullets = (exe?.breakpointDetails ?? []).map((b) => b.bullet?.textVi ?? '');
-    expect(bullets.some((b) => b.includes('Chính Xác:'))).toBe(false);
+    expect(bullets.some((b) => b.includes('Chuẩn Xác:'))).toBe(false);
   });
 
   it('Mặt Trời tách bảng thưởng theo số tướng 3 sao', () => {
