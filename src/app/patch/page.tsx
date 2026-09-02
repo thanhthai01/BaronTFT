@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { PatchBoard } from '@/components/features/patch/PatchBoard';
+import { patchReports } from '@/content/patch-notes';
+import { patchNotesIndex } from '@/content/patch-notes-index.generated';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -15,7 +17,7 @@ export default function PatchPage() {
   return (
     <section className={styles.page}>
       <div className="wide-container">
-        <PatchBoard />
+        <PatchBoard report={patchReports[0]} index={patchNotesIndex} />
       </div>
     </section>
   );

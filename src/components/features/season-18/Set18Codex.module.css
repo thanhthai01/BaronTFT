@@ -723,6 +723,17 @@
   font-size: var(--fs-2xs);
 }
 
+/* Tên EN gốc — chỉ hiện khi tướng có nicknameVi (tên VI chính thức thay thế
+   làm dòng chính); phần lớn tướng vẫn giữ tên EN làm dòng chính duy nhất. */
+.unameEn {
+  display: block;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--fs-2xs);
+  font-style: italic;
+  text-transform: none;
+}
+
 .nameCol {
   display: flex;
   flex: 1;

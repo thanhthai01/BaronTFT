@@ -24,11 +24,12 @@ import {
   patchKindOrder,
   patchOriginMeta,
   patchRarityMeta,
-  patchReports,
   type PatchCategory,
   type PatchChangeKind,
   type PatchContentOrigin,
   type PatchEntry,
+  type PatchReport,
+  type PatchReportIndexEntry,
 } from '@/content/patch-notes';
 import { buildPatchBoardModel } from './patch-board-model';
 import styles from './PatchBoard.module.css';
@@ -170,16 +171,18 @@ function OriginBadge({ origin }: { origin: PatchContentOrigin }) {
   );
 }
 
-export function PatchBoard({ reportId }: { reportId?: string } = {}) {
+export function PatchBoard({ report, index }: { report: PatchReport; index: PatchReportIndexEntry[] }) {
   const router = useRouter();
   const selectId = useId();
   const [category, setCategory] = useState<PatchCategory | 'all'>('all');
   const [kindFilter, setKindFilter] = useState<PatchChangeKind | 'all'>('all');
-  // `reportId` đến từ route (/patch → không truyền = mới nhất; /patch/[version]
-  // → truyền id bản vá cụ thể). Không dùng state nội bộ nữa: trước đây chuyển
-  // bản vá chỉ đổi state, URL đứng yên nên không rank/không chia sẻ được theo
-  // từng bản vá — xem plan Đợt 2.
-  const report = patchReports.find((item) => item.id === reportId) ?? patchReports[0];
+  // `report` đến từ route qua server component (/patch → bản mới nhất;
+  // /patch/[version] → bản cụ thể) — không tự tra cứu bằng patchReports nữa.
+  // Import thẳng patchReports (14 bản vá, 547 mục, 146KB) từ client component
+  // này từng làm bundle /patch phình theo từng bản vá mới; server component
+  // (free, không tính vào bundle) giờ tra sẵn rồi truyền xuống qua props —
+  // xem ghi chú trong pull-set18.ts pullPatchNotes(). `index` chỉ đủ cho ô
+  // chọn bản vá (id/version/dateVi/title), không kéo theo entries/impacts.
   const entitySet = report.entitySet ?? 18;
 
   /** Hai bộ lọc chồng nhau nên số đếm của mỗi bên phải tính theo bộ lọc CÒN LẠI,
@@ -211,7 +214,7 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
         </div>
 
         <div className={[styles.filterBlock, styles.presentationBlock].join(' ')}>
-          <PatchPresentation report={report} url={report.id === patchReports[0].id ? '/patch' : `/patch/${report.id}`} />
+          <PatchPresentation report={report} url={report.id === index[0].id ? '/patch' : `/patch/${report.id}`} />
         </div>
 
         {/* Danh sách bản vá sẽ dài dần theo mùa nên dùng select: dù có vài chục
@@ -225,9 +228,9 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
               trong cùng một ô. Ngày vẫn được nói riêng ở dòng meta bên dưới. */}
           <PatchVersionSelect
             id={selectId}
-            options={patchReports.map((item) => ({ id: item.id, label: item.version }))}
+            options={index.map((item) => ({ id: item.id, label: item.version }))}
             value={report.id}
-            onChange={(id) => router.push(id === patchReports[0].id ? '/patch' : `/patch/${id}`)}
+            onChange={(id) => router.push(id === index[0].id ? '/patch' : `/patch/${id}`)}
           />
           {/* Danh tính bản vá (ngày + nguồn) chỉ nói một lần ở đây; thanh đầu cột
               phải chỉ giữ con số của lượt xem hiện tại. */}

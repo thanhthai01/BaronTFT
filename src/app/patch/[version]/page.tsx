@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { PatchBoard } from '@/components/features/patch/PatchBoard';
 import { patchReports } from '@/content/patch-notes';
+import { patchNotesIndex } from '@/content/patch-notes-index.generated';
 import styles from '../page.module.css';
 
 // Bản mới nhất (patchReports[0]) không có trang riêng ở đây — nó đã có URL
@@ -33,7 +34,7 @@ export default async function PatchVersionPage({ params }: { params: Promise<{ v
   return (
     <section className={styles.page}>
       <div className="wide-container">
-        <PatchBoard reportId={report.id} />
+        <PatchBoard report={report} index={patchNotesIndex} />
       </div>
     </section>
   );

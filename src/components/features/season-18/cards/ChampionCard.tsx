@@ -7,19 +7,26 @@ import { assertTrustedHtml } from '@/lib/trusted-html';
 import styles from '../Set18Codex.module.css';
 import { CostPill, TraitIcon, traitTitle } from './shared';
 
+/** Máu/Mana/STVL lưu dạng mảng theo cấp sao — [0,0,0] nghĩa là dữ liệu chưa
+ * được lấp (lỗ hổng scrape), không phải chỉ số thật của tướng, nên ẩn dòng
+ * đó thay vì in "0/0/0". */
+function isEmptyStatArray(values: number[]): boolean {
+  return values.every((v) => !v);
+}
+
 export function statRows(s: Set18ChampionStats) {
   return [
-    { key: 'health', label: 'Máu', icon: styles.statIconHealth, value: s.health.join('/') },
-    { key: 'mana', label: 'Mana', icon: styles.statIconMana, value: s.mana.join('/') },
-    { key: 'attackDamage', label: 'Sát thương tấn công', icon: styles.statIconAd, value: s.attackDamage.join('/') },
-    { key: 'abilityPower', label: 'Sát thương kỹ năng', icon: styles.statIconAp, value: String(s.abilityPower) },
-    { key: 'armor', label: 'Giáp', icon: styles.statIconArmor, value: String(s.armor) },
-    { key: 'magicResist', label: 'Kháng phép', icon: styles.statIconMr, value: String(s.magicResist) },
-    { key: 'attackSpeed', label: 'Tốc độ tấn công', icon: styles.statIconAs, value: String(s.attackSpeed) },
-    { key: 'critChance', label: 'Tỷ lệ chí mạng', icon: styles.statIconCritChance, value: s.critChance_pct },
-    { key: 'critMultiplier', label: 'Sát thương chí mạng', icon: styles.statIconCritDmg, value: s.critMultiplier_pct },
-    { key: 'range', label: 'Tầm bắn', icon: styles.statIconRange, value: String(s.range) },
-  ];
+    { key: 'health', label: 'Máu', icon: styles.statIconHealth, value: s.health.join('/'), empty: isEmptyStatArray(s.health) },
+    { key: 'mana', label: 'Mana', icon: styles.statIconMana, value: s.mana.join('/'), empty: isEmptyStatArray(s.mana) },
+    { key: 'attackDamage', label: 'Sát thương tấn công', icon: styles.statIconAd, value: s.attackDamage.join('/'), empty: isEmptyStatArray(s.attackDamage) },
+    { key: 'abilityPower', label: 'Sát thương kỹ năng', icon: styles.statIconAp, value: String(s.abilityPower), empty: false },
+    { key: 'armor', label: 'Giáp', icon: styles.statIconArmor, value: String(s.armor), empty: false },
+    { key: 'magicResist', label: 'Kháng phép', icon: styles.statIconMr, value: String(s.magicResist), empty: false },
+    { key: 'attackSpeed', label: 'Tốc độ tấn công', icon: styles.statIconAs, value: String(s.attackSpeed), empty: false },
+    { key: 'critChance', label: 'Tỷ lệ chí mạng', icon: styles.statIconCritChance, value: s.critChance_pct, empty: false },
+    { key: 'critMultiplier', label: 'Sát thương chí mạng', icon: styles.statIconCritDmg, value: s.critMultiplier_pct, empty: false },
+    { key: 'range', label: 'Tầm bắn', icon: styles.statIconRange, value: String(s.range), empty: false },
+  ].filter((row) => !row.empty);
 }
 
 function resolveTraits(names: string[], traitByName: Map<string, Set18Trait>): Set18Trait[] {
@@ -93,7 +100,8 @@ export function CardFrontContent({
         <div className={styles.miniHead}>
           <Image alt={champion.name} className={styles.miniLogo} height={56} sizes="56px" src={form.image} width={56} />
           <div className={styles.nameCol}>
-            <strong className={styles.uname}>{champion.name}</strong>
+            <strong className={styles.uname}>{champion.nicknameVi || champion.name}</strong>
+            {champion.nicknameVi ? <span className={styles.unameEn}>{champion.name}</span> : null}
             <span className={styles.urole}>{champion.role}</span>
           </div>
           <CostPill color={champion.costColor} cost={champion.cost} />
@@ -305,7 +313,8 @@ export function ChampionCard({
           >
             <div className={styles.backHead}>
               <div className={styles.nameRow}>
-                <strong className={styles.uname}>{champion.name}</strong>
+                <strong className={styles.uname}>{champion.nicknameVi || champion.name}</strong>
+                {champion.nicknameVi ? <span className={styles.unameEn}>{champion.name}</span> : null}
                 <span className={styles.urole}>{champion.role}</span>
               </div>
               <CostPill color={champion.costColor} cost={champion.cost} />

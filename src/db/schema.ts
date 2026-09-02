@@ -12,10 +12,11 @@ import { check, pgTable, text, integer, boolean, jsonb, timestamp, uniqueIndex }
 export const set18Champions = pgTable('set18_champions', {
   id: text('id').primaryKey(), // khớp entity-index, vd "champion:tft18_akali"
   name: text('name').notNull(),
-  // Biệt danh/lore tiếng Việt, KHÔNG thay thế `name` — quy ước site vẫn giữ
-  // tên tướng tiếng Anh làm tên hiển thị chính. Field này optional, chỉ điền
-  // khi có bản dịch xác nhận (vd Raptor = "Chim Quỷ Biến Dị"); phần lớn tướng
-  // để trống cho tới khi có nhu cầu hiển thị.
+  // Tên VI CHÍNH THỨC (không phải biệt danh tuỳ chọn) — khi có, ChampionCard
+  // hiện nó làm tên chính, `name` (EN) lùi xuống dòng phụ. Chỉ điền khi có
+  // bản dịch chính thức xác nhận (10 tướng Quái Rừng, vd Raptor = "Chim Mẹ",
+  // khớp tftips.app/vi + riot_official glossary); phần lớn tướng (proper
+  // noun kiểu Akali, Ahri...) giữ nguyên tên EN nên để trống.
   nicknameVi: text('nickname_vi'),
   cost: integer('cost').notNull(),
   costLabel: text('cost_label').notNull(),

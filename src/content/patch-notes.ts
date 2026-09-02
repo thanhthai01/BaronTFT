@@ -130,6 +130,16 @@ export const patchImpactMeta: Record<PatchImpact['direction'], { label: string; 
   mixed: { label: 'Đổi hướng', arrow: '◆' },
 };
 
+/** Bản gọn của PatchReport — chỉ đủ cho ô chọn bản vá, KHÔNG kéo theo
+ * entries/impacts (nặng, chỉ bản đang xem mới cần). Xem
+ * `patch-notes-index.generated.ts` và lý do tách trong PatchBoard.tsx. */
+export type PatchReportIndexEntry = {
+  id: string;
+  version: string;
+  dateVi: string;
+  title: string;
+};
+
 export type PatchReport = {
   id: string;
   version: string;
