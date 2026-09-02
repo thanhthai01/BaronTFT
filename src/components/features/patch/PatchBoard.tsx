@@ -220,9 +220,12 @@ export function PatchBoard({ reportId }: { reportId?: string } = {}) {
           <label className={styles.filterLabel} htmlFor={selectId}>
             Chọn bản vá
           </label>
+          {/* Nhãn chỉ dùng `version`: chuỗi này đã tự chứa ngày ("Live
+              02/09/2026 (18.1d)") nên nối thêm dateVi sẽ lặp ngày hai lần
+              trong cùng một ô. Ngày vẫn được nói riêng ở dòng meta bên dưới. */}
           <PatchVersionSelect
             id={selectId}
-            options={patchReports.map((item) => ({ id: item.id, label: `${item.version} — ${item.dateVi}` }))}
+            options={patchReports.map((item) => ({ id: item.id, label: item.version }))}
             value={report.id}
             onChange={(id) => router.push(id === patchReports[0].id ? '/patch' : `/patch/${id}`)}
           />
