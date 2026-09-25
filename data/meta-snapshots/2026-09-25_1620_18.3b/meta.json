@@ -1,0 +1,17 @@
+{
+  "fetchedAt": "2026-09-25T16:20:48",
+  "patch": "18.3b",
+  "patchParam": "current",
+  "clusterId": 424,
+  "tftSet": "TFTSet18",
+  "totals": {
+    "emerald_d1": 491016,
+    "emerald_d3": 488528,
+    "diamond_d1": 184768,
+    "diamond_d3": 185184,
+    "master_d1": 62648,
+    "master_d3": 62448
+  },
+  "catalogHash": "4a509abee609",
+  "catalogRef": "2026-09-25_1619_18.3"
+}
