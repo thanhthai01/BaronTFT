@@ -36,7 +36,7 @@ export function Legend({
       </div>
 
       <div className={styles.group}>
-        <span className={styles.groupLabel}>Xu hướng so với bản {previousPatch}</span>
+        <span className={styles.groupLabel}>Xu hướng so với {previousPatch}</span>
         <ul className={styles.items}>
           {TREND_ITEMS.map(({ trend, symbol, label }) => (
             <li className={styles.item} key={trend}>

@@ -44,7 +44,7 @@ export type MetaComp = {
 
 export const metaCompsSnapshot = {
   patch: '18.3b',
-  previousPatch: '18.3',
+  previousPatch: 'bản 18.3',
   updatedVi: '25/09/2026',
   source: 'MetaTFT',
   defaultRank: 'emerald' as MetaCompRankKey,

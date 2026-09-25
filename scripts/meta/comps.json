@@ -1,0 +1,439 @@
+{
+  "_readme": "Danh sách đội hiển thị trên /doi-hinh-meta. Routine sửa file này rồi chạy gen_meta_comps.py. Xem scripts/meta/ROUTINE.md.",
+  "comps": [
+    {
+      "cluster": "425014",
+      "id": "veigar-thuat-su",
+      "name": "Veigar Thuật Sư",
+      "carries": [
+        "Veigar"
+      ],
+      "damage": "AP",
+      "cost": 1,
+      "playstyle": "Reroll cấp 5",
+      "prediction": null,
+      "units": [
+        "Ornn",
+        "Rek'Sai",
+        "Veigar",
+        "Alistar",
+        "LeBlanc",
+        "Cassiopeia",
+        "Fiddlesticks"
+      ],
+      "metatftName": "DA_18_Spellweaver, DA_18_Veigar",
+      "note": "Ổn định ở mọi rank. Không bị đụng ở 18.3b."
+    },
+    {
+      "cluster": "425052",
+      "id": "elise-tien-hac-am",
+      "name": "Elise Tiên Hắc Ám",
+      "carries": [
+        "Elise"
+      ],
+      "damage": "AP",
+      "cost": 2,
+      "playstyle": "Reroll cấp 6",
+      "prediction": null,
+      "units": [
+        "Elise",
+        "Cassiopeia",
+        "Diana",
+        "Hecarim",
+        "Kog'Maw",
+        "Ancient Sentinel",
+        "Morgana",
+        "Alune"
+      ],
+      "metatftName": "DA_18_Coven, DA_18_Morgana",
+      "note": "Nâng Cấp Tà Thuật của Tiên Hắc Ám bị tắt ở 18.3b, đội mất nguồn sức mạnh chính."
+    },
+    {
+      "cluster": "425022",
+      "id": "khazix-hecarim",
+      "name": "Kha'Zix Hecarim",
+      "carries": [
+        "Kha'Zix"
+      ],
+      "damage": "AP",
+      "cost": 3,
+      "playstyle": "Reroll cấp 7",
+      "prediction": null,
+      "units": [
+        "Ornn",
+        "Diana",
+        "Fiddlesticks",
+        "Hecarim",
+        "Kha'Zix",
+        "Ezreal",
+        "Soraka"
+      ],
+      "metatftName": "DA_18_Elderwood, DA_18_KhaZix",
+      "note": "Kha'Zix bị giảm sát thương ở 18.3b. Vẫn mạnh ở Cao Thủ+, nhưng ở Lục Bảo – Kim Cương chỉ còn mức chơi được."
+    },
+    {
+      "cluster": "425008",
+      "id": "cassiopeia-ve-quan",
+      "name": "Cassiopeia Vệ Quân",
+      "carries": [
+        "Cassiopeia"
+      ],
+      "damage": "AP",
+      "cost": 3,
+      "playstyle": "Reroll cấp 7",
+      "prediction": null,
+      "units": [
+        "Leona",
+        "Ornn",
+        "Shen",
+        "Cassiopeia",
+        "Fiddlesticks",
+        "Rammus",
+        "Lillia"
+      ],
+      "metatftName": "DA_18_Defender, DA_18_Cassiopeia",
+      "note": "Mạnh lên nhờ bớt người chơi Kha'Zix. Chung Ornn, Fiddlesticks và đồ AP với Kha'Zix."
+    },
+    {
+      "cluster": "425020",
+      "id": "azir-dao-phu",
+      "name": "Azir Đao Phủ",
+      "carries": [
+        "Azir"
+      ],
+      "damage": "AP",
+      "cost": 3,
+      "playstyle": "Reroll cấp 7",
+      "prediction": null,
+      "units": [
+        "Rek'Sai",
+        "Yorick",
+        "Yunara",
+        "Azir",
+        "Kha'Zix",
+        "Vi",
+        "Sett"
+      ],
+      "metatftName": "DA_18_Executioner, DA_18_Azir",
+      "note": "Dính cả nerf Kha'Zix lẫn Gai Đen, rơi khỏi nhóm mạnh."
+    },
+    {
+      "cluster": "425000",
+      "id": "zyra-dung-si",
+      "name": "Zyra Dũng Sĩ",
+      "carries": [
+        "Zyra"
+      ],
+      "damage": "AP",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Yorick",
+        "Scuttlecrab",
+        "Sejuani",
+        "Vi",
+        "Amumu",
+        "Sivir",
+        "Zyra",
+        "Ashe",
+        "Maokai"
+      ],
+      "metatftName": "DA_Juggernaut18, DA_18_Zyra, DA_18_Sivir",
+      "note": "Lên cấp 9 có thể đổi sang Ashe cùng khung Dũng Sĩ."
+    },
+    {
+      "cluster": "425005",
+      "id": "ahri-thuat-si",
+      "name": "Ahri Thuật Sĩ",
+      "carries": [
+        "Ahri"
+      ],
+      "damage": "AP",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Karma",
+        "Pebbles",
+        "Krug",
+        "Ahri",
+        "Ancient Sentinel",
+        "Morgana",
+        "Sett",
+        "Taric"
+      ],
+      "metatftName": "DA_18_Invoker, DA_18_Ahri",
+      "note": "Ổn định, dùng chung khung Thuật Sĩ với Morgana + Alune."
+    },
+    {
+      "cluster": "425010",
+      "id": "malphite-dao-phu",
+      "name": "Malphite Đao Phủ",
+      "carries": [
+        "Zyra",
+        "Malphite"
+      ],
+      "damage": "AP",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Yorick",
+        "Azir",
+        "Fiddlesticks",
+        "Amumu",
+        "Malphite",
+        "Soraka",
+        "Zyra",
+        "Kennen"
+      ],
+      "metatftName": "DA_18_Executioner, DA_18_Soraka",
+      "note": "Mạnh lên ở 18.3b. Zyra cầm Ấn Đao Phủ gây sát thương, Malphite chống chịu."
+    },
+    {
+      "cluster": "425026",
+      "id": "morgana-alune-thuat-si",
+      "name": "Morgana + Alune Thuật Sĩ",
+      "carries": [
+        "Alune",
+        "Morgana"
+      ],
+      "damage": "AP",
+      "cost": 5,
+      "playstyle": "Fast 9",
+      "prediction": null,
+      "units": [
+        "Elise",
+        "Cassiopeia",
+        "Diana",
+        "Ancient Sentinel",
+        "Morgana",
+        "Alune",
+        "Taric",
+        "The Elder Dragon"
+      ],
+      "metatftName": "DA_18_Invoker, DA_18_Morgana",
+      "note": "Đội tốt nhất ở Lục Bảo+. Ít người chơi ở Cao Thủ nên mẫu ở đó nhỏ."
+    },
+    {
+      "cluster": "425019",
+      "id": "warwick-sat-thu",
+      "name": "Warwick + Sói",
+      "carries": [
+        "Warwick"
+      ],
+      "damage": "AD",
+      "cost": 2,
+      "playstyle": "Reroll cấp 6",
+      "prediction": null,
+      "units": [
+        "Rek'Sai",
+        "Murkwolf",
+        "Warwick",
+        "Azir",
+        "Diana",
+        "Krug",
+        "Brambleback",
+        "Malphite"
+      ],
+      "metatftName": "DA_18_Slayer, DA_18_Warwick",
+      "note": "Đội 2 vàng khá nhất hiện tại, nhưng chưa đủ mạnh để leo rank ổn định."
+    },
+    {
+      "cluster": "425006",
+      "id": "rengar-hoa-linh",
+      "name": "Rengar Hoa Linh",
+      "carries": [
+        "Rengar"
+      ],
+      "damage": "AD",
+      "cost": 3,
+      "playstyle": "Reroll cấp 7",
+      "prediction": null,
+      "units": [
+        "Yorick",
+        "Krug",
+        "Master Yi",
+        "Rengar",
+        "Vi",
+        "Nidalee",
+        "Sett"
+      ],
+      "metatftName": "DA_18_Blossom, DA_18_Rengar",
+      "note": "Đội AD reroll tốt nhất, ổn định ở mọi rank. Đổi được sang Master Yi cùng khung."
+    },
+    {
+      "cluster": "425023",
+      "id": "master-yi-thich-ung",
+      "name": "Master Yi Thích Ứng",
+      "carries": [
+        "Master Yi"
+      ],
+      "damage": "AD",
+      "cost": 3,
+      "playstyle": "Reroll cấp 7",
+      "prediction": null,
+      "units": [
+        "Yorick",
+        "Kog'Maw",
+        "Krug",
+        "Master Yi",
+        "Vi",
+        "Nidalee",
+        "Sett"
+      ],
+      "metatftName": "DA_18_Adaptor, DA_18_MasterYi_AD",
+      "note": "Cùng khung với Rengar (Sett, Yorick, Krug, Nidalee, Vi)."
+    },
+    {
+      "cluster": "425002",
+      "id": "aphelios-mat-trang",
+      "name": "Aphelios Mặt Trăng",
+      "carries": [
+        "Aphelios",
+        "Nidalee"
+      ],
+      "damage": "AD",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Varus",
+        "Diana",
+        "Kog'Maw",
+        "Vi",
+        "Amumu",
+        "Ancient Sentinel",
+        "Aphelios",
+        "Nidalee"
+      ],
+      "metatftName": "DA_18_Lunar, DA_18_Aphelios, DA_Nidalee18_AP",
+      "note": "Giữ top 4 rất tốt, ít khi top 1."
+    },
+    {
+      "cluster": "425001",
+      "id": "aphelios-lien-kich",
+      "name": "Aphelios Liên Kích",
+      "carries": [
+        "Aphelios"
+      ],
+      "damage": "AD",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Rakan",
+        "Varus",
+        "Xayah",
+        "Raptor",
+        "Amumu",
+        "Ancient Sentinel",
+        "Aphelios",
+        "Brambleback"
+      ],
+      "metatftName": "DA_18_Rapidfire, DA_18_Aphelios",
+      "note": "Biến thể của Aphelios, ít người chơi hơn bản Mặt Trăng."
+    },
+    {
+      "cluster": "425004",
+      "id": "ezreal-dao-phu",
+      "name": "Ezreal Đao Phủ",
+      "carries": [
+        "Ezreal"
+      ],
+      "damage": "AD",
+      "cost": 4,
+      "playstyle": "Fast 8",
+      "prediction": null,
+      "units": [
+        "Ornn",
+        "Alistar",
+        "Yunara",
+        "Fiddlesticks",
+        "Ahri",
+        "Ezreal",
+        "Sett",
+        "Soraka"
+      ],
+      "metatftName": "DA_18_Executioner, DA_18_Sett",
+      "note": "Mạnh lên ở 18.3b."
+    },
+    {
+      "cluster": "425025",
+      "id": "ashe-dung-si",
+      "name": "Ashe Dũng Sĩ",
+      "carries": [
+        "Ashe"
+      ],
+      "damage": "AD",
+      "cost": 5,
+      "playstyle": "Fast 9",
+      "prediction": null,
+      "units": [
+        "Rakan",
+        "Vi",
+        "Amumu",
+        "Sivir",
+        "Ashe",
+        "Ivern",
+        "Kennen",
+        "Maokai",
+        "Taric"
+      ],
+      "metatftName": "DA_Juggernaut18, DA_18_Sivir",
+      "note": "Ít bị tranh hơn Elder Dragon, dùng chung hàng huyền thoại."
+    },
+    {
+      "cluster": "425047",
+      "id": "elder-dragon",
+      "name": "Elder Dragon",
+      "carries": [
+        "The Elder Dragon",
+        "Draven"
+      ],
+      "damage": "AD",
+      "cost": 5,
+      "playstyle": "Fast 9",
+      "prediction": null,
+      "units": [
+        "Amumu",
+        "Ancient Sentinel",
+        "Draven",
+        "Ivern",
+        "Kennen",
+        "Maokai",
+        "Taric",
+        "The Elder Dragon"
+      ],
+      "metatftName": "DA_Riftbeast18, DA_Sentinel18",
+      "note": "Đội bị tranh nhiều nhất meta. Chung hàng huyền thoại với Ashe."
+    },
+    {
+      "cluster": "425003",
+      "id": "draven-than-rung",
+      "name": "Draven Thần Rừng",
+      "carries": [
+        "Draven",
+        "Ezreal"
+      ],
+      "damage": "AD",
+      "cost": 5,
+      "playstyle": "Fast 9",
+      "prediction": null,
+      "units": [
+        "Alistar",
+        "Amumu",
+        "Ezreal",
+        "Draven",
+        "Gnar",
+        "Ivern",
+        "Kennen",
+        "Maokai",
+        "Taric"
+      ],
+      "metatftName": "DA_18_Elderwood, DA_18_Ezreal, DA_Amumu18",
+      "note": "Chung hàng huyền thoại với Ashe và Elder Dragon."
+    }
+  ]
+}

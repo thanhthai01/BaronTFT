@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+
+# Lần chụp MetaTFT — nằm ở nhánh riêng meta-snapshots (scripts/meta/sync_data.py), không commit vào main
+data/meta-snapshots/
