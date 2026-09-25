@@ -1,0 +1,29 @@
+.symbol {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+}
+
+.symbol[data-verdict='meta'] {
+  color: var(--success);
+}
+
+.symbol[data-verdict='predicted'] {
+  color: var(--accent-primary);
+}
+
+.symbol[data-verdict='viable'] {
+  color: var(--text-muted);
+}
+
+.symbol[data-verdict='avoid'] {
+  color: var(--danger);
+}
+
+.label {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}

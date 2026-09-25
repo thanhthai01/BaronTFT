@@ -1,0 +1,25 @@
+/* Header trang này cần đặc tả hơn .page-header (global) để nén padding-block
+ * và cỡ chữ h1/kicker/p vốn dành cho hero, không hợp với trang bảng số liệu. */
+:global(.page-header).header {
+  padding-block: clamp(1.1rem, 2.4vw, 1.6rem);
+}
+
+:global(.page-header).header :global(h1) {
+  margin: 0.35rem 0 0.3rem;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+}
+
+.header p {
+  margin-top: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.section {
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+.stack {
+  display: grid;
+  gap: 0.75rem;
+}

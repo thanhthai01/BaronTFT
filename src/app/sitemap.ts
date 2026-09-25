@@ -6,7 +6,7 @@ import { set18Slugs } from '@/content/set18/set18-slugs.generated';
 import { lessons } from '@/content/lessons';
 import { patchReports } from '@/content/patch-notes';
 
-const STATIC_ROUTES = ['/', '/checklist', '/cay-quyet-dinh', '/lo-trinh', '/nguon-hoc', '/patch', '/gop-y', '/mua-18/meo'];
+const STATIC_ROUTES = ['/', '/checklist', '/cay-quyet-dinh', '/lo-trinh', '/nguon-hoc', '/patch', '/doi-hinh-meta', '/gop-y', '/mua-18/meo'];
 
 // lastModified bị bỏ qua có chủ đích: PatchReport.dateVi là chuỗi tiếng Việt tự
 // do (vd "Bản PBE 06/08"), không parse tin cậy thành Date — thà thiếu field tuỳ

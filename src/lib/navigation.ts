@@ -12,6 +12,7 @@ export const primaryNavigationLinks: PrimaryNavigationLink[] = [
   { href: '/checklist', label: 'Checklist', navGroup: 'Thực hành' },
   { href: '/mua-18', label: 'Mùa 18', navGroup: 'Tra cứu' },
   { href: '/patch', label: 'Patch', navGroup: 'Tra cứu' },
+  { href: '/doi-hinh-meta', label: 'Đội hình meta', shortLabel: 'Đội hình', navGroup: 'Tra cứu' },
   { href: '/nguon-hoc', label: 'Nguồn học', navGroup: 'Tra cứu' },
 ];
 

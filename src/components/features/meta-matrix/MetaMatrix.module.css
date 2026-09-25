@@ -1,0 +1,119 @@
+.matrix {
+  display: grid;
+  gap: 0.35rem;
+}
+
+/* Cột nhãn giá vàng hẹp + 2 cột bằng nhau cho AP/AD — cùng khung với .row. */
+.header,
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.header {
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border-line);
+}
+
+.headerSpacer {
+  display: block;
+}
+
+.headerCol {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extra);
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-tight);
+}
+
+.headerCol small {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.row {
+  align-items: start;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.35rem;
+}
+
+.row:first-of-type {
+  border-top: none;
+}
+
+.rowLabel {
+  position: sticky;
+  top: 5.5rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+}
+
+.cell {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  align-content: start;
+  /* Mỗi thẻ tự giữ chiều cao riêng — không cho grid kéo giãn thẻ liền kề
+   * bằng chiều cao thẻ đang mở <details> (bug: thẻ bên cạnh biến thành
+   * khối trắng rỗng khi 1 thẻ trong hàng expand). */
+  align-items: start;
+  gap: 0.35rem;
+}
+
+.mobileColLabel {
+  display: none;
+}
+
+.empty {
+  margin: 0;
+  border: 1px dashed var(--border-line);
+  border-radius: var(--r-md);
+  padding: 0.9rem;
+  color: var(--text-subtle);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .header {
+    display: none;
+  }
+
+  .row {
+    display: block;
+    padding-top: 0.7rem;
+  }
+
+  .rowLabel {
+    position: static;
+    margin-bottom: 0.35rem;
+    font-size: var(--fs-sm);
+  }
+
+  .cell {
+    grid-template-columns: 1fr;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobileColLabel {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+  }
+}
