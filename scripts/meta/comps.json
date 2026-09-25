@@ -1,5 +1,5 @@
 {
-  "_readme": "Danh sách đội hiển thị trên /doi-hinh-meta. Routine sửa file này rồi chạy gen_meta_comps.py. Xem scripts/meta/ROUTINE.md.",
+  "_readme": "Danh sách đội hiển thị trên /doi-hinh-meta. Sửa file này rồi chạy gen_meta_comps.py. Xem scripts/meta/README.md và skill tft-meta-update.",
   "comps": [
     {
       "cluster": "425014",

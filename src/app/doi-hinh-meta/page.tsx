@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { metaComps, metaCompsSnapshot } from '@/content/meta-comps';
 import { buildMetaMatrix } from '@/components/features/meta-matrix/meta-matrix-model';
+import { DataFreshness } from '@/components/features/meta-matrix/DataFreshness';
 import { Legend } from '@/components/features/meta-matrix/Legend';
 import { MetaMatrix } from '@/components/features/meta-matrix/MetaMatrix';
 import { RankSwitcher, type RankPanel } from '@/components/features/meta-matrix/RankSwitcher';
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function MetaMatrixPage() {
-  const { patch, previousPatch, updatedVi, source, ranks, defaultRank, thresholds } = metaCompsSnapshot;
+  const { patch, previousPatch, updatedVi, fetchedAt, patchAgeDays, source, ranks, defaultRank, thresholds } =
+    metaCompsSnapshot;
+  const showEarlyPatchNotice = patchAgeDays >= 0 && patchAgeDays <= 2;
+  const earlyPatchAge = patchAgeDays === 0 ? 'trong ngày ra bản vá' : `${patchAgeDays} ngày sau bản vá`;
 
   const panels: RankPanel[] = ranks.map((rank) => ({
     key: rank.key,
@@ -29,9 +33,13 @@ export default function MetaMatrixPage() {
         <div className="wide-container">
           <span className="kicker">Đội hình meta · {patch}</span>
           <h1>Ma trận đội hình leo rank</h1>
-          <p>
-            Số liệu {source} · cập nhật {updatedVi}
-          </p>
+          <p>Số liệu {source}</p>
+          <DataFreshness fetchedAt={fetchedAt} updatedVi={updatedVi} />
+          {showEarlyPatchNotice ? (
+            <p className={styles.earlyPatchNotice}>
+              Số liệu mới {earlyPatchAge} {patch}: mẫu còn mỏng và lệch về nhóm chơi sớm — xem ◆ như dự đoán.
+            </p>
+          ) : null}
         </div>
       </header>
 

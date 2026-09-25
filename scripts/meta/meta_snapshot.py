@@ -31,6 +31,9 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import rules  # noqa: E402
+
 API = 'https://api-hc.metatft.com/tft-comps-api'
 REPO = Path(__file__).resolve().parents[2]
 ROOT = REPO / 'data' / 'meta-snapshots'
@@ -49,7 +52,6 @@ MIN_N = 500              # dưới mức này chỉ ghi "theo dõi"
 NEW_MAX_OLD_N = 300      # lần trước gần như không ai chơi
 MIN_DELTA = 0.10         # thay đổi hạng TB tối thiểu để tính là mạnh lên/yếu đi
 PICK_JUMP = 1.5          # tỉ lệ chọn tăng ≥ 1,5 điểm % => đang bị tranh nhanh
-SD_PLACE = 2.29          # độ lệch chuẩn thứ hạng 1–8 (phân phối đều)
 UA = {'User-Agent': 'Mozilla/5.0 (BaronTFT meta snapshot)'}
 
 
@@ -311,8 +313,7 @@ def match_clusters(old_cat, new_cat, same_set):
 
 
 def significant(a, b):
-    se = SD_PLACE * math.sqrt(1 / a['n'] + 1 / b['n'])
-    return abs(b['avg'] - a['avg']) >= max(MIN_DELTA, 2 * se)
+    return rules.significant_change(a, b)
 
 
 def fmt(v, d=2):
@@ -385,14 +386,14 @@ def cmd_compare(args):
             lines.append('_Không có._')
             lines.append('')
             return
-        lines.append('| Đội (MetaTFT) | Hạng TB | Trước | Δ | Top 4 | Top 1 | Tỉ lệ chọn | Số trận |')
-        lines.append('|---|---|---|---|---|---|---|---|')
+        lines.append('| Đội (MetaTFT) | Mã cụm | Hạng TB | Trước | Δ | Top 4 | Top 1 | Tỉ lệ chọn | Số trận |')
+        lines.append('|---|---|---|---|---|---|---|---|---|')
         for r in sorted(items, key=sort_key):
             s, o = r['new'], r['old']
             prev = fmt(o['avg']) if o else '—'
             d = f"{'+' if s['avg'] >= o['avg'] else ''}{fmt(s['avg'] - o['avg'])}" if o else 'mới'
             pk = f"{fmt(o['pick'], 1)} → {fmt(s['pick'], 1)}%" if o else f"{fmt(s['pick'], 1)}%"
-            lines.append(f"| {r['name']} | **{fmt(s['avg'])}** | {prev} | {d} | {fmt(s['top4'], 1)}% | "
+            lines.append(f"| {r['name']} | `{r['id']}` | **{fmt(s['avg'])}** | {prev} | {d} | {fmt(s['top4'], 1)}% | "
                          f"{fmt(s['win'], 1)}% | {pk} | {fmt_int(s['n'])} |")
         lines.append('')
 

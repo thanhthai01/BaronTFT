@@ -35,6 +35,15 @@
 
 .item {
   display: inline-flex;
+  align-items: center;
+}
+
+.verdictNote {
+  /* Cha là flex nên khoảng trắng đầu thẻ bị bỏ — dùng margin thay vì dấu cách. */
+  margin-left: 0.35em;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
 }
 
 .trendSymbol {

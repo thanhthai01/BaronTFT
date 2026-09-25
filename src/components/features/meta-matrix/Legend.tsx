@@ -20,7 +20,7 @@ export function Legend({
   thresholds,
 }: {
   previousPatch: string;
-  thresholds: { contestedPick: number; holdTop4: number; ceilingWin: number };
+  thresholds: { contestedPick: number; holdTop4: number; ceilingWin: number; fallingDrop: number };
 }) {
   return (
     <div className={styles.legend}>
@@ -30,6 +30,7 @@ export function Legend({
           {VERDICT_ORDER.map((verdict) => (
             <li className={styles.item} key={verdict}>
               <VerdictSymbol showLabel verdict={verdict} />
+              {verdict === 'avoid' ? <span className={styles.verdictNote}>(hạng TB &gt; 4,65)</span> : null}
             </li>
           ))}
         </ul>
@@ -51,8 +52,9 @@ export function Legend({
 
       <p className={styles.note}>Hạng trung bình càng thấp càng tốt (1 = nhất, 8 = bét).</p>
       <p className={styles.note}>
-        Bị tranh: tỉ lệ chọn ≥ {formatViDecimal(thresholds.contestedPick, 0)}% · Giữ điểm: Top 4 ≥{' '}
-        {formatViDecimal(thresholds.holdTop4, 0)}% · Ăn top 1: Top 1 ≥ {formatViDecimal(thresholds.ceilingWin, 0)}%
+        Vừa tụt: tệ đi ≥ {formatViDecimal(thresholds.fallingDrop, 2)} hạng · Bị tranh: carry chính có mặt ở ≥{' '}
+        {formatViDecimal(thresholds.contestedPick, 0)}% đội hình · Giữ điểm: Top 4 ≥ {formatViDecimal(thresholds.holdTop4, 0)}%
+        · Ăn top 1: Top 1 ≥ {formatViDecimal(thresholds.ceilingWin, 0)}%
       </p>
     </div>
   );

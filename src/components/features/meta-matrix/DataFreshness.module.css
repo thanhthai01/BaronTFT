@@ -1,0 +1,13 @@
+.freshness {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.stale {
+  margin: 0;
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}

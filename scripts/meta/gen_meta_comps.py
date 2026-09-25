@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import meta_snapshot as ms  # noqa: E402
+import rules  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 REPO = ms.REPO
@@ -31,14 +32,6 @@ OUT = REPO / 'src/content/meta-comps.ts'
 RANKS = [('emerald', 'Lục Bảo+'), ('diamond', 'Kim Cương+'), ('master', 'Cao Thủ+')]
 DEFAULT_RANK = 'emerald'  # rank của chủ site (Lục Bảo) — xem memory user_tft_rank
 
-META_MAX_AVG = 4.40
-MIN_SAMPLE = 1000
-PREDICTED_MAX_AVG = 4.45
-VIABLE_MAX_AVG = 4.65
-AVOID_DROP = 0.15
-CONTESTED_PICK = 7.0
-HOLD_TOP4 = 54.0
-CEILING_WIN = 18.0
 AUTO_MATCH = 0.85  # điểm ghép tối thiểu để tự đổi cụm; thấp hơn thì đưa vào danh sách cần xem
 NAME_BONUS = 0.3   # cộng điểm khi tên gọi MetaTFT (name_string) trùng — MetaTFT hay giữ tên khi tách cụm
 
@@ -97,21 +90,13 @@ def catalog_of(snap):
     return ms.read_json(ms.ROOT / meta['catalogRef'], 'catalog'), meta
 
 
-def verdict(s, prev_avg, prediction):
-    drop = s['avg'] - prev_avg
-    thin = s['n'] < MIN_SAMPLE
-    if prediction and thin:
-        if prediction['direction'] == 'up':
-            return 'predicted'
-        if prediction['direction'] == 'down' and s['avg'] <= META_MAX_AVG:
-            return 'viable'
-    if s['avg'] > VIABLE_MAX_AVG or (drop >= AVOID_DROP and s['avg'] >= 4.55):
-        return 'avoid'
-    if not thin and s['avg'] <= META_MAX_AVG:
-        return 'meta'
-    if thin and s['avg'] <= PREDICTED_MAX_AVG:
-        return 'predicted'
-    return 'viable'
+def patch_age_days(label, fetched):
+    """Ngày bản vá lên Live lấy từ patch-notes-index (dateVi dd/mm/yyyy); không thấy thì trả -1."""
+    for entry in ms.ts_array(ms.PATCH_INDEX):
+        if entry['version'].startswith('Live') and f'({label})' in entry['version']:
+            live = datetime.strptime(entry['dateVi'], '%d/%m/%Y')
+            return max(0, (fetched.date() - live.date()).days)
+    return -1
 
 
 def pick_snapshot(prefix, default):
@@ -172,20 +157,24 @@ def main():
         if base_cl is None or base_cl not in old[DEFAULT_RANK]:
             base_cl, _ = best_match(cluster_units(info), cat_base, old[DEFAULT_RANK], info.get('name_string'), threshold=0.6)
 
+        carry_api = next((u.strip() for u in info.get('units_string', '').split(',')
+                          if unit_name(u) == comp['carries'][0]), None)
         ranks = {}
         for key, _ in RANKS:
             s = now[key][0].get(cl)
             if s is None:
                 s = {'n': 0, 'avg': 8.0, 'top4': 0.0, 'win': 0.0, 'pick': 0.0}
-            prev = old[key].get(base_cl, s)['avg'] if base_cl else s['avg']
-            delta = round(s['avg'] - prev, 2)
+            o = old[key].get(base_cl) if base_cl else None
+            contest = round(rules.carry_contest_pick(carry_api, cl, cat_now, now[key][0]), 1) if carry_api else s['pick']
             ranks[key] = {
                 **s,
-                'prevAvg': prev,
-                'verdict': verdict(s, prev, comp.get('prediction')),
-                'trend': 'up' if delta <= -0.05 else 'down' if delta >= 0.05 else 'flat',
-                'contested': s['pick'] >= CONTESTED_PICK,
-                'shapes': [k for k, ok in (('hold', s['top4'] >= HOLD_TOP4), ('ceiling', s['win'] >= CEILING_WIN)) if ok],
+                'prevAvg': o['avg'] if o else s['avg'],
+                'verdict': rules.verdict(s, comp.get('prediction')),
+                'trend': rules.trend(s['avg'], o['avg']) if o else 'flat',
+                'falling': rules.falling(o, s),
+                'contestPick': contest,
+                'contested': contest >= rules.CONTESTED_PICK,
+                'shapes': rules.shapes(s),
             }
 
         def build(carry):
@@ -208,10 +197,13 @@ def main():
             'note': comp['note'],
         })
 
-    if changed_clusters:
+    # Chỉ ghi mã cụm mới vào comps.json khi sinh từ lần chụp MỚI NHẤT — sinh lại từ lần chụp cũ
+    # (để so/kiểm tra) không được kéo comps.json về bộ cụm cũ.
+    if changed_clusters and snap == snaps[-1]:
         COMPS_FILE.write_text(json.dumps(config, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
     fetched = datetime.fromisoformat(meta_now['fetchedAt'])
+    patch_age = patch_age_days(meta_now['patch'], fetched)
     base_date = datetime.fromisoformat(meta_base['fetchedAt'])
     previous = (f"bản {meta_base['patch']}" if meta_base['patch'] != meta_now['patch']
                 else f'ngày {base_date:%d/%m}')
@@ -225,7 +217,7 @@ export type MetaCompDamage = 'AP' | 'AD';
 /** meta = mạnh, số liệu xác nhận · predicted = dự đoán mạnh · viable = chơi được · avoid = tránh */
 export type MetaCompVerdict = 'meta' | 'predicted' | 'viable' | 'avoid';
 export type MetaCompTrend = 'up' | 'down' | 'flat';
-/** hold = Giữ điểm (Top 4 ≥ {HOLD_TOP4:g}%) · ceiling = Ăn top 1 (Top 1 ≥ {CEILING_WIN:g}%) */
+/** hold = Giữ điểm (Top 4 ≥ {rules.HOLD_TOP4:g}%) · ceiling = Ăn top 1 (Top 1 ≥ {rules.CEILING_WIN:g}%), cả hai đã trừ nhiễu mẫu */
 export type MetaCompShape = 'hold' | 'ceiling';
 export type MetaCompRankKey = {' | '.join(repr(k) for k, _ in RANKS)};
 
@@ -241,10 +233,15 @@ export type MetaCompRankStats = {{
   pick: number;
   /** avg cùng mức rank ở lần chụp dùng để so xu hướng. */
   prevAvg: number;
+  /** Chỉ nói sức mạnh HIỆN TẠI; biến động nằm ở `trend`/`falling`. */
   verdict: MetaCompVerdict;
   /** So avg lần trước: up = tốt lên ≥ 0,05 hạng, down = tệ đi ≥ 0,05 hạng. */
   trend: MetaCompTrend;
-  /** Tỉ lệ chọn ≥ {CONTESTED_PICK:g}% — dễ bị tranh tướng. */
+  /** Tệ đi ≥ {rules.FALLING_DROP:g} hạng và vượt nhiễu thống kê so với lần trước. */
+  falling: boolean;
+  /** % đội hình có carry chính cầm đồ (cộng mọi biến thể dùng cùng carry). */
+  contestPick: number;
+  /** contestPick ≥ {rules.CONTESTED_PICK:g}% ≈ trung bình ≥ 0,5 đối thủ mỗi ván cùng đi carry này. */
   contested: boolean;
   shapes: MetaCompShape[];
 }};
@@ -267,10 +264,14 @@ export const metaCompsSnapshot = {{
   /** Mốc so xu hướng, đã kèm chữ "bản"/"ngày" — vd "bản 18.3" hoặc "ngày 25/09". */
   previousPatch: '{previous}',
   updatedVi: '{fetched:%d/%m/%Y}',
+  /** ISO — client tính "x ngày trước" để cảnh báo số liệu cũ. */
+  fetchedAt: '{meta_now['fetchedAt']}',
+  /** Số ngày từ lúc bản vá lên Live tới lúc chụp; ≤ 2 ngày thì mẫu còn mỏng, lệch về nhóm chơi sớm. */
+  patchAgeDays: {patch_age},
   source: 'MetaTFT',
   defaultRank: '{DEFAULT_RANK}' as MetaCompRankKey,
   ranks: {json.dumps(ranks_meta, ensure_ascii=False)} as {{ key: MetaCompRankKey; label: string; sampleSize: number }}[],
-  thresholds: {{ contestedPick: {CONTESTED_PICK:g}, holdTop4: {HOLD_TOP4:g}, ceilingWin: {CEILING_WIN:g} }},
+  thresholds: {{ contestedPick: {rules.CONTESTED_PICK:g}, holdTop4: {rules.HOLD_TOP4:g}, ceilingWin: {rules.CEILING_WIN:g}, fallingDrop: {rules.FALLING_DROP:g} }},
 }};
 
 export const metaComps: MetaComp[] = '''

@@ -28,10 +28,12 @@ export function CompCard({ comp, rankKey }: { comp: MetaComp; rankKey: MetaCompR
   const isAvoid = rank.verdict === 'avoid';
   const firstCarry = comp.carries[0];
   const restCarries = comp.carries.slice(1);
-  const { thresholds, ranks: rankMeta } = metaCompsSnapshot;
+  const { thresholds, ranks: rankMeta, previousPatch } = metaCompsSnapshot;
 
   const deltaLabel = `Bản trước ${formatViDecimal(rank.prevAvg)} → hiện tại ${formatViDecimal(rank.avg)}`;
-  const hasBadges = rank.contested || rank.shapes.length > 0;
+  const hasBadges = rank.falling || rank.contested || rank.shapes.length > 0;
+  const mainCarryName = firstCarry?.name ?? '';
+  const avgOpponents = formatViDecimal((7 * rank.contestPick) / 100, 1);
 
   return (
     <details className={styles.card} data-verdict={rank.verdict}>
@@ -55,10 +57,18 @@ export function CompCard({ comp, rankKey }: { comp: MetaComp; rankKey: MetaCompR
 
         {hasBadges ? (
           <span className={styles.badgeRow}>
+            {rank.falling ? (
+              <span
+                className={styles.fallingBadge}
+                title={`Tệ đi ${formatViDecimal(rank.prevAvg)} → ${formatViDecimal(rank.avg)} so với ${previousPatch}`}
+              >
+                Vừa tụt
+              </span>
+            ) : null}
             {rank.contested ? (
               <span
                 className={styles.contestedBadge}
-                title={`Tỉ lệ chọn ${formatViDecimal(rank.pick, 1)}% — dễ đụng người cùng đội hình`}
+                title={`${formatViDecimal(rank.contestPick, 1)}% đội hình dùng ${mainCarryName} làm carry — trung bình ~${avgOpponents} đối thủ mỗi ván`}
               >
                 Bị tranh
               </span>

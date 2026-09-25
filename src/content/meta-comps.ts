@@ -1,11 +1,12 @@
-// Sinh bởi MetaPlaybook/18.3b/gen_meta_comps.py từ số liệu MetaTFT — không sửa tay.
-// Mỗi đội có số liệu riêng cho từng mức rank; xếp loại/nhãn đã tính sẵn theo ngưỡng trong script.
+// GENERATED FILE — do not edit by hand.
+// Sinh bởi scripts/meta/gen_meta_comps.py từ scripts/meta/comps.json + data/meta-snapshots
+// (số liệu: 2026-09-25_1620_18.3b, xu hướng so với: 2026-09-25_1619_18.3).
 
 export type MetaCompDamage = 'AP' | 'AD';
 /** meta = mạnh, số liệu xác nhận · predicted = dự đoán mạnh · viable = chơi được · avoid = tránh */
 export type MetaCompVerdict = 'meta' | 'predicted' | 'viable' | 'avoid';
 export type MetaCompTrend = 'up' | 'down' | 'flat';
-/** hold = Giữ điểm (Top 4 ≥ 54%) · ceiling = Ăn top 1 (Top 1 ≥ 18%) */
+/** hold = Giữ điểm (Top 4 ≥ 54%) · ceiling = Ăn top 1 (Top 1 ≥ 18%), cả hai đã trừ nhiễu mẫu */
 export type MetaCompShape = 'hold' | 'ceiling';
 export type MetaCompRankKey = 'emerald' | 'diamond' | 'master';
 
@@ -19,12 +20,17 @@ export type MetaCompRankStats = {
   win: number;
   /** % đội hình ở mức rank này chơi đội đó. */
   pick: number;
-  /** avg cùng mức rank ở bản vá trước. */
+  /** avg cùng mức rank ở lần chụp dùng để so xu hướng. */
   prevAvg: number;
+  /** Chỉ nói sức mạnh HIỆN TẠI; biến động nằm ở `trend`/`falling`. */
   verdict: MetaCompVerdict;
-  /** So avg bản trước: up = tốt lên ≥ 0,05 hạng, down = tệ đi ≥ 0,05 hạng. */
+  /** So avg lần trước: up = tốt lên ≥ 0,05 hạng, down = tệ đi ≥ 0,05 hạng. */
   trend: MetaCompTrend;
-  /** Tỉ lệ chọn ≥ 7% — dễ bị tranh tướng. */
+  /** Tệ đi ≥ 0.15 hạng và vượt nhiễu thống kê so với lần trước. */
+  falling: boolean;
+  /** % đội hình có carry chính cầm đồ (cộng mọi biến thể dùng cùng carry). */
+  contestPick: number;
+  /** contestPick ≥ 10% ≈ trung bình ≥ 0,5 đối thủ mỗi ván cùng đi carry này. */
   contested: boolean;
   shapes: MetaCompShape[];
 };
@@ -44,12 +50,17 @@ export type MetaComp = {
 
 export const metaCompsSnapshot = {
   patch: '18.3b',
+  /** Mốc so xu hướng, đã kèm chữ "bản"/"ngày" — vd "bản 18.3" hoặc "ngày 25/09". */
   previousPatch: 'bản 18.3',
   updatedVi: '25/09/2026',
+  /** ISO — client tính "x ngày trước" để cảnh báo số liệu cũ. */
+  fetchedAt: '2026-09-25T16:20:48',
+  /** Số ngày từ lúc bản vá lên Live tới lúc chụp; ≤ 2 ngày thì mẫu còn mỏng, lệch về nhóm chơi sớm. */
+  patchAgeDays: 1,
   source: 'MetaTFT',
   defaultRank: 'emerald' as MetaCompRankKey,
-  ranks: [{"key": "emerald", "label": "Lục Bảo+", "sampleSize": 462360}, {"key": "diamond", "label": "Kim Cương+", "sampleSize": 174864}, {"key": "master", "label": "Cao Thủ+", "sampleSize": 58832}] as { key: MetaCompRankKey; label: string; sampleSize: number }[],
-  thresholds: { contestedPick: 7, holdTop4: 54, ceilingWin: 18 },
+  ranks: [{"key": "emerald", "label": "Lục Bảo+", "sampleSize": 491016}, {"key": "diamond", "label": "Kim Cương+", "sampleSize": 184768}, {"key": "master", "label": "Cao Thủ+", "sampleSize": 62648}] as { key: MetaCompRankKey; label: string; sampleSize: number }[],
+  thresholds: { contestedPick: 10, holdTop4: 54, ceilingWin: 18, fallingDrop: 0.15 },
 };
 
 export const metaComps: MetaComp[] = [
@@ -119,42 +130,48 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 25265,
-        "avg": 4.21,
-        "top4": 55.8,
+        "n": 26928,
+        "avg": 4.2,
+        "top4": 55.7,
         "win": 15.3,
         "pick": 5.5,
-        "prevAvg": 4.16,
+        "prevAvg": 4.15,
         "verdict": "meta",
-        "trend": "down",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 6.2,
         "contested": false,
         "shapes": [
           "hold"
         ]
       },
       "diamond": {
-        "n": 10286,
-        "avg": 4.16,
+        "n": 10920,
+        "avg": 4.15,
         "top4": 56.7,
-        "win": 16.3,
+        "win": 16.4,
         "pick": 5.9,
-        "prevAvg": 4.13,
+        "prevAvg": 4.09,
         "verdict": "meta",
-        "trend": "flat",
+        "trend": "down",
+        "falling": false,
+        "contestPick": 6.7,
         "contested": false,
         "shapes": [
           "hold"
         ]
       },
       "master": {
-        "n": 3583,
-        "avg": 4.19,
-        "top4": 55.6,
-        "win": 16.9,
+        "n": 3849,
+        "avg": 4.18,
+        "top4": 55.7,
+        "win": 17.0,
         "pick": 6.1,
-        "prevAvg": 4.07,
+        "prevAvg": 4.06,
         "verdict": "meta",
         "trend": "down",
+        "falling": false,
+        "contestPick": 6.9,
         "contested": false,
         "shapes": [
           "hold"
@@ -234,38 +251,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 10530,
-        "avg": 5.48,
+        "n": 11172,
+        "avg": 5.49,
         "top4": 31.2,
         "win": 9.3,
         "pick": 2.3,
-        "prevAvg": 4.98,
+        "prevAvg": 4.92,
         "verdict": "avoid",
         "trend": "down",
+        "falling": true,
+        "contestPick": 2.8,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 2556,
+        "n": 2690,
         "avg": 5.46,
-        "top4": 32.6,
-        "win": 10.3,
+        "top4": 32.5,
+        "win": 10.1,
         "pick": 1.5,
-        "prevAvg": 4.69,
+        "prevAvg": 4.61,
         "verdict": "avoid",
         "trend": "down",
+        "falling": true,
+        "contestPick": 1.9,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 553,
-        "avg": 5.11,
-        "top4": 40.0,
-        "win": 12.7,
+        "n": 573,
+        "avg": 5.13,
+        "top4": 39.6,
+        "win": 12.6,
         "pick": 0.9,
-        "prevAvg": 4.46,
+        "prevAvg": 4.34,
         "verdict": "avoid",
         "trend": "down",
+        "falling": true,
+        "contestPick": 1.3,
         "contested": false,
         "shapes": []
       }
@@ -338,42 +361,46 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 15521,
+        "n": 16368,
         "avg": 4.43,
         "top4": 51.5,
         "win": 12.6,
-        "pick": 3.4,
-        "prevAvg": 4.27,
+        "pick": 3.3,
+        "prevAvg": 4.26,
         "verdict": "viable",
         "trend": "down",
+        "falling": true,
+        "contestPick": 4.6,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 5727,
+        "n": 6007,
         "avg": 4.4,
-        "top4": 52.1,
-        "win": 13.5,
+        "top4": 51.9,
+        "win": 13.4,
         "pick": 3.3,
-        "prevAvg": 4.2,
+        "prevAvg": 4.22,
         "verdict": "meta",
         "trend": "down",
+        "falling": true,
+        "contestPick": 4.3,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 1806,
-        "avg": 4.3,
-        "top4": 54.2,
-        "win": 15.0,
+        "n": 1923,
+        "avg": 4.32,
+        "top4": 53.7,
+        "win": 14.8,
         "pick": 3.1,
-        "prevAvg": 4.12,
+        "prevAvg": 4.13,
         "verdict": "meta",
         "trend": "down",
+        "falling": true,
+        "contestPick": 3.9,
         "contested": false,
-        "shapes": [
-          "hold"
-        ]
+        "shapes": []
       }
     },
     "note": "Kha'Zix bị giảm sát thương ở 18.3b. Vẫn mạnh ở Cao Thủ+, nhưng ở Lục Bảo – Kim Cương chỉ còn mức chơi được."
@@ -444,38 +471,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 10007,
+        "n": 10568,
         "avg": 4.39,
         "top4": 52.2,
-        "win": 9.5,
+        "win": 9.7,
         "pick": 2.2,
-        "prevAvg": 4.49,
+        "prevAvg": 4.47,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 2.2,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 3518,
-        "avg": 4.42,
-        "top4": 51.0,
-        "win": 10.1,
+        "n": 3709,
+        "avg": 4.41,
+        "top4": 51.2,
+        "win": 10.2,
         "pick": 2.0,
-        "prevAvg": 4.55,
+        "prevAvg": 4.52,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 2.0,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 1086,
-        "avg": 4.44,
-        "top4": 50.0,
-        "win": 10.3,
-        "pick": 1.8,
-        "prevAvg": 4.6,
+        "n": 1160,
+        "avg": 4.41,
+        "top4": 50.7,
+        "win": 10.9,
+        "pick": 1.9,
+        "prevAvg": 4.63,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 1.9,
         "contested": false,
         "shapes": []
       }
@@ -548,38 +581,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 18082,
+        "n": 19200,
         "avg": 4.58,
         "top4": 49.2,
         "win": 9.9,
         "pick": 3.9,
-        "prevAvg": 4.49,
+        "prevAvg": 4.46,
         "verdict": "viable",
         "trend": "down",
+        "falling": false,
+        "contestPick": 4.6,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 6471,
-        "avg": 4.73,
-        "top4": 46.2,
-        "win": 9.3,
+        "n": 6833,
+        "avg": 4.72,
+        "top4": 46.3,
+        "win": 9.4,
         "pick": 3.7,
-        "prevAvg": 4.56,
+        "prevAvg": 4.54,
         "verdict": "avoid",
         "trend": "down",
+        "falling": true,
+        "contestPick": 4.5,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 1981,
-        "avg": 4.8,
-        "top4": 44.6,
-        "win": 9.5,
+        "n": 2118,
+        "avg": 4.79,
+        "top4": 44.8,
+        "win": 9.6,
         "pick": 3.4,
-        "prevAvg": 4.62,
+        "prevAvg": 4.65,
         "verdict": "avoid",
         "trend": "down",
+        "falling": false,
+        "contestPick": 4.2,
         "contested": false,
         "shapes": []
       }
@@ -662,38 +701,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 13941,
-        "avg": 4.33,
-        "top4": 52.8,
+        "n": 14842,
+        "avg": 4.32,
+        "top4": 53.0,
         "win": 14.1,
         "pick": 3.0,
-        "prevAvg": 4.32,
+        "prevAvg": 4.3,
         "verdict": "meta",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 5.0,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 5725,
-        "avg": 4.33,
-        "top4": 52.9,
-        "win": 13.4,
+        "n": 6096,
+        "avg": 4.32,
+        "top4": 53.0,
+        "win": 13.5,
         "pick": 3.3,
-        "prevAvg": 4.34,
+        "prevAvg": 4.31,
         "verdict": "meta",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 5.6,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 2029,
-        "avg": 4.29,
-        "top4": 53.4,
-        "win": 13.7,
-        "pick": 3.4,
-        "prevAvg": 4.35,
+        "n": 2181,
+        "avg": 4.27,
+        "top4": 53.8,
+        "win": 14.0,
+        "pick": 3.5,
+        "prevAvg": 4.28,
         "verdict": "meta",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 6.1,
         "contested": false,
         "shapes": []
       }
@@ -771,38 +816,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 29473,
+        "n": 31126,
         "avg": 4.33,
         "top4": 53.9,
         "win": 11.3,
-        "pick": 6.4,
-        "prevAvg": 4.38,
+        "pick": 6.3,
+        "prevAvg": 4.4,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 8.9,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 13759,
+        "n": 14468,
         "avg": 4.37,
         "top4": 53.5,
         "win": 10.9,
-        "pick": 7.9,
-        "prevAvg": 4.42,
+        "pick": 7.8,
+        "prevAvg": 4.43,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 10.3,
         "contested": true,
         "shapes": []
       },
       "master": {
-        "n": 5131,
-        "avg": 4.42,
-        "top4": 52.6,
+        "n": 5451,
+        "avg": 4.43,
+        "top4": 52.3,
         "win": 10.3,
         "pick": 8.7,
-        "prevAvg": 4.48,
+        "prevAvg": 4.47,
         "verdict": "viable",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 11.2,
         "contested": true,
         "shapes": []
       }
@@ -899,38 +950,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 29285,
+        "n": 31099,
         "avg": 4.37,
-        "top4": 53.1,
+        "top4": 53.2,
         "win": 10.4,
         "pick": 6.3,
-        "prevAvg": 4.46,
+        "prevAvg": 4.44,
         "verdict": "meta",
         "trend": "up",
-        "contested": false,
+        "falling": false,
+        "contestPick": 11.3,
+        "contested": true,
         "shapes": []
       },
       "diamond": {
-        "n": 13655,
+        "n": 14418,
         "avg": 4.41,
         "top4": 52.3,
         "win": 10.2,
         "pick": 7.8,
-        "prevAvg": 4.52,
+        "prevAvg": 4.5,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 13.4,
         "contested": true,
         "shapes": []
       },
       "master": {
-        "n": 5335,
+        "n": 5684,
         "avg": 4.45,
-        "top4": 51.3,
+        "top4": 51.5,
         "win": 9.8,
         "pick": 9.1,
         "prevAvg": 4.6,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 15.2,
         "contested": true,
         "shapes": []
       }
@@ -1027,14 +1084,16 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 8574,
-        "avg": 4.09,
-        "top4": 56.5,
+        "n": 9168,
+        "avg": 4.08,
+        "top4": 56.6,
         "win": 20.4,
         "pick": 1.9,
-        "prevAvg": 4.22,
+        "prevAvg": 4.17,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 3.2,
         "contested": false,
         "shapes": [
           "hold",
@@ -1042,14 +1101,16 @@ export const metaComps: MetaComp[] = [
         ]
       },
       "diamond": {
-        "n": 2314,
-        "avg": 4.23,
-        "top4": 54.0,
-        "win": 18.9,
+        "n": 2450,
+        "avg": 4.22,
+        "top4": 54.2,
+        "win": 19.3,
         "pick": 1.3,
-        "prevAvg": 4.33,
+        "prevAvg": 4.31,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 2.4,
         "contested": false,
         "shapes": [
           "hold",
@@ -1057,14 +1118,16 @@ export const metaComps: MetaComp[] = [
         ]
       },
       "master": {
-        "n": 504,
+        "n": 535,
         "avg": 4.36,
         "top4": 51.2,
         "win": 20.4,
         "pick": 0.9,
-        "prevAvg": 4.41,
+        "prevAvg": 4.4,
         "verdict": "predicted",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 2.0,
         "contested": false,
         "shapes": [
           "ceiling"
@@ -1144,38 +1207,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 7168,
-        "avg": 4.53,
+        "n": 7625,
+        "avg": 4.52,
         "top4": 51.8,
         "win": 5.1,
         "pick": 1.6,
-        "prevAvg": 4.63,
+        "prevAvg": 4.56,
         "verdict": "viable",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 1.6,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 2383,
+        "n": 2516,
         "avg": 4.58,
-        "top4": 50.7,
+        "top4": 50.6,
         "win": 4.3,
         "pick": 1.4,
-        "prevAvg": 4.68,
+        "prevAvg": 4.6,
         "verdict": "viable",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 1.4,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 702,
-        "avg": 4.62,
-        "top4": 50.3,
-        "win": 4.7,
+        "n": 736,
+        "avg": 4.63,
+        "top4": 49.9,
+        "win": 4.5,
         "pick": 1.2,
-        "prevAvg": 4.72,
+        "prevAvg": 4.58,
         "verdict": "viable",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 1.2,
         "contested": false,
         "shapes": []
       }
@@ -1248,38 +1317,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 4728,
-        "avg": 4.38,
-        "top4": 52.7,
-        "win": 10.9,
+        "n": 5002,
+        "avg": 4.36,
+        "top4": 53.0,
+        "win": 11.1,
         "pick": 1.0,
-        "prevAvg": 4.43,
+        "prevAvg": 4.4,
         "verdict": "meta",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 3.3,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 1615,
-        "avg": 4.36,
-        "top4": 52.6,
-        "win": 10.8,
+        "n": 1710,
+        "avg": 4.37,
+        "top4": 52.3,
+        "win": 10.9,
         "pick": 0.9,
-        "prevAvg": 4.42,
+        "prevAvg": 4.4,
         "verdict": "meta",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 2.9,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 513,
-        "avg": 4.41,
+        "n": 562,
+        "avg": 4.43,
         "top4": 50.5,
-        "win": 10.9,
+        "win": 11.0,
         "pick": 0.9,
-        "prevAvg": 4.47,
+        "prevAvg": 4.45,
         "verdict": "predicted",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 2.7,
         "contested": false,
         "shapes": []
       }
@@ -1352,40 +1427,46 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 3015,
+        "n": 3224,
         "avg": 4.39,
         "top4": 53.9,
         "win": 7.2,
         "pick": 0.7,
-        "prevAvg": 4.42,
+        "prevAvg": 4.41,
         "verdict": "meta",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 0.7,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 1111,
-        "avg": 4.38,
-        "top4": 54.3,
-        "win": 8.6,
+        "n": 1165,
+        "avg": 4.36,
+        "top4": 54.6,
+        "win": 8.5,
         "pick": 0.6,
-        "prevAvg": 4.42,
+        "prevAvg": 4.43,
         "verdict": "meta",
-        "trend": "flat",
+        "trend": "up",
+        "falling": false,
+        "contestPick": 0.6,
         "contested": false,
         "shapes": [
           "hold"
         ]
       },
       "master": {
-        "n": 352,
-        "avg": 4.34,
-        "top4": 53.1,
+        "n": 374,
+        "avg": 4.32,
+        "top4": 54.0,
         "win": 10.2,
         "pick": 0.6,
-        "prevAvg": 4.42,
+        "prevAvg": 4.35,
         "verdict": "predicted",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 0.6,
         "contested": false,
         "shapes": []
       }
@@ -1482,42 +1563,48 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 35164,
+        "n": 37343,
         "avg": 4.2,
         "top4": 57.9,
         "win": 8.1,
         "pick": 7.6,
-        "prevAvg": 4.26,
+        "prevAvg": 4.28,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 10.5,
         "contested": true,
         "shapes": [
           "hold"
         ]
       },
       "diamond": {
-        "n": 14956,
+        "n": 15847,
         "avg": 4.31,
-        "top4": 55.8,
+        "top4": 55.7,
         "win": 7.3,
         "pick": 8.6,
-        "prevAvg": 4.36,
+        "prevAvg": 4.38,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 11.3,
         "contested": true,
         "shapes": [
           "hold"
         ]
       },
       "master": {
-        "n": 5169,
+        "n": 5530,
         "avg": 4.39,
-        "top4": 53.7,
+        "top4": 53.6,
         "win": 7.3,
         "pick": 8.8,
-        "prevAvg": 4.44,
+        "prevAvg": 4.43,
         "verdict": "meta",
-        "trend": "up",
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 11.7,
         "contested": true,
         "shapes": []
       }
@@ -1595,154 +1682,51 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 3832,
+        "n": 4077,
         "avg": 4.3,
         "top4": 55.0,
-        "win": 9.2,
+        "win": 9.1,
         "pick": 0.8,
-        "prevAvg": 4.4,
+        "prevAvg": 4.38,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 3.7,
         "contested": false,
         "shapes": [
           "hold"
         ]
       },
       "diamond": {
-        "n": 1892,
-        "avg": 4.36,
-        "top4": 53.5,
+        "n": 2005,
+        "avg": 4.35,
+        "top4": 53.7,
         "win": 8.5,
         "pick": 1.1,
-        "prevAvg": 4.44,
+        "prevAvg": 4.42,
         "verdict": "meta",
         "trend": "up",
+        "falling": false,
+        "contestPick": 3.8,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 750,
-        "avg": 4.44,
-        "top4": 51.6,
-        "win": 8.3,
+        "n": 797,
+        "avg": 4.46,
+        "top4": 51.3,
+        "win": 8.0,
         "pick": 1.3,
-        "prevAvg": 4.51,
-        "verdict": "predicted",
+        "prevAvg": 4.55,
+        "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 4.2,
         "contested": false,
         "shapes": []
       }
     },
     "note": "Biến thể của Aphelios, ít người chơi hơn bản Mặt Trăng."
-  },
-  {
-    "id": "brambleback-sat-thu",
-    "name": "Brambleback Tàn Phá",
-    "damage": "AD",
-    "cost": 4,
-    "playstyle": "Cấp 8",
-    "carries": [
-      {
-        "name": "Brambleback",
-        "cost": 4,
-        "image": "/set18/assets/champions/full/tft18_brambleback.png",
-        "items": [
-          {
-            "name": "Áo Choàng Bóng Tối",
-            "icon": "/set18/assets/items/full/da_edgeofnight.png"
-          },
-          {
-            "name": "Bàn Tay Công Lý",
-            "icon": "/set18/assets/items/full/da_handofjustice.png"
-          },
-          {
-            "name": "Áo Choàng Thủy Ngân",
-            "icon": "/set18/assets/items/full/da_quicksilver.png"
-          }
-        ]
-      }
-    ],
-    "units": [
-      {
-        "name": "Akali",
-        "cost": 1,
-        "image": "/set18/assets/champions/full/tft18_akali.jpg"
-      },
-      {
-        "name": "Murkwolf",
-        "cost": 2,
-        "image": "/set18/assets/champions/full/tft18_murkwolf.png"
-      },
-      {
-        "name": "Warwick",
-        "cost": 2,
-        "image": "/set18/assets/champions/full/tft18_warwick.jpg"
-      },
-      {
-        "name": "Diana",
-        "cost": 3,
-        "image": "/set18/assets/champions/full/tft18_diana.jpg"
-      },
-      {
-        "name": "Ancient Sentinel",
-        "cost": 4,
-        "image": "/set18/assets/champions/full/tft18_ancientsentinel.jpg"
-      },
-      {
-        "name": "Brambleback",
-        "cost": 4,
-        "image": "/set18/assets/champions/full/tft18_brambleback.png"
-      },
-      {
-        "name": "Malphite",
-        "cost": 4,
-        "image": "/set18/assets/champions/full/tft18_malphite.jpg"
-      },
-      {
-        "name": "Nidalee",
-        "cost": 4,
-        "image": "/set18/assets/champions/full/tft18_nidalee.png"
-      }
-    ],
-    "ranks": {
-      "emerald": {
-        "n": 535,
-        "avg": 4.58,
-        "top4": 48.2,
-        "win": 6.7,
-        "pick": 0.1,
-        "prevAvg": 4.66,
-        "verdict": "predicted",
-        "trend": "up",
-        "contested": false,
-        "shapes": []
-      },
-      "diamond": {
-        "n": 160,
-        "avg": 4.41,
-        "top4": 50.6,
-        "win": 9.4,
-        "pick": 0.1,
-        "prevAvg": 4.49,
-        "verdict": "predicted",
-        "trend": "up",
-        "contested": false,
-        "shapes": []
-      },
-      "master": {
-        "n": 58,
-        "avg": 4.26,
-        "top4": 51.7,
-        "win": 10.3,
-        "pick": 0.1,
-        "prevAvg": 4.57,
-        "verdict": "predicted",
-        "trend": "up",
-        "contested": false,
-        "shapes": []
-      }
-    },
-    "note": "Brambleback được buff tốc độ tung chiêu ở 18.3b. Số trận còn rất ít, chỉ nên thử."
   },
   {
     "id": "ezreal-dao-phu",
@@ -1815,38 +1799,44 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 5339,
+        "n": 5651,
         "avg": 4.42,
         "top4": 52.4,
-        "win": 9.2,
+        "win": 9.1,
         "pick": 1.2,
-        "prevAvg": 4.45,
+        "prevAvg": 4.48,
         "verdict": "viable",
-        "trend": "flat",
+        "trend": "up",
+        "falling": false,
+        "contestPick": 3.8,
         "contested": false,
         "shapes": []
       },
       "diamond": {
-        "n": 2322,
+        "n": 2447,
         "avg": 4.48,
-        "top4": 51.2,
-        "win": 8.4,
+        "top4": 51.0,
+        "win": 8.3,
         "pick": 1.3,
-        "prevAvg": 4.54,
+        "prevAvg": 4.58,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 3.8,
         "contested": false,
         "shapes": []
       },
       "master": {
-        "n": 894,
-        "avg": 4.54,
-        "top4": 50.7,
-        "win": 8.4,
+        "n": 953,
+        "avg": 4.56,
+        "top4": 50.1,
+        "win": 8.3,
         "pick": 1.5,
-        "prevAvg": 4.63,
+        "prevAvg": 4.71,
         "verdict": "viable",
         "trend": "up",
+        "falling": false,
+        "contestPick": 4.2,
         "contested": false,
         "shapes": []
       }
@@ -1929,43 +1919,49 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 21041,
+        "n": 22395,
         "avg": 4.35,
-        "top4": 50.9,
-        "win": 19.9,
+        "top4": 50.8,
+        "win": 19.8,
         "pick": 4.6,
-        "prevAvg": 4.3,
+        "prevAvg": 4.31,
         "verdict": "meta",
-        "trend": "down",
-        "contested": false,
+        "trend": "flat",
+        "falling": false,
+        "contestPick": 11.3,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "diamond": {
-        "n": 7344,
+        "n": 7753,
         "avg": 4.38,
         "top4": 50.2,
         "win": 19.9,
         "pick": 4.2,
-        "prevAvg": 4.34,
+        "prevAvg": 4.37,
         "verdict": "meta",
         "trend": "flat",
-        "contested": false,
+        "falling": false,
+        "contestPick": 10.6,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "master": {
-        "n": 2230,
+        "n": 2362,
         "avg": 4.34,
         "top4": 51.2,
-        "win": 20.1,
+        "win": 20.2,
         "pick": 3.8,
-        "prevAvg": 4.33,
+        "prevAvg": 4.32,
         "verdict": "meta",
         "trend": "flat",
-        "contested": false,
+        "falling": false,
+        "contestPick": 10.2,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
@@ -2063,42 +2059,48 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 52619,
-        "avg": 4.44,
-        "top4": 49.8,
+        "n": 56089,
+        "avg": 4.45,
+        "top4": 49.7,
         "win": 20.1,
         "pick": 11.4,
-        "prevAvg": 4.46,
+        "prevAvg": 4.49,
         "verdict": "viable",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 11.4,
         "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "diamond": {
-        "n": 19785,
+        "n": 20978,
         "avg": 4.41,
-        "top4": 50.1,
-        "win": 21.0,
-        "pick": 11.3,
-        "prevAvg": 4.42,
+        "top4": 50.0,
+        "win": 20.9,
+        "pick": 11.4,
+        "prevAvg": 4.45,
         "verdict": "viable",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 11.4,
         "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "master": {
-        "n": 6363,
-        "avg": 4.37,
-        "top4": 50.6,
-        "win": 21.5,
+        "n": 6791,
+        "avg": 4.39,
+        "top4": 50.4,
+        "win": 21.1,
         "pick": 10.8,
-        "prevAvg": 4.35,
+        "prevAvg": 4.41,
         "verdict": "meta",
         "trend": "flat",
+        "falling": false,
+        "contestPick": 10.8,
         "contested": true,
         "shapes": [
           "ceiling"
@@ -2202,43 +2204,49 @@ export const metaComps: MetaComp[] = [
     ],
     "ranks": {
       "emerald": {
-        "n": 22948,
+        "n": 24412,
         "avg": 4.39,
-        "top4": 49.8,
-        "win": 19.1,
+        "top4": 49.9,
+        "win": 19.2,
         "pick": 5.0,
         "prevAvg": 4.39,
         "verdict": "meta",
         "trend": "flat",
-        "contested": false,
+        "falling": false,
+        "contestPick": 16.4,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "diamond": {
-        "n": 7500,
+        "n": 7940,
         "avg": 4.41,
-        "top4": 49.7,
-        "win": 18.9,
+        "top4": 49.8,
+        "win": 19.0,
         "pick": 4.3,
         "prevAvg": 4.4,
         "verdict": "viable",
         "trend": "flat",
-        "contested": false,
+        "falling": false,
+        "contestPick": 15.7,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
       },
       "master": {
-        "n": 2077,
-        "avg": 4.37,
-        "top4": 49.9,
-        "win": 19.8,
+        "n": 2201,
+        "avg": 4.36,
+        "top4": 50.2,
+        "win": 19.9,
         "pick": 3.5,
-        "prevAvg": 4.35,
+        "prevAvg": 4.33,
         "verdict": "meta",
         "trend": "flat",
-        "contested": false,
+        "falling": false,
+        "contestPick": 14.3,
+        "contested": true,
         "shapes": [
           "ceiling"
         ]
